@@ -35,7 +35,8 @@ next-env.d.ts
 
 # docker
 .dockerignore
-docker-compose.yml
+# Dockerfile
+# docker-compose.yml
 docker-compose.dev.yml
 
 # IDE
