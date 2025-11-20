@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { GAMES_DATA } from '@/lib/constants';
 
 interface RecommendedGamesSidebarProps {
@@ -52,10 +53,12 @@ export default function RecommendedGamesSidebar({
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-video overflow-hidden bg-slate-900">
-                  <img
+                  <Image
                     src={game.thumbnail}
                     alt={game.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 1280px) 50vw, 128px"
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
                   />
                   {/* Popularity badge */}

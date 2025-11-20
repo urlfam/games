@@ -1,6 +1,7 @@
 import { ARTICLES_DATA } from '@/lib/articles';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -57,12 +58,14 @@ export default function NewsCategoryPage({
               href={`/news/${article.slug}`}
               className="group block bg-white rounded-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-200"
             >
-              <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
                 {article.featuredImage ? (
-                  <img
+                  <Image
                     src={article.featuredImage}
                     alt={article.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <span className="text-gray-400">Article Image</span>
@@ -77,11 +80,15 @@ export default function NewsCategoryPage({
                 </h3>
                 <p className="text-gray-600 text-sm mb-4">{article.excerpt}</p>
                 <div className="flex items-center gap-3">
-                  <img
-                    src={article.author.avatar}
-                    alt={article.author.name}
-                    className="w-8 h-8 rounded-full bg-gray-300"
-                  />
+                  <div className="relative w-8 h-8">
+                    <Image
+                      src={article.author.avatar}
+                      alt={article.author.name}
+                      fill
+                      className="rounded-full bg-gray-300 object-cover"
+                      sizes="32px"
+                    />
+                  </div>
                   <div className="text-sm">
                     <Link
                       href={`/news/author/${encodeURIComponent(

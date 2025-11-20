@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ARTICLES_DATA } from '@/lib/articles';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -40,6 +41,9 @@ export async function generateMetadata({
       description: article.excerpt,
       images: [article.featuredImage],
     },
+    alternates: {
+      canonical: `/news/${params.slug}`,
+    },
   };
 }
 
@@ -68,12 +72,26 @@ export default function ArticlePage({ params }: ArticlePageProps) {
   const newsArticleSchema = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://puzzio.io/news/${article.slug}`,
+    },
     headline: article.title,
     description: article.excerpt,
-    image: article.featuredImage,
+    keywords: article.tags.join(', '),
+    image: {
+      '@type': 'ImageObject',
+      url: article.featuredImage,
+      width: 1200,
+      height: 630,
+    },
     author: {
       '@type': 'Person',
       name: article.author.name,
+      url: `https://puzzio.io/news/author/${encodeURIComponent(
+        article.author.name,
+      )}`,
+      image: article.author.avatar,
     },
     publisher: {
       '@type': 'Organization',
@@ -81,11 +99,16 @@ export default function ArticlePage({ params }: ArticlePageProps) {
       logo: {
         '@type': 'ImageObject',
         url: 'https://puzzio.io/logo.png',
+        width: 600,
+        height: 60,
       },
     },
     datePublished: article.publishDate,
     dateModified: article.publishDate,
     articleBody: article.content,
+    articleSection: article.category,
+    // optional: basic word count derived from content
+    wordCount: article.content ? article.content.trim().split(/\s+/).length : 0,
   };
 
   // 2. Author Schema
@@ -188,18 +211,23 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Featured Image */}
           <div className="relative w-full h-96 mb-8 rounded-xl overflow-hidden">
-            <img
+            <Image
               src={article.featuredImage}
               alt={article.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority
             />
           </div>
 
           {/* Author Info */}
           <div className="bg-slate-800 rounded-xl p-6 mb-8 flex gap-4">
-            <img
+            <Image
               src={article.author.avatar}
               alt={article.author.name}
+              width={64}
+              height={64}
               className="w-16 h-16 rounded-full"
             />
             <div>
@@ -246,10 +274,12 @@ export default function ArticlePage({ params }: ArticlePageProps) {
                     className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all group"
                   >
                     <div className="relative h-40 overflow-hidden">
-                      <img
+                      <Image
                         src={relatedArticle.featuredImage}
                         alt={relatedArticle.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                     <div className="p-4">
