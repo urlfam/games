@@ -6,8 +6,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'imgs.crazygames.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.crazygames.com',
       },
     ],
   },
