@@ -82,6 +82,7 @@ export default function GamePlayer({ embedSrc, title, pageUrl, enableProxy }: Ga
           title={title}
           allow="fullscreen; autoplay; accelerometer; gyroscope; picture-in-picture"
           sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
+          referrerPolicy="no-referrer" // <-- AJOUT DE CETTE LIGNE
         />
       </div>
     </div>
