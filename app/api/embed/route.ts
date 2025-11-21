@@ -31,9 +31,13 @@ export async function GET(req: Request) {
 
     // Fetch the remote content server-side and stream it directly to the client.
     const res = await fetch(url, {
-      // don't forward client cookies by default
-      headers: { 'User-Agent': 'puzzio-proxy/1.0' },
-      // allow longer timeouts if necessary
+      // Forward some headers from the original request to look more like a real user
+      headers: { 
+        'User-Agent': req.headers.get('User-Agent') || 'puzzio-proxy/1.0',
+        'Accept': req.headers.get('Accept') || '*/*',
+        'Accept-Language': req.headers.get('Accept-Language') || 'en-US,en;q=0.9',
+        'Referer': parsed.origin, // Set referer to the game's own origin
+      },
     });
 
     if (!res.ok) {
@@ -48,8 +52,15 @@ export async function GET(req: Request) {
     const cacheControl = res.headers.get('cache-control');
     if (cacheControl) headers['cache-control'] = cacheControl;
 
-    const body = await res.arrayBuffer();
-    return new NextResponse(Buffer.from(body), { status: 200, headers });
+    const body = await res.text();
+
+    // CRITICAL FIX: Inject a <base> tag into the HTML head.
+    // This forces all relative paths in the proxied HTML (like /js/main.js or /images/logo.png)
+    // to load from the original domain, not from our proxy. This is often what breaks proxied pages.
+    const baseUrl = `<base href="${parsed.origin}/">`;
+    const modifiedBody = body.replace('<head>', `<head>\n${baseUrl}`);
+
+    return new NextResponse(modifiedBody, { status: 200, headers });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Unknown error' }, { status: 500 });
   }
