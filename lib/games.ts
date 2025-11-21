@@ -1,8 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-// Define the path to your local "database"
-const GAMES_DB_PATH = path.join(process.cwd(), 'lib', 'games.json');
+// The data directory is now inside the container, at a writable location.
+const DATA_DIR = path.join(process.cwd(), 'data');
+const GAMES_DB_PATH = path.join(DATA_DIR, 'games.json');
 
 export interface Game {
   id: number;

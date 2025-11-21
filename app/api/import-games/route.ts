@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-// Define the path to your local "database"
-const LIB_DIR = path.join(process.cwd(), 'lib');
-const GAMES_DB_PATH = path.join(LIB_DIR, 'games.json');
+// The data directory is now inside the container, at a writable location.
+const DATA_DIR = path.join(process.cwd(), 'data');
+const GAMES_DB_PATH = path.join(DATA_DIR, 'games.json');
 
 // This is a simple file-based lock to prevent race conditions.
 let isWriting = false;
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     // 3. --- Read existing games ---
     let allGames: any[] = [];
     try {
-      await fs.mkdir(LIB_DIR, { recursive: true });
+      await fs.mkdir(DATA_DIR, { recursive: true });
       const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
       allGames = JSON.parse(data);
     } catch (error) {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     allGames.push(gameToSave);
 
     // 5. --- Write the entire file back ---
-    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(allGames, null, 2), 'utf-8');
+    await saveGames(allGames);
 
     console.log(`Successfully imported game: ${newGame.title}`);
 
@@ -88,5 +88,15 @@ export async function POST(req: Request) {
     );
   } finally {
     isWriting = false; // Unlock the file
+  }
+}
+
+async function saveGames(games: any) {
+  try {
+    // Ensure the directory exists before writing the file
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+  } catch (error) {
+    console.error('Error saving games:', error);
   }
 }
