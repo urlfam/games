@@ -3,7 +3,8 @@ import fs from 'fs/promises';
 import path from 'path';
 
 // Define the path to your local "database"
-const GAMES_DB_PATH = path.join(process.cwd(), 'lib', 'games.json');
+const LIB_DIR = path.join(process.cwd(), 'lib');
+const GAMES_DB_PATH = path.join(LIB_DIR, 'games.json');
 
 // --- Helper function to read the database ---
 async function getGames() {
@@ -18,7 +19,14 @@ async function getGames() {
 
 // --- Helper function to write to the database ---
 async function saveGames(games: any) {
-  await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+  try {
+    // Ensure the directory exists before writing the file
+    await fs.mkdir(LIB_DIR, { recursive: true });
+    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+  } catch (error) {
+    console.error('Failed to save games file:', error);
+    throw error; // re-throw the error to be caught by the main handler
+  }
 }
 
 /**
