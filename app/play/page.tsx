@@ -1,32 +1,29 @@
-'use client';
-
-import { GAMES_DATA } from '@/lib/constants';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 import CategorySidebar from '@/components/CategorySidebar';
+import { getAllGames, Game } from '@/lib/games'; // Import our new function
 
-export default function PlayPage() {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get('category')?.toLowerCase() || 'all';
+// This is now a Server Component, so we can fetch data directly.
+export default async function PlayPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | undefined };
+}) {
+  const allGames = await getAllGames();
+  const categoryParam = searchParams?.category?.toLowerCase() || 'all';
 
   const filteredGames =
     categoryParam === 'all'
-      ? GAMES_DATA
-      : GAMES_DATA.filter(
+      ? allGames
+      : allGames.filter(
           (game) => game.category.toLowerCase() === categoryParam,
         );
 
-  const featuredGame =
-    filteredGames.length > 0
-      ? filteredGames.reduce((prev, current) =>
-          prev.popularity > current.popularity ? prev : current,
-        )
-      : GAMES_DATA[0];
+  // Let's define a featured game (e.g., the most recently imported one)
+  const featuredGame = filteredGames.length > 0 ? filteredGames[0] : allGames[0];
 
-  const trendingGames = [...filteredGames]
-    .sort((a, b) => b.popularity - a.popularity)
-    .slice(0, 6);
+  // Let's define trending games (e.g., the first 6)
+  const trendingGames = filteredGames.slice(0, 6);
 
   const itemListSchema = {
     '@context': 'https://schema.org',
@@ -40,11 +37,19 @@ export default function PlayPage() {
         '@type': 'VideoGame',
         name: game.title,
         url: `https://puzzio.io/play/${game.slug}`,
-        image: game.thumbnail,
+        image: game.image_url,
         description: game.description,
       },
     })),
   };
+
+  if (!featuredGame) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <p>No games found. Please run the import workflow.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -66,7 +71,7 @@ export default function PlayPage() {
                 <h1 className="text-5xl font-bold text-white mb-4">
                   {featuredGame.title}
                 </h1>
-                <p className="text-xl text-gray-300 mb-6">
+                <p className="text-xl text-gray-300 mb-6 line-clamp-3">
                   {featuredGame.description}
                 </p>
                 <Link href={`/play/${featuredGame.slug}`}>
@@ -78,7 +83,7 @@ export default function PlayPage() {
 
               <div className="relative hidden md:block w-1/2 h-full rounded-lg overflow-hidden">
                 <Image
-                  src={featuredGame.thumbnail}
+                  src={featuredGame.image_url}
                   alt={featuredGame.title}
                   fill
                   className="object-cover rounded-lg shadow-lg"
@@ -103,7 +108,7 @@ export default function PlayPage() {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <Image
-                        src={game.thumbnail}
+                        src={game.image_url}
                         alt={game.title}
                         fill
                         className="object-cover"
@@ -115,10 +120,10 @@ export default function PlayPage() {
                       <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
                         {game.category}
                       </span>
-                      <h3 className="text-lg font-bold text-white mb-2">
+                      <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
                         {game.title}
                       </h3>
-                      <p className="text-gray-400 text-sm mb-4">
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">
                         {game.description}
                       </p>
                       <Link href={`/play/${game.slug}`}>
@@ -145,7 +150,7 @@ export default function PlayPage() {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <Image
-                        src={game.thumbnail}
+                        src={game.image_url}
                         alt={game.title}
                         fill
                         className="object-cover"
@@ -157,10 +162,10 @@ export default function PlayPage() {
                       <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
                         {game.category}
                       </span>
-                      <h3 className="text-lg font-bold text-white mb-2">
+                      <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
                         {game.title}
                       </h3>
-                      <p className="text-gray-400 text-sm mb-4">
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-3">
                         {game.description}
                       </p>
                       <Link href={`/play/${game.slug}`}>
