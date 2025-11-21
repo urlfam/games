@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import CategorySidebar from '@/components/CategorySidebar';
 
 export const metadata: Metadata = {
   title: 'Play Free Online Games',
@@ -14,5 +15,12 @@ export default function PlayLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-slate-900">
+      <CategorySidebar />
+      <main className="pl-16 transition-all duration-300">
+        {children}
+      </main>
+    </div>
+  );
 }

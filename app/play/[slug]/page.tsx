@@ -46,11 +46,11 @@ export default async function GamePage({ params }: GamePageProps) {
   const recommendedGames = allGames.filter(g => g.category === game.category && g.id !== game.id).slice(0, 10);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 p-4 bg-slate-900 text-white">
+    <div className="flex flex-col lg:flex-row gap-4 p-4">
       {/* Main Content */}
-      <main className="flex-grow">
+      <div className="flex-grow">
         <div className="bg-slate-800 rounded-lg p-4 mb-4">
-          <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">{game.title}</h1>
           <p className="text-sm text-gray-400">Category: <span className="font-semibold text-purple-400">{game.category}</span></p>
         </div>
 
@@ -66,13 +66,13 @@ export default async function GamePage({ params }: GamePageProps) {
 
         {/* Game Description */}
         <div className="bg-slate-800 rounded-lg p-4 mb-4">
-          <h2 className="text-2xl font-bold mb-2">Description</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Description</h2>
           <p className="text-gray-300">{game.description}</p>
         </div>
 
         {/* Comments Section */}
         <GameComments gameId={game.id.toString()} />
-      </main>
+      </div>
 
       {/* Recommended Games Sidebar */}
       <aside className="w-full lg:w-80 lg:flex-shrink-0">
