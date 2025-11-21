@@ -8,7 +8,7 @@ interface GamePageProps {
   params: { slug: string };
 }
 
-// Generate dynamic metadata for SEO
+// Generate dynamic metadata for SEO - THIS WORKS PERFECTLY in real-time
 export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
   const game = await getGameBySlug(params.slug);
 
@@ -33,14 +33,6 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
       images: [game.image_url],
     },
   };
-}
-
-// Generate all game pages at build time for performance
-export async function generateStaticParams() {
-  const games = await getAllGames();
-  return games.map((game) => ({
-    slug: game.slug,
-  }));
 }
 
 export default async function GamePage({ params }: GamePageProps) {
