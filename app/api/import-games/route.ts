@@ -6,28 +6,8 @@ import path from 'path';
 const LIB_DIR = path.join(process.cwd(), 'lib');
 const GAMES_DB_PATH = path.join(LIB_DIR, 'games.json');
 
-// --- Helper function to read the database ---
-async function getGames() {
-  try {
-    const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    // If the file doesn't exist, return an empty array
-    return [];
-  }
-}
-
-// --- Helper function to write to the database ---
-async function saveGames(games: any) {
-  try {
-    // Ensure the directory exists before writing the file
-    await fs.mkdir(LIB_DIR, { recursive: true });
-    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Failed to save games file:', error);
-    throw error; // re-throw the error to be caught by the main handler
-  }
-}
+// This is a simple file-based lock to prevent race conditions.
+let isWriting = false;
 
 /**
  * API Route to import a new game.
@@ -36,7 +16,6 @@ async function saveGames(games: any) {
  */
 export async function POST(req: Request) {
   // 1. --- Security Check ---
-  // Check for a secret token in the authorization header
   const authToken = req.headers.get('Authorization')?.split(' ')[1];
   const N8N_SECRET_TOKEN = process.env.N8N_SECRET_TOKEN;
 
@@ -44,11 +23,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
+  // Prevent multiple writes at the same time
+  if (isWriting) {
+    return NextResponse.json({ message: 'Service busy, try again in a moment.' }, { status: 429 });
+  }
+
   try {
+    isWriting = true; // Lock the file
+
     // 2. --- Get the new game data from the request body ---
     const newGame = await req.json();
 
-    // Basic validation
     if (!newGame.title || !newGame.iframe_url) {
       return NextResponse.json(
         { message: 'Missing required fields: title and iframe_url' },
@@ -56,10 +41,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. --- Add the new game to our "database" ---
-    const allGames = await getGames();
+    // 3. --- Read existing games ---
+    let allGames: any[] = [];
+    try {
+      await fs.mkdir(LIB_DIR, { recursive: true });
+      const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
+      allGames = JSON.parse(data);
+    } catch (error) {
+      // File doesn't exist, we'll create it.
+    }
 
-    // Check if the game already exists (based on title or page_url)
+    // 4. --- Add the new game if it doesn't exist ---
     const gameExists = allGames.some(
       (game: any) => game.title === newGame.title || game.page_url === newGame.page_url
     );
@@ -67,23 +59,23 @@ export async function POST(req: Request) {
     if (gameExists) {
       return NextResponse.json(
         { message: `Game "${newGame.title}" already exists.` },
-        { status: 200 } // Use 200 OK to not show an error in n8n for duplicates
+        { status: 200 }
       );
     }
 
-    // Add a unique ID and import date
     const gameToSave = {
-      id: allGames.length + 1,
+      id: allGames.length > 0 ? Math.max(...allGames.map(g => g.id)) + 1 : 1,
       importedAt: new Date().toISOString(),
       ...newGame,
     };
 
     allGames.push(gameToSave);
-    await saveGames(allGames);
+
+    // 5. --- Write the entire file back ---
+    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(allGames, null, 2), 'utf-8');
 
     console.log(`Successfully imported game: ${newGame.title}`);
 
-    // 4. --- Send a success response ---
     return NextResponse.json(
       { message: `Successfully imported game: ${newGame.title}` },
       { status: 201 },
@@ -94,5 +86,7 @@ export async function POST(req: Request) {
       { message: 'An internal server error occurred.' },
       { status: 500 },
     );
+  } finally {
+    isWriting = false; // Unlock the file
   }
 }
