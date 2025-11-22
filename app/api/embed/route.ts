@@ -54,14 +54,18 @@ export async function GET(req: Request) {
 
     const body = await res.text();
 
-    // CRITICAL FIX: Inject a <base> tag into the HTML head.
-    // This forces all relative paths in the proxied HTML (like /js/main.js or /images/logo.png)
-    // to load from the original domain, not from our proxy. This is often what breaks proxied pages.
+    // CRITICAL FIX 1: Inject a <base> tag using a more robust regex
     const baseUrl = `<base href="${parsed.origin}/">`;
-    const modifiedBody = body.replace('<head>', `<head>\n${baseUrl}`);
+    // This regex finds <head> even if it has attributes
+    const modifiedBodyWithBase = body.replace(/<head[^>]*>/, `$&\\n${baseUrl}`);
 
-    return new NextResponse(modifiedBody, { status: 200, headers });
+    // CRITICAL FIX 2: Strip any Content-Security-Policy meta tags that could block execution
+    const finalBody = modifiedBodyWithBase.replace(/<meta http-equiv="Content-Security-Policy" content="[^"]*">/gi, '');
+
+
+    return new NextResponse(finalBody, { status: 200, headers });
   } catch (err: any) {
+    console.error(`Proxy error for url: ${req.url}`, err);
     return NextResponse.json({ error: err?.message || 'Unknown error' }, { status: 500 });
   }
 }
