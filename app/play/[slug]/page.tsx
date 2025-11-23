@@ -4,7 +4,6 @@ import RecommendedGamesSidebar from '@/components/RecommendedGamesSidebar';
 import GameComments from '@/components/GameComments';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import GamePlayer from '@/components/GamePlayer';
 
 interface GamePageProps {
   params: { slug: string };
@@ -49,12 +48,10 @@ export default async function GamePage({ params }: GamePageProps) {
 
   const recommendedGames = allGames.filter(g => g.category === game.category && g.id !== game.id).slice(0, 12);
 
-  // Allow optional proxy embedding (disabled by default). To enable, set
-  // NEXT_PUBLIC_ENABLE_EMBED_PROXY=true (or ENABLE_EMBED_PROXY on the server).
-  const enableProxy = process.env.NEXT_PUBLIC_ENABLE_EMBED_PROXY === 'true' || process.env.ENABLE_EMBED_PROXY === 'true';
-  const embedSrc = enableProxy
-    ? `/api/embed?url=${encodeURIComponent(game.iframe_url)}`
-    : game.iframe_url;
+  // Construire l'URL pour le proxy Nginx
+  // Note: Assurez-vous que votre variable d'environnement est définie.
+  const proxyBaseUrl = process.env.NEXT_PUBLIC_PROXY_URL || `http://147.93.7.103:9999`;
+  const gameProxyUrl = `${proxyBaseUrl}/game/${game.slug}`;
 
   return (
     <div className="p-4 lg:p-6">
@@ -62,20 +59,16 @@ export default async function GamePage({ params }: GamePageProps) {
         
         {/* Main Content (Game, Description, Comments) */}
         <div className="lg:col-span-3">
-          
-          <GamePlayer 
-            embedSrc={embedSrc}
-            title={game.title}
-            pageUrl={game.page_url}
-            enableProxy={enableProxy}
-          />
-
-          {/* Small caption / legal note */}
-          <div className="text-sm text-gray-400 mb-6">
-            Note: the content inside the player is provided by the game host (e.g. CrazyGames).
-            Because the iframe content is cross-origin the site cannot modify or remove branding inside that frame.
-            If you want a visually &quot;clean&quot; embed (served under your domain) we can enable a server-side proxy —
-            this changes how scripts/resources are loaded and may have legal/terms implications. Ask me to enable the proxy and I will add the allowlist and safeguards.
+          {/* Iframe pointant vers le proxy Nginx */}
+          <div className="relative w-full overflow-hidden rounded-xl shadow-2xl mb-6 bg-black" style={{ minHeight: '70vh' }}>
+            <iframe
+              src={gameProxyUrl}
+              className="absolute top-0 left-0 w-full h-full border-0"
+              allowFullScreen
+              title={game.title}
+              sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
+              referrerPolicy="no-referrer"
+            ></iframe>
           </div>
 
           {/* Game Info Header */}
