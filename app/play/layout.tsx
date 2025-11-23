@@ -18,9 +18,7 @@ export default function PlayLayout({
   return (
     <div className="min-h-screen bg-slate-900">
       <CategorySidebar />
-      <main className="pl-16 transition-all duration-300">
-        {children}
-      </main>
+      <main className="pl-16 transition-all duration-300">{children}</main>
     </div>
   );
 }

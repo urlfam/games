@@ -18,7 +18,8 @@ export default async function PlayPage({
           (game) => game.category.toLowerCase() === categoryParam,
         );
 
-  const featuredGame = filteredGames.length > 0 ? filteredGames[0] : allGames[0];
+  const featuredGame =
+    filteredGames.length > 0 ? filteredGames[0] : allGames[0];
   const trendingGames = filteredGames.slice(0, 6);
 
   const itemListSchema = {
@@ -53,7 +54,7 @@ export default async function PlayPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
-      
+
       {/* Hero Section */}
       <section className="relative h-96 bg-gradient-to-r from-slate-800 to-slate-900 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center h-full gap-8">

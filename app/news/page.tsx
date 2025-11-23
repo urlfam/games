@@ -173,8 +173,8 @@ export default function NewsPage() {
               Stay Updated
             </h2>
             <p className="text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto text-base sm:text-lg">
-              Subscribe to our newsletter for the latest gaming news and exclusive
-              content.
+              Subscribe to our newsletter for the latest gaming news and
+              exclusive content.
             </p>
             <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3 sm:gap-2">
               <input

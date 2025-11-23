@@ -11,7 +11,6 @@ interface RecommendedGamesSidebarProps {
 export default function RecommendedGamesSidebar({
   games,
 }: RecommendedGamesSidebarProps) {
-
   if (!games || games.length === 0) {
     return null;
   }

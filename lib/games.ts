@@ -25,15 +25,15 @@ export async function getAllGames(): Promise<Game[]> {
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     const games: Game[] = JSON.parse(data);
-    
+
     // Add a 'slug' to each game based on its page_url for easier linking
-    return games.map(game => ({
+    return games.map((game) => ({
       ...game,
-      slug: game.page_url.substring(game.page_url.lastIndexOf('/') + 1)
+      slug: game.page_url.substring(game.page_url.lastIndexOf('/') + 1),
     }));
   } catch (error) {
     // If the file doesn't exist or is empty, return an empty array
-    console.error("Could not read games.json:", error);
+    console.error('Could not read games.json:', error);
     return [];
   }
 }
@@ -45,5 +45,5 @@ export async function getAllGames(): Promise<Game[]> {
  */
 export async function getGameBySlug(slug: string): Promise<Game | undefined> {
   const games = await getAllGames();
-  return games.find(game => game.slug === slug);
+  return games.find((game) => game.slug === slug);
 }

@@ -12,7 +12,8 @@ export const metadata: Metadata = {
     default: 'Puzzio.io - Free Online Games',
     template: '%s | Puzzio.io',
   },
-  description: 'Discover and play thousands of free online games. Puzzio.io offers a wide variety of puzzles, action, strategy, and arcade games to play in your browser.',
+  description:
+    'Discover and play thousands of free online games. Puzzio.io offers a wide variety of puzzles, action, strategy, and arcade games to play in your browser.',
   alternates: {
     canonical: '/',
   },
@@ -28,7 +29,8 @@ export default function RootLayout({
     '@type': 'WebSite',
     name: 'Puzzio.io',
     url: 'https://puzzio.io',
-    description: 'Free online games platform featuring puzzles, action, strategy and arcade games',
+    description:
+      'Free online games platform featuring puzzles, action, strategy and arcade games',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -81,7 +83,9 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
         />
       </head>
       <body>

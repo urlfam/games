@@ -6,7 +6,17 @@ import { useSearchParams } from 'next/navigation';
 // Let's define a static list of categories for now.
 // In the future, we can generate this dynamically from the games.json file.
 const categories = [
-  'Action', 'Adventure', 'Puzzle', 'Racing', 'Sports', 'Strategy', 'Tir', 'Conduite', 'Casual', 'Clicker', 'Beauté'
+  'Action',
+  'Adventure',
+  'Puzzle',
+  'Racing',
+  'Sports',
+  'Strategy',
+  'Tir',
+  'Conduite',
+  'Casual',
+  'Clicker',
+  'Beauté',
 ];
 
 export default function CategorySidebar() {
@@ -19,7 +29,9 @@ export default function CategorySidebar() {
         <Link
           href="/play"
           className={`p-2 rounded-lg ${
-            activeCategory === 'all' ? 'bg-purple-500 text-white' : 'text-gray-400 hover:bg-slate-700'
+            activeCategory === 'all'
+              ? 'bg-purple-500 text-white'
+              : 'text-gray-400 hover:bg-slate-700'
           }`}
           title="All Games"
         >
@@ -31,7 +43,9 @@ export default function CategorySidebar() {
             key={category}
             href={`/play?category=${category.toLowerCase()}`}
             className={`p-2 rounded-lg ${
-              activeCategory === category.toLowerCase() ? 'bg-purple-500 text-white' : 'text-gray-400 hover:bg-slate-700'
+              activeCategory === category.toLowerCase()
+                ? 'bg-purple-500 text-white'
+                : 'text-gray-400 hover:bg-slate-700'
             }`}
             title={category}
           >

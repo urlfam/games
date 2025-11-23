@@ -25,7 +25,10 @@ export async function POST(req: Request) {
 
   // Prevent multiple writes at the same time
   if (isWriting) {
-    return NextResponse.json({ message: 'Service busy, try again in a moment.' }, { status: 429 });
+    return NextResponse.json(
+      { message: 'Service busy, try again in a moment.' },
+      { status: 429 },
+    );
   }
 
   try {
@@ -53,18 +56,19 @@ export async function POST(req: Request) {
 
     // 4. --- Add the new game if it doesn't exist ---
     const gameExists = allGames.some(
-      (game: any) => game.title === newGame.title || game.page_url === newGame.page_url
+      (game: any) =>
+        game.title === newGame.title || game.page_url === newGame.page_url,
     );
 
     if (gameExists) {
       return NextResponse.json(
         { message: `Game "${newGame.title}" already exists.` },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
     const gameToSave = {
-      id: allGames.length > 0 ? Math.max(...allGames.map(g => g.id)) + 1 : 1,
+      id: allGames.length > 0 ? Math.max(...allGames.map((g) => g.id)) + 1 : 1,
       importedAt: new Date().toISOString(),
       ...newGame,
     };

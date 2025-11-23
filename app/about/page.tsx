@@ -101,9 +101,9 @@ export default function AboutPage() {
                 <p>
                   At Puzzio.io, we believe gaming should be accessible to
                   everyone, anywhere, anytime. Our mission is to bring
-                  high-quality browser-based games directly to your screen without
-                  the hassle of downloads, installations, or expensive hardware
-                  requirements.
+                  high-quality browser-based games directly to your screen
+                  without the hassle of downloads, installations, or expensive
+                  hardware requirements.
                 </p>
                 <p className="mt-4">
                   We're passionate about democratizing gaming and making it
@@ -154,8 +154,8 @@ export default function AboutPage() {
                       Free Access
                     </h3>
                     <p className="text-gray-600">
-                      All our games and content are available completely free. We
-                      believe everyone deserves access to quality gaming
+                      All our games and content are available completely free.
+                      We believe everyone deserves access to quality gaming
                       entertainment.
                     </p>
                   </div>
@@ -170,8 +170,8 @@ export default function AboutPage() {
                   Puzzio.io was founded in 2025 by a team of gaming enthusiasts
                   who saw the potential of browser-based gaming to revolutionize
                   how people access and enjoy games. We started with a simple
-                  vision: make gaming accessible to everyone, regardless of their
-                  device or technical capabilities.
+                  vision: make gaming accessible to everyone, regardless of
+                  their device or technical capabilities.
                 </p>
                 <p className="mt-4">
                   Today, we serve millions of players worldwide, offering a
@@ -191,16 +191,16 @@ export default function AboutPage() {
                     <span className="text-purple-500 font-bold text-xl">✓</span>
                     <div>
                       <strong className="text-slate-900">Accessibility:</strong>{' '}
-                      Gaming should be available to everyone, regardless of device
-                      or location.
+                      Gaming should be available to everyone, regardless of
+                      device or location.
                     </div>
                   </li>
                   <li className="flex gap-3">
                     <span className="text-purple-500 font-bold text-xl">✓</span>
                     <div>
                       <strong className="text-slate-900">Quality:</strong> We
-                      curate only the best games and provide insightful, accurate
-                      gaming news.
+                      curate only the best games and provide insightful,
+                      accurate gaming news.
                     </div>
                   </li>
                   <li className="flex gap-3">
@@ -226,8 +226,8 @@ export default function AboutPage() {
                   Join Us
                 </h2>
                 <p>
-                  Whether you're a casual player looking for a quick gaming fix or
-                  a hardcore gamer seeking your next challenge, Puzzio.io has
+                  Whether you're a casual player looking for a quick gaming fix
+                  or a hardcore gamer seeking your next challenge, Puzzio.io has
                   something for you. Browse our game collection, read our latest
                   news, and become part of our growing community.
                 </p>
