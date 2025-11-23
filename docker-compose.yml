@@ -3,12 +3,18 @@ services:
   web:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
+    env_file:
+      - .env.local
     environment:
       - NODE_ENV=production
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000', r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))\""]
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "require(''http'').get(''http://localhost:3000'', r=>{process.exit(r.statusCode===200?0:1)}).on(''error'',()=>process.exit(1))"',
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -18,7 +24,7 @@ services:
     image: nginx:latest
     container_name: puzzio-proxy-container
     ports:
-      - "9999:9999"
+      - '9999:9999'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     restart: unless-stopped
