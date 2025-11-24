@@ -88,6 +88,11 @@ async function testGame(browser, game) {
       const hasExclusiveMessage = bodyText.includes('exclusively on CrazyGames');
       const hasRefusedToConnect = bodyText.includes('refused to connect');
       
+      // Détecter si le jeu est bloqué sur un écran de chargement
+      const stuckOnLoading = bodyText.includes('Loading assets...') || 
+                            bodyText.includes('Loading...') ||
+                            bodyText.includes('Please wait...');
+      
       // Vérifier si l'injector a été chargé
       const scripts = Array.from(document.querySelectorAll('script'));
       const injectorLoaded = scripts.some(s => s.src && s.src.includes('/injector.js'));
@@ -99,6 +104,7 @@ async function testGame(browser, game) {
         has404,
         hasExclusiveMessage,
         hasRefusedToConnect,
+        stuckOnLoading,
         injectorLoaded,
         hasVisibleError: hasNoSuchKey || hasAccessDenied || has404 || hasExclusiveMessage || hasRefusedToConnect,
       };
@@ -109,6 +115,7 @@ async function testGame(browser, game) {
       !mainPageLoaded || 
       criticalErrors.length > 0 || 
       pageAnalysis.hasVisibleError ||
+      (pageAnalysis.stuckOnLoading && failed404 > 2) || // Bloqué sur loading + quelques erreurs
       (failed404 > 5 && failed404 > totalRequests * 0.3); // Plus de 30% de 404
     
     const result = {
@@ -122,6 +129,7 @@ async function testGame(browser, game) {
       errorRate: totalRequests > 0 ? Math.round((failed404 / totalRequests) * 100) : 0,
       injectorLoaded: pageAnalysis.injectorLoaded,
       visibleError: pageAnalysis.hasVisibleError,
+      stuckOnLoading: pageAnalysis.stuckOnLoading,
       criticalErrors: criticalErrors,
       sampleNetworkErrors: networkErrors.slice(0, 3), // Limiter à 3 exemples
       testedAt: new Date().toISOString(),
@@ -133,6 +141,7 @@ async function testGame(browser, game) {
       console.log(`   ❌ Cassé !`);
       if (!mainPageLoaded) console.log(`      - Page principale non chargée`);
       if (pageAnalysis.hasVisibleError) console.log(`      - Erreur visible: ${pageAnalysis.bodyText.substring(0, 100)}...`);
+      if (pageAnalysis.stuckOnLoading) console.log(`      - Bloqué sur l'écran de chargement`);
       if (result.errorRate > 30) console.log(`      - Taux d'erreur: ${result.errorRate}%`);
       criticalErrors.forEach(err => {
         console.log(`      - ${err.type}: ${err.status} ${err.url}`);
