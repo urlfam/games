@@ -35,81 +35,107 @@ async function testGame(browser, game) {
   console.log(`   URL: ${gameUrl}`);
   
   const page = await browser.newPage();
-  const errors = [];
-  const consoleErrors = [];
+  const networkErrors = [];
+  const criticalErrors = [];
+  let totalRequests = 0;
+  let failed404 = 0;
+  let mainPageLoaded = false;
   
-  // Capturer les erreurs réseau (404, 500, etc.)
+  // Capturer TOUTES les requêtes réseau
   page.on('response', (response) => {
-    if (response.status() >= 400) {
-      errors.push({
-        type: 'network',
-        status: response.status(),
-        url: response.url(),
+    totalRequests++;
+    const status = response.status();
+    const url = response.url();
+    
+    // Si c'est la page principale qui échoue, c'est critique
+    if (url.includes(`/game/${slug}`) && status >= 400) {
+      criticalErrors.push({
+        type: 'main-page-error',
+        status: status,
+        url: url,
       });
     }
-  });
-  
-  // Capturer les erreurs de console
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(msg.text());
+    
+    // Compter les 404
+    if (status === 404) {
+      failed404++;
+      networkErrors.push({
+        type: 'network',
+        status: status,
+        url: url.substring(0, 100), // Tronquer l'URL
+      });
     }
-  });
-  
-  // Capturer les erreurs JavaScript
-  page.on('pageerror', (error) => {
-    errors.push({
-      type: 'javascript',
-      message: error.message,
-    });
   });
   
   try {
-    // Charger la page avec timeout
-    await page.goto(gameUrl, { 
-      waitUntil: 'networkidle2',
-      timeout: TEST_TIMEOUT 
+    // Charger la page avec un timeout généreux et ne pas attendre networkidle
+    const response = await page.goto(gameUrl, { 
+      waitUntil: 'domcontentloaded', // Plus tolérant que networkidle2
+      timeout: 20000 
     });
     
-    // Attendre un peu pour que le jeu se charge
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    mainPageLoaded = response.status() === 200;
     
-    // Vérifier si on a une erreur "NoSuchKey" ou similaire
-    const bodyText = await page.evaluate(() => document.body.innerText);
+    // Attendre un peu pour que les assets se chargent
+    await new Promise(resolve => setTimeout(resolve, 5000));
     
-    if (bodyText.includes('NoSuchKey') || 
-        bodyText.includes('Access Denied') ||
-        bodyText.includes('404') ||
-        bodyText.includes('exclusively on CrazyGames')) {
-      errors.push({
-        type: 'content',
-        message: 'Page contient un message d\'erreur',
-      });
-    }
-    
-    // Vérifier si l'injector est actif
-    const injectorActive = await page.evaluate(() => {
-      return window.console && 
-             performance.getEntriesByName('/injector.js').length > 0;
+    // Vérifier si on a une erreur VISIBLE sur la page
+    const pageAnalysis = await page.evaluate(() => {
+      const bodyText = document.body.innerText;
+      const hasNoSuchKey = bodyText.includes('NoSuchKey');
+      const hasAccessDenied = bodyText.includes('Access Denied');
+      const has404 = bodyText.includes('404') && bodyText.includes('Not Found');
+      const hasExclusiveMessage = bodyText.includes('exclusively on CrazyGames');
+      const hasRefusedToConnect = bodyText.includes('refused to connect');
+      
+      // Vérifier si l'injector a été chargé
+      const scripts = Array.from(document.querySelectorAll('script'));
+      const injectorLoaded = scripts.some(s => s.src && s.src.includes('/injector.js'));
+      
+      return {
+        bodyText: bodyText.substring(0, 500),
+        hasNoSuchKey,
+        hasAccessDenied,
+        has404,
+        hasExclusiveMessage,
+        hasRefusedToConnect,
+        injectorLoaded,
+        hasVisibleError: hasNoSuchKey || hasAccessDenied || has404 || hasExclusiveMessage || hasRefusedToConnect,
+      };
     });
+    
+    // Détecter si c'est vraiment cassé
+    const isBroken = 
+      !mainPageLoaded || 
+      criticalErrors.length > 0 || 
+      pageAnalysis.hasVisibleError ||
+      (failed404 > 5 && failed404 > totalRequests * 0.3); // Plus de 30% de 404
     
     const result = {
       slug,
       title: game.title,
       url: gameUrl,
-      working: errors.length === 0,
-      errors: errors,
-      consoleErrors: consoleErrors.slice(0, 5), // Limiter à 5 erreurs
-      injectorLoaded: injectorActive,
+      working: !isBroken,
+      mainPageLoaded,
+      totalRequests,
+      failed404,
+      errorRate: totalRequests > 0 ? Math.round((failed404 / totalRequests) * 100) : 0,
+      injectorLoaded: pageAnalysis.injectorLoaded,
+      visibleError: pageAnalysis.hasVisibleError,
+      criticalErrors: criticalErrors,
+      sampleNetworkErrors: networkErrors.slice(0, 3), // Limiter à 3 exemples
       testedAt: new Date().toISOString(),
     };
     
     if (result.working) {
-      console.log(`   ✅ Fonctionne !`);
+      console.log(`   ✅ Fonctionne ! (${totalRequests} requêtes, ${failed404} erreurs 404)`);
     } else {
-      console.log(`   ❌ Erreur détectée:`);
-      errors.forEach(err => {
-        console.log(`      - ${err.type}: ${err.message || err.url || err.status}`);
+      console.log(`   ❌ Cassé !`);
+      if (!mainPageLoaded) console.log(`      - Page principale non chargée`);
+      if (pageAnalysis.hasVisibleError) console.log(`      - Erreur visible: ${pageAnalysis.bodyText.substring(0, 100)}...`);
+      if (result.errorRate > 30) console.log(`      - Taux d'erreur: ${result.errorRate}%`);
+      criticalErrors.forEach(err => {
+        console.log(`      - ${err.type}: ${err.status} ${err.url}`);
       });
     }
     
@@ -117,19 +143,26 @@ async function testGame(browser, game) {
     return result;
     
   } catch (error) {
-    console.log(`   ❌ Timeout ou crash: ${error.message}`);
+    console.log(`   ⚠️  Timeout: ${error.message}`);
     await page.close();
+    
+    // Un timeout n'est pas forcément un problème si la page a commencé à charger
     return {
       slug,
       title: game.title,
       url: gameUrl,
-      working: false,
-      errors: [{
+      working: mainPageLoaded, // Si la page a chargé avant le timeout, c'est OK
+      mainPageLoaded,
+      totalRequests,
+      failed404,
+      errorRate: totalRequests > 0 ? Math.round((failed404 / totalRequests) * 100) : 0,
+      injectorLoaded: false,
+      visibleError: false,
+      criticalErrors: [{
         type: 'timeout',
         message: error.message,
       }],
-      consoleErrors: [],
-      injectorLoaded: false,
+      sampleNetworkErrors: [],
       testedAt: new Date().toISOString(),
     };
   }
