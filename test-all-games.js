@@ -72,7 +72,7 @@ async function testGame(browser, game) {
     });
     
     // Attendre un peu pour que le jeu se charge
-    await page.waitForTimeout(3000);
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     // Vérifier si on a une erreur "NoSuchKey" ou similaire
     const bodyText = await page.evaluate(() => document.body.innerText);
@@ -164,7 +164,7 @@ async function main() {
     
     // Pause entre chaque test pour ne pas surcharger
     if (i < games.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
   
