@@ -92,8 +92,8 @@ async function testGame(browser, game) {
     
     mainPageLoaded = response.status() === 200;
     
-    // Attendre plus longtemps pour détecter les jeux qui plantent après le chargement initial
-    await new Promise(resolve => setTimeout(resolve, 8000));
+    // Attendre 60 secondes pour détecter les jeux qui plantent après le chargement initial
+    await new Promise(resolve => setTimeout(resolve, 60000));
     
     // Vérifier si on a une erreur VISIBLE sur la page
     const pageAnalysis = await page.evaluate(() => {
