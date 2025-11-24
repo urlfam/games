@@ -37,11 +37,34 @@ async function testGame(browser, game) {
   const page = await browser.newPage();
   const networkErrors = [];
   const criticalErrors = [];
+  const consoleErrors = [];
   let totalRequests = 0;
   let failed404 = 0;
   let failed400 = 0;
   let failed500 = 0;
+  let consoleErrorCount = 0;
   let mainPageLoaded = false;
+  
+  // Capturer les erreurs de la console (ce que le navigateur voit)
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      consoleErrorCount++;
+      const text = msg.text();
+      consoleErrors.push({
+        type: 'console-error',
+        message: text.substring(0, 200), // Tronquer pour éviter les messages trop longs
+      });
+    }
+  });
+  
+  // Capturer les erreurs JavaScript non gérées
+  page.on('pageerror', (error) => {
+    consoleErrorCount++;
+    consoleErrors.push({
+      type: 'javascript-error',
+      message: error.message.substring(0, 200),
+    });
+  });
   
   // Capturer TOUTES les requêtes réseau
   page.on('response', (response) => {
@@ -127,17 +150,18 @@ async function testGame(browser, game) {
     });
     
     // Détecter si c'est vraiment cassé
-    const totalErrors = failed404 + failed400 + failed500;
-    const errorRate = totalRequests > 0 ? (totalErrors / totalRequests) : 0;
+    const totalNetworkErrors = failed404 + failed400 + failed500;
+    const networkErrorRate = totalRequests > 0 ? (totalNetworkErrors / totalRequests) : 0;
     
     const isBroken = 
       !mainPageLoaded || 
       criticalErrors.length > 0 || 
       pageAnalysis.hasVisibleError ||
-      (pageAnalysis.stuckOnLoading && totalErrors > 2) || // Bloqué sur loading + quelques erreurs
+      (pageAnalysis.stuckOnLoading && (totalNetworkErrors > 2 || consoleErrorCount > 5)) || // Bloqué sur loading + erreurs
       failed400 > 3 || // Plus de 3 erreurs 400 Bad Request = problème
       failed500 > 2 || // Plus de 2 erreurs serveur = problème
-      (totalErrors > 5 && errorRate > 0.2); // Plus de 20% d'erreurs totales
+      consoleErrorCount > 20 || // Plus de 20 erreurs console = problème sérieux
+      (totalNetworkErrors > 5 && networkErrorRate > 0.2); // Plus de 20% d'erreurs réseau
     
     const result = {
       slug,
@@ -149,18 +173,20 @@ async function testGame(browser, game) {
       failed404,
       failed400,
       failed500,
-      totalErrors: totalErrors,
-      errorRate: Math.round(errorRate * 100),
+      consoleErrorCount,
+      totalNetworkErrors: totalNetworkErrors,
+      networkErrorRate: Math.round(networkErrorRate * 100),
       injectorLoaded: pageAnalysis.injectorLoaded,
       visibleError: pageAnalysis.hasVisibleError,
       stuckOnLoading: pageAnalysis.stuckOnLoading,
       criticalErrors: criticalErrors,
-      sampleNetworkErrors: networkErrors.slice(0, 5), // Montrer 5 exemples d'erreurs
+      sampleNetworkErrors: networkErrors.slice(0, 5),
+      sampleConsoleErrors: consoleErrors.slice(0, 5), // Montrer 5 exemples d'erreurs console
       testedAt: new Date().toISOString(),
     };
     
     if (result.working) {
-      console.log(`   ✅ Fonctionne ! (${totalRequests} requêtes, ${failed404} x 404, ${failed400} x 400, ${failed500} x 5xx)`);
+      console.log(`   ✅ Fonctionne ! (${totalRequests} req, ${failed404}×404, ${failed400}×400, ${failed500}×5xx, ${consoleErrorCount} console errors)`);
     } else {
       console.log(`   ❌ Cassé !`);
       if (!mainPageLoaded) console.log(`      - Page principale non chargée`);
@@ -168,13 +194,22 @@ async function testGame(browser, game) {
       if (pageAnalysis.stuckOnLoading) console.log(`      - Bloqué sur l'écran de chargement`);
       if (failed400 > 0) console.log(`      - ${failed400} erreurs 400 Bad Request`);
       if (failed500 > 0) console.log(`      - ${failed500} erreurs serveur (5xx)`);
-      if (result.errorRate > 20) console.log(`      - Taux d'erreur: ${result.errorRate}%`);
+      if (consoleErrorCount > 0) console.log(`      - ${consoleErrorCount} erreurs JavaScript/Console`);
+      if (result.networkErrorRate > 20) console.log(`      - Taux d'erreur réseau: ${result.networkErrorRate}%`);
       
-      // Afficher quelques exemples d'erreurs
+      // Afficher quelques exemples d'erreurs réseau
       if (networkErrors.length > 0) {
-        console.log(`      - Exemples d'erreurs:`);
-        networkErrors.slice(0, 3).forEach(err => {
+        console.log(`      - Exemples d'erreurs réseau:`);
+        networkErrors.slice(0, 2).forEach(err => {
           console.log(`         • ${err.type}: ${err.url}`);
+        });
+      }
+      
+      // Afficher quelques exemples d'erreurs console
+      if (consoleErrors.length > 0) {
+        console.log(`      - Exemples d'erreurs console:`);
+        consoleErrors.slice(0, 2).forEach(err => {
+          console.log(`         • ${err.type}: ${err.message}`);
         });
       }
       
@@ -201,8 +236,9 @@ async function testGame(browser, game) {
       failed404,
       failed400,
       failed500,
-      totalErrors: failed404 + failed400 + failed500,
-      errorRate: totalRequests > 0 ? Math.round(((failed404 + failed400 + failed500) / totalRequests) * 100) : 0,
+      consoleErrorCount,
+      totalNetworkErrors: failed404 + failed400 + failed500,
+      networkErrorRate: totalRequests > 0 ? Math.round(((failed404 + failed400 + failed500) / totalRequests) * 100) : 0,
       injectorLoaded: false,
       visibleError: false,
       stuckOnLoading: false,
@@ -211,6 +247,7 @@ async function testGame(browser, game) {
         message: error.message,
       }],
       sampleNetworkErrors: [],
+      sampleConsoleErrors: consoleErrors.slice(0, 5),
       testedAt: new Date().toISOString(),
     };
   }
