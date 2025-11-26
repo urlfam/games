@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getAllGames, getGameBySlug } from '@/lib/games';
 import RecommendedGamesSidebar from '@/components/RecommendedGamesSidebar';
 import GameComments from '@/components/GameComments';
+import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -63,19 +64,13 @@ export default async function GamePage({ params }: GamePageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content (Game, Description, Comments) */}
         <div className="lg:col-span-3">
-          {/* Iframe pointant vers le proxy Nginx */}
-          <div
-            className="relative w-full overflow-hidden rounded-xl shadow-2xl mb-6 bg-black"
-            style={{ minHeight: '70vh' }}
-          >
-            <iframe
-              src={gameProxyUrl}
-              className="absolute top-0 left-0 w-full h-full border-0"
-              allowFullScreen
-              title={game.title}
-              sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
-              referrerPolicy="no-referrer"
-            ></iframe>
+          {/* Game Player with Splash Screen */}
+          <div className="mb-6">
+            <GamePlayerWithSplash
+              gameTitle={game.title}
+              gameUrl={gameProxyUrl}
+              gameImage={game.image_url}
+            />
           </div>
 
           {/* Game Info Header */}
