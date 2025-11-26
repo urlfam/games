@@ -38,7 +38,6 @@ COPY --from=builder /app/app ./app
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/components ./components
 COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/test-all-games.js ./test-all-games.js
 
 # Create a dedicated, writable directory for our dynamic data
 RUN mkdir -p /app/data
