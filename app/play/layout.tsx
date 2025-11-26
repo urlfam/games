@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import CategorySidebar from '@/components/CategorySidebar';
+import CategorySidebarServer from '@/components/CategorySidebarServer';
 
 export const metadata: Metadata = {
   title: 'Play Free Online Games',
@@ -17,7 +17,7 @@ export default function PlayLayout({
 }) {
   return (
     <div className="min-h-screen bg-slate-900">
-      <CategorySidebar />
+      <CategorySidebarServer />
       <main className="pl-16 transition-all duration-300">{children}</main>
     </div>
   );

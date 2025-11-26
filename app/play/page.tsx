@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAllGames } from '@/lib/games'; // Import our new function
+import { getAllGames, getNewGames, getTrendingGames } from '@/lib/games'; // Import our new function
 
 // This is a Server Component
 export default async function PlayPage({
@@ -8,18 +8,26 @@ export default async function PlayPage({
 }: {
   searchParams?: { [key: string]: string | undefined };
 }) {
-  const allGames = await getAllGames();
   const categoryParam = searchParams?.category?.toLowerCase() || 'all';
 
-  const filteredGames =
-    categoryParam === 'all'
-      ? allGames
-      : allGames.filter(
-          (game) => game.category.toLowerCase() === categoryParam,
-        );
+  // Handle special categories
+  let filteredGames;
+  if (categoryParam === 'all') {
+    filteredGames = await getAllGames();
+  } else if (categoryParam === 'new') {
+    filteredGames = await getNewGames(50);
+  } else if (categoryParam === 'trending' || categoryParam === 'popular') {
+    filteredGames = await getTrendingGames(50);
+  } else {
+    // Filter by real category
+    const allGames = await getAllGames();
+    filteredGames = allGames.filter((game) => {
+      const gameCategory = game.category.toLowerCase().replace(/\s+/g, '-');
+      return gameCategory === categoryParam;
+    });
+  }
 
-  const featuredGame =
-    filteredGames.length > 0 ? filteredGames[0] : allGames[0];
+  const featuredGame = filteredGames.length > 0 ? filteredGames[0] : null;
   const trendingGames = filteredGames.slice(0, 6);
 
   const itemListSchema = {

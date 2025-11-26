@@ -47,3 +47,55 @@ export async function getGameBySlug(slug: string): Promise<Game | undefined> {
   const games = await getAllGames();
   return games.find((game) => game.slug === slug);
 }
+
+/**
+ * Gets all unique categories from games with their count.
+ * @returns {Promise<Array<{name: string, count: number, slug: string}>>} Array of categories with game count.
+ */
+export async function getCategories(): Promise<
+  Array<{ name: string; count: number; slug: string }>
+> {
+  const games = await getAllGames();
+  const categoryMap = new Map<string, number>();
+
+  games.forEach((game) => {
+    const category = game.category;
+    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+  });
+
+  return Array.from(categoryMap.entries())
+    .map(([name, count]) => ({
+      name,
+      count,
+      slug: name.toLowerCase().replace(/\s+/g, '-'),
+    }))
+    .sort((a, b) => b.count - a.count); // Sort by game count descending
+}
+
+/**
+ * Gets new games (recently imported).
+ * @param {number} limit - Maximum number of games to return.
+ * @returns {Promise<Game[]>} Array of newest games.
+ */
+export async function getNewGames(limit: number = 20): Promise<Game[]> {
+  const games = await getAllGames();
+  return games
+    .sort(
+      (a, b) =>
+        new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime(),
+    )
+    .slice(0, limit);
+}
+
+/**
+ * Gets trending/popular games.
+ * For now, returns random selection. In future, can use view counts.
+ * @param {number} limit - Maximum number of games to return.
+ * @returns {Promise<Game[]>} Array of trending games.
+ */
+export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
+  const games = await getAllGames();
+  // Shuffle array and take limit
+  const shuffled = [...games].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, limit);
+}
