@@ -135,7 +135,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   About Us
