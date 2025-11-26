@@ -28,6 +28,11 @@ import {
   PanelLeft,
   Music,
   Palette,
+  Mail,
+  Info,
+  FileText,
+  Shield,
+  Gamepad,
 } from 'lucide-react';
 
 // Category configuration with icons
@@ -72,7 +77,8 @@ export default function CategorySidebar() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <nav className="flex flex-col gap-1 mt-16 px-2">
+      {/* Categories */}
+      <nav className="flex flex-col gap-1 mt-16 px-2 flex-1">
         {categories.map((category) => {
           const Icon = category.icon;
           const isActive =
@@ -97,9 +103,7 @@ export default function CategorySidebar() {
               <Icon size={20} className="flex-shrink-0" />
               <span
                 className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                  isHovered
-                    ? 'opacity-100 w-auto'
-                    : 'opacity-0 w-0'
+                  isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
                 }`}
               >
                 {category.name}
@@ -108,6 +112,98 @@ export default function CategorySidebar() {
           );
         })}
       </nav>
+
+      {/* Bottom Section - Contact Button & Links */}
+      <div className="px-2 mt-4 border-t border-gray-700 pt-4">
+        {/* Contact Us Button */}
+        <Link
+          href="/contact"
+          className="flex items-center justify-center gap-2 px-4 py-3 mb-3 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-full transition-all duration-200 font-semibold"
+        >
+          <Mail size={20} className="flex-shrink-0" />
+          <span
+            className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+            }`}
+          >
+            Contact us
+          </span>
+        </Link>
+
+        {/* Footer Links */}
+        <div className="flex flex-col gap-1">
+          <Link
+            href="/about-us"
+            className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+            title="About"
+          >
+            <Info size={18} className="flex-shrink-0" />
+            <span
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              }`}
+            >
+              About
+            </span>
+          </Link>
+
+          <Link
+            href="/terms"
+            className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+            title="Terms & conditions"
+          >
+            <FileText size={18} className="flex-shrink-0" />
+            <span
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              }`}
+            >
+              Terms & conditions
+            </span>
+          </Link>
+
+          <Link
+            href="/privacy"
+            className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+            title="Privacy"
+          >
+            <Shield size={18} className="flex-shrink-0" />
+            <span
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              }`}
+            >
+              Privacy
+            </span>
+          </Link>
+
+          <Link
+            href="/play"
+            className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+            title="All games"
+          >
+            <Gamepad size={18} className="flex-shrink-0" />
+            <span
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              }`}
+            >
+              All games
+            </span>
+          </Link>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-4 px-3">
+          <p
+            className={`text-gray-500 text-xs transition-all duration-300 ${
+              isHovered ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            © 2025 Puzzio.io
+          </p>
+        </div>
+      </div>
     </aside>
   );
 }
