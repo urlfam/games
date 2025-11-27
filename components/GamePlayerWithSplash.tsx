@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Play, Maximize2 } from 'lucide-react';
+import { Play, ThumbsUp, ThumbsDown, Heart, Share2, Flag, Maximize2 } from 'lucide-react';
 
 interface GamePlayerWithSplashProps {
   gameTitle: string;
@@ -17,6 +17,9 @@ export default function GamePlayerWithSplash({
 }: GamePlayerWithSplashProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const handlePlay = () => {
     setIsLoading(true);
@@ -24,16 +27,46 @@ export default function GamePlayerWithSplash({
   };
 
   const handleFullscreen = () => {
-    const iframe = document.querySelector('iframe');
-    if (iframe) {
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
+    const container = document.getElementById('game-container');
+    if (container) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
       }
     }
   };
 
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    if (isDisliked) setIsDisliked(false);
+  };
+
+  const handleDislike = () => {
+    setIsDisliked(!isDisliked);
+    if (isLiked) setIsLiked(false);
+  };
+
+  const handleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: gameTitle,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
+    }
+  };
+
+  const handleReport = () => {
+    alert('Report feature coming soon!');
+  };
+
   return (
-    <div className="relative w-full overflow-hidden rounded-xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800" style={{ minHeight: '70vh' }}>
+    <div id="game-container" className="relative w-full overflow-hidden rounded-xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800" style={{ minHeight: '70vh' }}>
       {!isPlaying ? (
         // Splash Screen
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-purple-900/90 via-slate-900/95 to-black/95 backdrop-blur-sm z-10">
@@ -87,8 +120,75 @@ export default function GamePlayerWithSplash({
           </div>
         </div>
       ) : (
-        // Game Iframe
+        // Game Iframe with Custom Toolbar
         <>
+          {/* Custom Toolbar */}
+          <div className="absolute top-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 px-4 py-3 flex items-center justify-between">
+            <h3 className="text-white font-semibold text-lg truncate flex-1">{gameTitle}</h3>
+            
+            <div className="flex items-center gap-2">
+              {/* Like Button */}
+              <button
+                onClick={handleLike}
+                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                  isLiked ? 'bg-purple-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+                }`}
+                title="Like"
+              >
+                <ThumbsUp className="w-5 h-5" />
+              </button>
+
+              {/* Dislike Button */}
+              <button
+                onClick={handleDislike}
+                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                  isDisliked ? 'bg-red-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+                }`}
+                title="Dislike"
+              >
+                <ThumbsDown className="w-5 h-5" />
+              </button>
+
+              {/* Favorite Button */}
+              <button
+                onClick={handleFavorite}
+                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                  isFavorite ? 'bg-pink-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+                }`}
+                title="Add to favorites"
+              >
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+              </button>
+
+              {/* Share Button */}
+              <button
+                onClick={handleShare}
+                className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
+                title="Share"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+
+              {/* Report Button */}
+              <button
+                onClick={handleReport}
+                className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
+                title="Report a bug"
+              >
+                <Flag className="w-5 h-5" />
+              </button>
+
+              {/* Fullscreen Button */}
+              <button
+                onClick={handleFullscreen}
+                className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all duration-200 hover:scale-110"
+                title="Fullscreen"
+              >
+                <Maximize2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-900 z-20">
               <div className="flex flex-col items-center gap-4">
@@ -98,24 +198,19 @@ export default function GamePlayerWithSplash({
             </div>
           )}
           
-          <iframe
-            src={gameUrl}
-            className="absolute top-0 left-0 w-full h-full border-0"
-            allowFullScreen
-            title={gameTitle}
-            sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
-            referrerPolicy="no-referrer"
-            onLoad={() => setIsLoading(false)}
-          ></iframe>
-
-          {/* Fullscreen Button */}
-          <button
-            onClick={handleFullscreen}
-            className="absolute bottom-4 right-4 z-30 p-3 bg-purple-600/90 hover:bg-purple-500 text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-110"
-            title="Fullscreen"
-          >
-            <Maximize2 className="w-6 h-6" />
-          </button>
+          {/* Iframe with bottom bar hidden */}
+          <div className="absolute top-[60px] left-0 right-0 bottom-0 overflow-hidden">
+            <iframe
+              src={gameUrl}
+              className="absolute top-0 left-0 w-full border-0"
+              style={{ height: 'calc(100% + 60px)' }}
+              allowFullScreen
+              title={gameTitle}
+              sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
+              referrerPolicy="no-referrer"
+              onLoad={() => setIsLoading(false)}
+            ></iframe>
+          </div>
         </>
       )}
     </div>
