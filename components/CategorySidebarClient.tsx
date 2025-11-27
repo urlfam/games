@@ -71,9 +71,9 @@ export default function CategorySidebarClient({
         {/* Contact Us Button */}
         <Link
           href="/contact"
-          className={`flex items-center gap-2 mb-3 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-full transition-all duration-200 font-semibold ${
+          className={`flex items-center mb-3 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-full transition-all duration-200 font-semibold ${
             isHovered
-              ? 'justify-start px-4 py-3'
+              ? 'justify-start gap-2 px-4 py-3'
               : 'justify-center w-12 h-12 mx-auto'
           }`}
           title="Contact us"
