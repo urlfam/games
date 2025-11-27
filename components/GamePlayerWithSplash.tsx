@@ -210,11 +210,12 @@ export default function GamePlayerWithSplash({
             </div>
           )}
           
-          {/* Iframe - with space for toolbar */}
+          {/* Iframe - with space for toolbar and hiding CrazyGames bar */}
           <div className="absolute top-0 left-0 right-0 bottom-[76px] overflow-hidden rounded-t-xl">
             <iframe
               src={gameUrl}
-              className="absolute top-0 left-0 w-full h-full border-0"
+              className="absolute top-0 left-0 w-full border-0"
+              style={{ height: 'calc(100% + 60px)' }}
               allowFullScreen
               title={gameTitle}
               sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
