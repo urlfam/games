@@ -66,8 +66,9 @@ export default function GamePlayerWithSplash({
   };
 
   return (
-    <div id="game-container" className="relative w-full overflow-hidden rounded-xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800" style={{ minHeight: '70vh' }}>
-      {!isPlaying ? (
+    <>
+      <div id="game-container" className="relative w-full overflow-hidden rounded-xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800" style={{ minHeight: '70vh' }}>
+        {!isPlaying ? (
         // Splash Screen
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-purple-900/90 via-slate-900/95 to-black/95 backdrop-blur-sm z-10">
           {/* Game Image Background */}
@@ -122,85 +123,6 @@ export default function GamePlayerWithSplash({
       ) : (
         // Game Iframe with Custom Toolbar
         <>
-          {/* Custom Toolbar - Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1">
-              {/* Game Thumbnail */}
-              <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50">
-                <Image
-                  src={gameImage}
-                  alt={gameTitle}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              {/* Game Title */}
-              <h3 className="text-white font-semibold text-lg truncate">{gameTitle}</h3>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              {/* Like Button */}
-              <button
-                onClick={handleLike}
-                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
-                  isLiked ? 'bg-purple-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
-                }`}
-                title="Like"
-              >
-                <ThumbsUp className="w-5 h-5" />
-              </button>
-
-              {/* Dislike Button */}
-              <button
-                onClick={handleDislike}
-                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
-                  isDisliked ? 'bg-red-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
-                }`}
-                title="Dislike"
-              >
-                <ThumbsDown className="w-5 h-5" />
-              </button>
-
-              {/* Favorite Button */}
-              <button
-                onClick={handleFavorite}
-                className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
-                  isFavorite ? 'bg-pink-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
-                }`}
-                title="Add to favorites"
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
-
-              {/* Share Button */}
-              <button
-                onClick={handleShare}
-                className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
-                title="Share"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
-
-              {/* Report Button */}
-              <button
-                onClick={handleReport}
-                className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
-                title="Report a bug"
-              >
-                <Flag className="w-5 h-5" />
-              </button>
-
-              {/* Fullscreen Button */}
-              <button
-                onClick={handleFullscreen}
-                className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all duration-200 hover:scale-110"
-                title="Fullscreen"
-              >
-                <Maximize2 className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-900 z-20">
               <div className="flex flex-col items-center gap-4">
@@ -210,8 +132,8 @@ export default function GamePlayerWithSplash({
             </div>
           )}
           
-          {/* Iframe - with space for toolbar and hiding CrazyGames bar */}
-          <div className="absolute top-0 left-0 right-0 bottom-[76px] overflow-hidden rounded-t-xl">
+          {/* Iframe - Full height with hiding CrazyGames bar */}
+          <div className="absolute inset-0 overflow-hidden rounded-xl">
             <iframe
               src={gameUrl}
               className="absolute top-0 left-0 w-full border-0"
@@ -224,7 +146,90 @@ export default function GamePlayerWithSplash({
             ></iframe>
           </div>
         </>
+        )}
+      </div>
+
+      {/* Custom Toolbar - Outside and below game container */}
+      {isPlaying && (
+        <div className="mt-4 bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-xl px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1">
+            {/* Game Thumbnail */}
+            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50">
+              <Image
+                src={gameImage}
+                alt={gameTitle}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
+
+            <h3 className="text-white font-semibold text-lg truncate">{gameTitle}</h3>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Like Button */}
+            <button
+              onClick={handleLike}
+              className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                isLiked ? 'bg-purple-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+              }`}
+              title="Like"
+            >
+              <ThumbsUp className="w-5 h-5" />
+            </button>
+
+            {/* Dislike Button */}
+            <button
+              onClick={handleDislike}
+              className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                isDisliked ? 'bg-red-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+              }`}
+              title="Dislike"
+            >
+              <ThumbsDown className="w-5 h-5" />
+            </button>
+
+            {/* Favorite Button */}
+            <button
+              onClick={handleFavorite}
+              className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+                isFavorite ? 'bg-pink-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
+              }`}
+              title="Add to favorites"
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+
+            {/* Share Button */}
+            <button
+              onClick={handleShare}
+              className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
+              title="Share"
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
+
+            {/* Report Button */}
+            <button
+              onClick={handleReport}
+              className="p-2 bg-slate-800 text-gray-400 hover:text-white rounded-lg transition-all duration-200 hover:scale-110"
+              title="Report a bug"
+            >
+              <Flag className="w-5 h-5" />
+            </button>
+
+            {/* Fullscreen Button */}
+            <button
+              onClick={handleFullscreen}
+              className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all duration-200 hover:scale-110"
+              title="Fullscreen"
+            >
+              <Maximize2 className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }
