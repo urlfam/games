@@ -2,13 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import { Star, ThumbsUp, Reply, Trash2, Edit2, Send } from 'lucide-react'
-import Image from 'next/image'
+import { Star, ThumbsUp, Reply, Trash2, Edit2, Send, User as UserIcon } from 'lucide-react'
 
 interface Comment {
   id: string
-  user_id: string
+  user_id: string | null
   game_slug: string
   content: string
   rating: number | null
@@ -16,10 +14,7 @@ interface Comment {
   likes_count: number
   created_at: string
   updated_at: string
-  users: {
-    username: string
-    avatar_url: string | null
-  }
+  username: string
   user_liked?: boolean
   replies?: Comment[]
 }
@@ -30,30 +25,24 @@ interface GameCommentsProps {
 
 export default function GameComments({ gameSlug }: GameCommentsProps) {
   const [comments, setComments] = useState<Comment[]>([])
-  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [newComment, setNewComment] = useState('')
+  const [username, setUsername] = useState('')
   const [newRating, setNewRating] = useState<number>(0)
   const [hoverRating, setHoverRating] = useState<number>(0)
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyContent, setReplyContent] = useState('')
-  const [editingComment, setEditingComment] = useState<string | null>(null)
-  const [editContent, setEditContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
   
   const supabase = createClient()
 
+  // Load username from localStorage
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase])
+    if (typeof window !== 'undefined') {
+      const savedUsername = localStorage.getItem('puzzio_username') || '';
+      setUsername(savedUsername);
+    }
+  }, [])
 
   const fetchComments = useCallback(async () => {
     try {

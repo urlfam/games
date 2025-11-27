@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getAllGames, getGameBySlug } from '@/lib/games';
 import RecommendedGamesSidebar from '@/components/RecommendedGamesSidebar';
-import GameComments from '@/components/GameComments';
+import GameCommentsSimple from '@/components/GameCommentsSimple';
 import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -99,7 +99,7 @@ export default async function GamePage({ params }: GamePageProps) {
           </div>
 
           {/* Comments Section */}
-          <GameComments gameSlug={game.slug || params.slug} />
+          <GameCommentsSimple gameSlug={game.slug || params.slug} />
         </div>
 
         {/* Recommended Games Sidebar */}

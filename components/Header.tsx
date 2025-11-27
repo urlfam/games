@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Search } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import AuthButton from './AuthButton';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -108,11 +107,6 @@ export default function Header() {
             />
           </form>
 
-          {/* Auth Button - Desktop */}
-          <div className="hidden md:block">
-            <AuthButton />
-          </div>
-
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -162,11 +156,6 @@ export default function Header() {
             >
               NEWS
             </Link>
-            
-            {/* Auth Button - Mobile */}
-            <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-              <AuthButton />
-            </div>
           </div>
         </div>
       )}
