@@ -1,277 +1,562 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Star, ThumbsUp, Send, MessageSquare } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { User } from '@supabase/supabase-js'
+import { Star, ThumbsUp, Reply, Trash2, Edit2, Send } from 'lucide-react'
+import Image from 'next/image'
 
-// Type definitions
 interface Comment {
-  id: string;
-  author: string;
-  text: string;
-  rating: number;
-  likes: number;
-  created_at: string;
+  id: string
+  user_id: string
+  game_slug: string
+  content: string
+  rating: number | null
+  parent_id: string | null
+  likes_count: number
+  created_at: string
+  updated_at: string
+  users: {
+    username: string
+    avatar_url: string | null
+  }
+  user_liked?: boolean
+  replies?: Comment[]
 }
-
-// Mock comments (remove when connecting to Supabase)
-const MOCK_COMMENTS: Comment[] = [
-  {
-    id: '1',
-    author: 'Alice',
-    text: 'Super jeu! Graphismes magnifiques et gameplay addictif. Je recommande vivement!',
-    rating: 5,
-    likes: 24,
-    created_at: '2025-11-08T10:30:00',
-  },
-  {
-    id: '2',
-    author: 'Bob',
-    text: 'Pas mal mais un peu difficile au début. Après quelques essais ça devient fun.',
-    rating: 4,
-    likes: 12,
-    created_at: '2025-11-07T15:20:00',
-  },
-  {
-    id: '3',
-    author: 'Charlie',
-    text: 'Excellent! Mon nouveau jeu préféré. Les niveaux sont bien pensés.',
-    rating: 5,
-    likes: 18,
-    created_at: '2025-11-06T09:45:00',
-  },
-];
 
 interface GameCommentsProps {
-  gameId: string;
+  gameSlug: string
 }
 
-export default function GameComments({ gameId }: GameCommentsProps) {
-  const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS);
-  const [newComment, setNewComment] = useState('');
-  const [newRating, setNewRating] = useState(5);
-  const [author, setAuthor] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
+export default function GameComments({ gameSlug }: GameCommentsProps) {
+  const [comments, setComments] = useState<Comment[]>([])
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [newComment, setNewComment] = useState('')
+  const [newRating, setNewRating] = useState<number>(0)
+  const [hoverRating, setHoverRating] = useState<number>(0)
+  const [replyingTo, setReplyingTo] = useState<string | null>(null)
+  const [replyContent, setReplyContent] = useState('')
+  const [editingComment, setEditingComment] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  
+  const supabase = createClient()
 
-  // Sort comments
-  const sortedComments = [...comments].sort((a, b) => {
-    if (sortBy === 'popular') {
-      return b.likes - a.likes;
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const { data: commentsData, error } = await supabase
+        .from('comments')
+        .select(`
+          *,
+          users (
+            username,
+            avatar_url
+          )
+        `)
+        .eq('game_slug', gameSlug)
+        .is('parent_id', null)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      const commentsWithReplies = await Promise.all(
+        (commentsData || []).map(async (comment) => {
+          const { data: repliesData } = await supabase
+            .from('comments')
+            .select(`
+              *,
+              users (
+                username,
+                avatar_url
+              )
+            `)
+            .eq('parent_id', comment.id)
+            .order('created_at', { ascending: true })
+
+          if (user) {
+            const { data: likeData } = await supabase
+              .from('comment_likes')
+              .select('comment_id')
+              .eq('user_id', user.id)
+              .in('comment_id', [comment.id, ...(repliesData || []).map(r => r.id)])
+
+            const likedIds = new Set(likeData?.map(l => l.comment_id) || [])
+            
+            return {
+              ...comment,
+              user_liked: likedIds.has(comment.id),
+              replies: (repliesData || []).map(reply => ({
+                ...reply,
+                user_liked: likedIds.has(reply.id)
+              }))
+            }
+          }
+
+          return {
+            ...comment,
+            replies: repliesData || []
+          }
+        })
+      )
+
+      setComments(commentsWithReplies)
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+    } finally {
+      setLoading(false)
     }
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
+  }, [gameSlug, user, supabase])
 
-  // Format date (English)
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
+  useEffect(() => {
+    fetchComments()
 
-    if (diffHours < 1) return 'Less than 1h ago';
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+    const channel = supabase
+      .channel(`comments:${gameSlug}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'comments',
+          filter: `game_slug=eq.${gameSlug}`
+        },
+        () => {
+          fetchComments()
+        }
+      )
+      .subscribe()
 
-  // Submit comment (mock - replace with Supabase later)
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [gameSlug, user, supabase, fetchComments])
+
   const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || !author.trim()) return;
+    e.preventDefault()
+    if (!user || !newComment.trim() || submitting) return
 
-    setLoading(true);
+    setSubmitting(true)
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .insert([
+          {
+            user_id: user.id,
+            game_slug: gameSlug,
+            content: newComment.trim(),
+            rating: newRating > 0 ? newRating : null
+          }
+        ])
 
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      if (error) throw error
 
-    // Create mock comment
-    const mockNewComment: Comment = {
-      id: Date.now().toString(),
-      author,
-      text: newComment,
-      rating: newRating,
-      likes: 0,
-      created_at: new Date().toISOString(),
-    };
+      setNewComment('')
+      setNewRating(0)
+      fetchComments()
+    } catch (error) {
+      console.error('Error submitting comment:', error)
+      alert('Failed to post comment. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
-    setComments([mockNewComment, ...comments]);
-    setNewComment('');
-    setAuthor('');
-    setNewRating(5);
-    setLoading(false);
-  };
+  const handleSubmitReply = async (parentId: string) => {
+    if (!user || !replyContent.trim() || submitting) return
 
-  // Like comment (mock - replace with Supabase later)
-  const handleLikeComment = (commentId: string) => {
-    setComments(
-      comments.map((c) =>
-        c.id === commentId ? { ...c, likes: c.likes + 1 } : c,
-      ),
-    );
-  };
+    setSubmitting(true)
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .insert([
+          {
+            user_id: user.id,
+            game_slug: gameSlug,
+            content: replyContent.trim(),
+            parent_id: parentId
+          }
+        ])
 
-  return (
-    <div className="bg-slate-800 rounded-lg p-6 space-y-6 mb-10">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-          <MessageSquare size={24} />
-          Comments & Reviews ({comments.length})
-        </h2>
+      if (error) throw error
 
-        {/* Sort buttons */}
-        <div className="flex gap-2 text-sm">
-          <button
-            onClick={() => setSortBy('recent')}
-            className={`px-3 py-1 rounded transition-colors ${
-              sortBy === 'recent'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-700 text-gray-400 hover:text-white'
-            }`}
-          >
-            Recent
-          </button>
-          <button
-            onClick={() => setSortBy('popular')}
-            className={`px-3 py-1 rounded transition-colors ${
-              sortBy === 'popular'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-700 text-gray-400 hover:text-white'
-            }`}
-          >
-            Popular
-          </button>
-        </div>
+      setReplyContent('')
+      setReplyingTo(null)
+      fetchComments()
+    } catch (error) {
+      console.error('Error submitting reply:', error)
+      alert('Failed to post reply. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleEditComment = async (commentId: string) => {
+    if (!user || !editContent.trim() || submitting) return
+
+    setSubmitting(true)
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .update({ content: editContent.trim(), updated_at: new Date().toISOString() })
+        .eq('id', commentId)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      setEditContent('')
+      setEditingComment(null)
+      fetchComments()
+    } catch (error) {
+      console.error('Error editing comment:', error)
+      alert('Failed to edit comment. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!user || submitting) return
+    if (!confirm('Are you sure you want to delete this comment?')) return
+
+    setSubmitting(true)
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+
+      fetchComments()
+    } catch (error) {
+      console.error('Error deleting comment:', error)
+      alert('Failed to delete comment. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleLikeComment = async (commentId: string, currentlyLiked: boolean) => {
+    if (!user) return
+
+    try {
+      if (currentlyLiked) {
+        await supabase
+          .from('comment_likes')
+          .delete()
+          .eq('comment_id', commentId)
+          .eq('user_id', user.id)
+      } else {
+        await supabase
+          .from('comment_likes')
+          .insert([{ comment_id: commentId, user_id: user.id }])
+      }
+
+      fetchComments()
+    } catch (error) {
+      console.error('Error toggling like:', error)
+    }
+  }
+
+  const renderStars = (rating: number, interactive: boolean = false) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={interactive ? 24 : 16}
+            className={`${
+              star <= (interactive ? (hoverRating || newRating) : rating)
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-gray-300'
+            } ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
+            onClick={() => interactive && setNewRating(star)}
+            onMouseEnter={() => interactive && setHoverRating(star)}
+            onMouseLeave={() => interactive && setHoverRating(0)}
+          />
+        ))}
       </div>
+    )
+  }
 
-      {/* Comment form */}
-      <form
-        onSubmit={handleSubmitComment}
-        className="bg-slate-700 rounded-lg p-4 space-y-3"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMins / 60)
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffMins < 1) return 'just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays < 7) return `${diffDays}d ago`
+    return date.toLocaleDateString()
+  }
+
+  const renderComment = (comment: Comment, isReply: boolean = false) => {
+    const isEditing = editingComment === comment.id
+    const isOwner = user?.id === comment.user_id
+
+    return (
+      <div
+        key={comment.id}
+        className={`${isReply ? 'ml-12 mt-3' : 'mt-4'} bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700`}
       >
-        <input
-          type="text"
-          placeholder="Your name"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          className="w-full bg-slate-600 text-white rounded px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required
-        />
-
-        <textarea
-          placeholder="Share your thoughts about this game..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="w-full bg-slate-600 text-white rounded px-3 py-2 placeholder-gray-400 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required
-          maxLength={500}
-        />
-
-        <div className="flex justify-between items-center">
-          {/* Rating stars */}
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setNewRating(i)}
-                className={`transition-transform hover:scale-110 ${
-                  i <= newRating ? 'text-yellow-400' : 'text-gray-600'
-                }`}
-              >
-                <Star
-                  size={22}
-                  fill={i <= newRating ? 'currentColor' : 'none'}
-                />
-              </button>
-            ))}
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0">
+            {comment.users.avatar_url ? (
+              <Image
+                src={comment.users.avatar_url}
+                alt={comment.users.username}
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                {comment.users.username[0].toUpperCase()}
+              </div>
+            )}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white px-5 py-2 rounded flex gap-2 items-center transition-colors"
-          >
-            <Send size={18} /> {loading ? 'Sending...' : 'Post'}
-          </button>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {comment.users.username}
+              </span>
+              <span className="text-sm text-gray-500">
+                {formatDate(comment.created_at)}
+              </span>
+              {comment.rating && !isReply && (
+                <div className="ml-auto">
+                  {renderStars(comment.rating)}
+                </div>
+              )}
+            </div>
+
+            {isEditing ? (
+              <div className="mt-2">
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                  rows={3}
+                  placeholder="Edit your comment..."
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleEditComment(comment.id)}
+                    disabled={submitting}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingComment(null)
+                      setEditContent('')
+                    }}
+                    className="px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-900 dark:text-white rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                  {comment.content}
+                </p>
+
+                <div className="flex items-center gap-4 mt-3">
+                  <button
+                    onClick={() => handleLikeComment(comment.id, comment.user_liked || false)}
+                    disabled={!user}
+                    className={`flex items-center gap-1 text-sm ${
+                      comment.user_liked
+                        ? 'text-purple-600 dark:text-purple-400'
+                        : 'text-gray-500 hover:text-purple-600 dark:hover:text-purple-400'
+                    } transition-colors disabled:opacity-50`}
+                  >
+                    <ThumbsUp size={16} className={comment.user_liked ? 'fill-current' : ''} />
+                    <span>{comment.likes_count || 0}</span>
+                  </button>
+
+                  {!isReply && user && (
+                    <button
+                      onClick={() => setReplyingTo(comment.id)}
+                      className="flex items-center gap-1 text-sm text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                    >
+                      <Reply size={16} />
+                      <span>Reply</span>
+                    </button>
+                  )}
+
+                  {isOwner && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditingComment(comment.id)
+                          setEditContent(comment.content)
+                        }}
+                        className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 transition-colors"
+                      >
+                        <Edit2 size={16} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        disabled={submitting}
+                        className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600 transition-colors disabled:opacity-50"
+                      >
+                        <Trash2 size={16} />
+                        <span>Delete</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+
+            {replyingTo === comment.id && (
+              <div className="mt-3">
+                <textarea
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                  rows={3}
+                  placeholder="Write a reply..."
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleSubmitReply(comment.id)}
+                    disabled={submitting}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <Send size={16} />
+                    Reply
+                  </button>
+                  <button
+                    onClick={() => {
+                      setReplyingTo(null)
+                      setReplyContent('')
+                    }}
+                    className="px-4 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-900 dark:text-white rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        <p className="text-xs text-gray-400">
-          {newComment.length}/500 characters
-        </p>
-      </form>
-
-      {/* Comments list */}
-      <div className="space-y-4">
-        {sortedComments.length === 0 ? (
-          <div className="text-center py-12">
-            <MessageSquare size={48} className="mx-auto text-gray-600 mb-4" />
-            <p className="text-gray-400">No comments yet</p>
-            <p className="text-gray-500 text-sm mt-2">
-              Be the first to share your review!
-            </p>
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="mt-2">
+            {comment.replies.map((reply) => renderComment(reply, true))}
           </div>
-        ) : (
-          sortedComments.map((comment) => (
-            <div
-              key={comment.id}
-              className="bg-slate-700 rounded-lg p-4 space-y-3 hover:bg-slate-650 transition-colors"
-            >
-              {/* Author and rating */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold text-white">{comment.author}</p>
-                  <div className="flex gap-0.5 mt-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        className={
-                          i < comment.rating
-                            ? 'text-yellow-400'
-                            : 'text-gray-600'
-                        }
-                        fill={i < comment.rating ? 'currentColor' : 'none'}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <span className="text-gray-400 text-sm">
-                  {formatDate(comment.created_at)}
-                </span>
-              </div>
-
-              {/* Comment text */}
-              <p className="text-gray-300 leading-relaxed">{comment.text}</p>
-
-              {/* Like button */}
-              <button
-                onClick={() => handleLikeComment(comment.id)}
-                className="flex gap-2 items-center text-gray-400 hover:text-purple-400 transition-colors group"
-              >
-                <ThumbsUp
-                  size={18}
-                  className="group-hover:scale-110 transition-transform"
-                />
-                <span className="font-medium">{comment.likes}</span>
-              </button>
-            </div>
-          ))
         )}
       </div>
+    )
+  }
 
-      {/* Info footer */}
-      <div className="border-t border-slate-600 pt-4">
-        <p className="text-xs text-gray-400 text-center">
-          ℹ️ Comments are moderated before publication
-        </p>
+  if (loading) {
+    return (
+      <div className="mt-8 space-y-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Comments</h2>
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-200 dark:bg-gray-700 h-32 rounded-lg" />
+          ))}
+        </div>
       </div>
+    )
+  }
+
+  return (
+    <div className="mt-8">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        Comments ({comments.length})
+      </h2>
+
+      {user ? (
+        <form onSubmit={handleSubmitComment} className="mb-6 bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              {user.user_metadata?.avatar_url ? (
+                <Image
+                  src={user.user_metadata.avatar_url}
+                  alt={user.user_metadata?.full_name || 'You'}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                  {user.email?.[0].toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div className="flex-1">
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                rows={4}
+                placeholder="Share your thoughts about this game..."
+                required
+              />
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Rate this game:</span>
+                  {renderStars(newRating, true)}
+                </div>
+                <button
+                  type="submit"
+                  disabled={submitting || !newComment.trim()}
+                  className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <Send size={16} />
+                  Post Comment
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      ) : (
+        <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-center">
+          <p className="text-blue-800 dark:text-blue-200">
+            Please sign in to leave a comment
+          </p>
+        </div>
+      )}
+
+      {comments.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <p className="text-gray-500 dark:text-gray-400">
+            No comments yet. Be the first to share your thoughts!
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {comments.map((comment) => renderComment(comment))}
+        </div>
+      )}
     </div>
-  );
+  )
 }

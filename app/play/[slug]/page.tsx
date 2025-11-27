@@ -70,6 +70,7 @@ export default async function GamePage({ params }: GamePageProps) {
               gameTitle={game.title}
               gameUrl={gameProxyUrl}
               gameImage={game.image_url}
+              gameSlug={game.slug || params.slug}
             />
           </div>
 
@@ -98,7 +99,7 @@ export default async function GamePage({ params }: GamePageProps) {
           </div>
 
           {/* Comments Section */}
-          <GameComments gameId={game.id.toString()} />
+          <GameComments gameSlug={game.slug || params.slug} />
         </div>
 
         {/* Recommended Games Sidebar */}

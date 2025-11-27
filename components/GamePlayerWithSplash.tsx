@@ -1,29 +1,129 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Play, ThumbsUp, ThumbsDown, Heart, Share2, Flag, Maximize2 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 interface GamePlayerWithSplashProps {
   gameTitle: string;
   gameUrl: string;
   gameImage: string;
+  gameSlug: string;
 }
 
 export default function GamePlayerWithSplash({
   gameTitle,
   gameUrl,
   gameImage,
+  gameSlug,
 }: GamePlayerWithSplashProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [likeCount, setLikeCount] = useState(0);
+  const [dislikeCount, setDislikeCount] = useState(0);
+  const [statsLoaded, setStatsLoaded] = useState(false);
+  
+  const supabase = createClient();
 
-  const handlePlay = () => {
+  // Load user and game stats
+  useEffect(() => {
+    loadUserAndStats();
+    
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserReactions(session.user.id);
+        loadUserFavorite(session.user.id);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameSlug]);
+
+  const loadUserAndStats = async () => {
+    // Get current user
+    const { data: { session } } = await supabase.auth.getSession();
+    setUser(session?.user ?? null);
+
+    // Load game stats
+    await loadGameStats();
+
+    // Load user reactions and favorites if logged in
+    if (session?.user) {
+      await loadUserReactions(session.user.id);
+      await loadUserFavorite(session.user.id);
+    }
+    
+    setStatsLoaded(true);
+  };
+
+  const loadGameStats = async () => {
+    const { data, error } = await supabase
+      .from('game_stats')
+      .select('likes, dislikes')
+      .eq('game_slug', gameSlug)
+      .single();
+
+    if (data) {
+      setLikeCount(data.likes || 0);
+      setDislikeCount(data.dislikes || 0);
+    } else if (error && error.code === 'PGRST116') {
+      // No stats yet, initialize
+      await supabase
+        .from('game_stats')
+        .insert({ game_slug: gameSlug, game_name: gameTitle, likes: 0, dislikes: 0 });
+    }
+  };
+
+  const loadUserReactions = async (userId: string) => {
+    const { data } = await supabase
+      .from('game_reactions')
+      .select('reaction_type')
+      .eq('user_id', userId)
+      .eq('game_slug', gameSlug)
+      .single();
+
+    if (data) {
+      setIsLiked(data.reaction_type === 'like');
+      setIsDisliked(data.reaction_type === 'dislike');
+    }
+  };
+
+  const loadUserFavorite = async (userId: string) => {
+    const { data } = await supabase
+      .from('favorites')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('game_slug', gameSlug)
+      .single();
+
+    setIsFavorite(!!data);
+  };
+
+  const handlePlay = async () => {
     setIsLoading(true);
     setIsPlaying(true);
+
+    // Track play history if user is logged in
+    if (user) {
+      await supabase
+        .from('play_history')
+        .upsert({
+          user_id: user.id,
+          game_slug: gameSlug,
+          game_name: gameTitle,
+        }, {
+          onConflict: 'user_id,game_slug'
+        });
+    }
   };
 
   const handleFullscreen = () => {
@@ -35,18 +135,171 @@ export default function GamePlayerWithSplash({
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    if (isDisliked) setIsDisliked(false);
+  const handleLike = async () => {
+    if (!user) {
+      alert('Please sign in to like games!');
+      return;
+    }
+
+    const newLikedState = !isLiked;
+    const wasDisliked = isDisliked;
+
+    // Optimistic update
+    setIsLiked(newLikedState);
+    if (wasDisliked) setIsDisliked(false);
+    
+    if (newLikedState) {
+      setLikeCount(prev => prev + 1);
+      if (wasDisliked) setDislikeCount(prev => Math.max(0, prev - 1));
+    } else {
+      setLikeCount(prev => Math.max(0, prev - 1));
+    }
+
+    try {
+      if (newLikedState) {
+        // Add or update like
+        await supabase
+          .from('game_reactions')
+          .upsert({
+            user_id: user.id,
+            game_slug: gameSlug,
+            reaction_type: 'like'
+          }, {
+            onConflict: 'user_id,game_slug'
+          });
+
+        // Update game stats
+        if (wasDisliked) {
+          await supabase.rpc('update_game_reaction', {
+            p_game_slug: gameSlug,
+            p_old_reaction: 'dislike',
+            p_new_reaction: 'like'
+          });
+        } else {
+          await supabase.rpc('increment_like', { game_slug_param: gameSlug });
+        }
+      } else {
+        // Remove like
+        await supabase
+          .from('game_reactions')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('game_slug', gameSlug);
+
+        await supabase.rpc('decrement_like', { game_slug_param: gameSlug });
+      }
+
+      // Reload stats to ensure consistency
+      await loadGameStats();
+    } catch (error) {
+      console.error('Error updating like:', error);
+      // Revert optimistic update on error
+      setIsLiked(!newLikedState);
+      if (wasDisliked) setIsDisliked(true);
+      await loadGameStats();
+    }
   };
 
-  const handleDislike = () => {
-    setIsDisliked(!isDisliked);
-    if (isLiked) setIsLiked(false);
+  const handleDislike = async () => {
+    if (!user) {
+      alert('Please sign in to dislike games!');
+      return;
+    }
+
+    const newDislikedState = !isDisliked;
+    const wasLiked = isLiked;
+
+    // Optimistic update
+    setIsDisliked(newDislikedState);
+    if (wasLiked) setIsLiked(false);
+    
+    if (newDislikedState) {
+      setDislikeCount(prev => prev + 1);
+      if (wasLiked) setLikeCount(prev => Math.max(0, prev - 1));
+    } else {
+      setDislikeCount(prev => Math.max(0, prev - 1));
+    }
+
+    try {
+      if (newDislikedState) {
+        // Add or update dislike
+        await supabase
+          .from('game_reactions')
+          .upsert({
+            user_id: user.id,
+            game_slug: gameSlug,
+            reaction_type: 'dislike'
+          }, {
+            onConflict: 'user_id,game_slug'
+          });
+
+        // Update game stats
+        if (wasLiked) {
+          await supabase.rpc('update_game_reaction', {
+            p_game_slug: gameSlug,
+            p_old_reaction: 'like',
+            p_new_reaction: 'dislike'
+          });
+        } else {
+          await supabase.rpc('increment_dislike', { game_slug_param: gameSlug });
+        }
+      } else {
+        // Remove dislike
+        await supabase
+          .from('game_reactions')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('game_slug', gameSlug);
+
+        await supabase.rpc('decrement_dislike', { game_slug_param: gameSlug });
+      }
+
+      // Reload stats to ensure consistency
+      await loadGameStats();
+    } catch (error) {
+      console.error('Error updating dislike:', error);
+      // Revert optimistic update on error
+      setIsDisliked(!newDislikedState);
+      if (wasLiked) setIsLiked(true);
+      await loadGameStats();
+    }
   };
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
+  const handleFavorite = async () => {
+    if (!user) {
+      alert('Please sign in to favorite games!');
+      return;
+    }
+
+    const newFavoriteState = !isFavorite;
+    
+    // Optimistic update
+    setIsFavorite(newFavoriteState);
+
+    try {
+      if (newFavoriteState) {
+        // Add to favorites
+        await supabase
+          .from('favorites')
+          .insert({
+            user_id: user.id,
+            game_slug: gameSlug,
+            game_name: gameTitle,
+            game_image: gameImage
+          });
+      } else {
+        // Remove from favorites
+        await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('game_slug', gameSlug);
+      }
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+      // Revert optimistic update on error
+      setIsFavorite(!newFavoriteState);
+    }
   };
 
   const handleShare = () => {
@@ -171,23 +424,25 @@ export default function GamePlayerWithSplash({
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+              className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                 isLiked ? 'bg-purple-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
               }`}
               title="Like"
             >
               <ThumbsUp className="w-5 h-5" />
+              {statsLoaded && <span className="text-sm font-medium">{likeCount}</span>}
             </button>
 
             {/* Dislike Button */}
             <button
               onClick={handleDislike}
-              className={`p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
+              className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-110 ${
                 isDisliked ? 'bg-red-600 text-white' : 'bg-slate-800 text-gray-400 hover:text-white'
               }`}
               title="Dislike"
             >
               <ThumbsDown className="w-5 h-5" />
+              {statsLoaded && <span className="text-sm font-medium">{dislikeCount}</span>}
             </button>
 
             {/* Favorite Button */}
