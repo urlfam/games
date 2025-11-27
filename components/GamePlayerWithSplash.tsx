@@ -123,7 +123,7 @@ export default function GamePlayerWithSplash({
         // Game Iframe with Custom Toolbar
         <>
           {/* Custom Toolbar - Bottom */}
-          <div className="absolute bottom-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 px-4 py-3 flex items-center justify-between">
+          <div className="absolute bottom-0 left-0 right-0 z-10 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1">
               {/* Game Thumbnail */}
               <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50">
@@ -210,12 +210,11 @@ export default function GamePlayerWithSplash({
             </div>
           )}
           
-          {/* Iframe with bottom bar hidden */}
-          <div className="absolute top-0 left-0 right-0 bottom-[68px] overflow-hidden">
+          {/* Iframe - with space for toolbar */}
+          <div className="absolute top-0 left-0 right-0 bottom-[76px] overflow-hidden rounded-t-xl">
             <iframe
               src={gameUrl}
-              className="absolute top-0 left-0 w-full border-0"
-              style={{ height: 'calc(100% + 60px)' }}
+              className="absolute top-0 left-0 w-full h-full border-0"
               allowFullScreen
               title={gameTitle}
               sandbox="allow-forms allow-scripts allow-same-origin allow-popups"
