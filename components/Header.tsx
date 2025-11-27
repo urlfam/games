@@ -9,44 +9,46 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Determine header style for News main vs News article
+  // Determine header style - white for news and static pages, dark for play
   const isNewsMain = pathname === '/news';
   const isNewsArticle = pathname.startsWith('/news/');
+  const isStaticPage = ['/contact', '/privacy', '/terms', '/about', '/about-us'].includes(pathname);
+  const isWhiteHeader = isNewsMain || isStaticPage;
 
   // Header style
-  const headerClass = isNewsMain
+  const headerClass = isWhiteHeader
     ? 'bg-white border-b border-gray-200 sticky top-0 z-50'
     : 'bg-slate-800 border-b border-purple-500/20 sticky top-0 z-50';
 
   // Logo color
-  const logoClass = isNewsMain
+  const logoClass = isWhiteHeader
     ? 'text-2xl font-bold text-gray-900'
     : 'text-2xl font-bold text-white';
   const dotClass = 'text-purple-500';
 
   // Desktop menu link colors
-  const playLinkClass = isNewsMain
+  const playLinkClass = isWhiteHeader
     ? 'text-gray-600 font-medium hover:text-gray-900 transition-colors'
     : 'text-white font-medium hover:text-purple-400 transition-colors';
-  const newsLinkClass = isNewsMain
+  const newsLinkClass = isWhiteHeader
     ? 'text-gray-900 font-medium hover:text-purple-500 transition-colors'
     : 'text-gray-400 font-medium hover:text-white transition-colors';
 
   // Mobile menu button color
-  const mobileMenuBtnClass = isNewsMain
+  const mobileMenuBtnClass = isWhiteHeader
     ? 'md:hidden text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition-colors'
     : 'md:hidden text-white p-2 hover:bg-slate-700 rounded-lg transition-colors';
 
   // Mobile menu dropdown style
-  const mobileMenuDropdownClass = isNewsMain
+  const mobileMenuDropdownClass = isWhiteHeader
     ? 'md:hidden border-t border-gray-200 bg-white'
     : 'md:hidden border-t border-slate-700 bg-slate-800';
 
   // Mobile menu link colors
-  const mobilePlayLinkClass = isNewsMain
+  const mobilePlayLinkClass = isWhiteHeader
     ? 'block py-4 px-4 text-gray-900 text-base font-semibold hover:bg-gray-100 rounded-lg transition-colors'
     : 'block py-4 px-4 text-white text-base font-semibold hover:bg-slate-700/50 rounded-lg transition-colors';
-  const mobileNewsLinkClass = isNewsMain
+  const mobileNewsLinkClass = isWhiteHeader
     ? 'block py-4 px-4 text-purple-600 text-base font-semibold hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors'
     : 'block py-4 px-4 text-gray-300 text-base font-semibold hover:bg-slate-700/50 hover:text-white rounded-lg transition-colors';
 
@@ -76,9 +78,9 @@ export default function Header() {
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X size={24} color={isNewsMain ? '#222' : '#fff'} />
+              <X size={24} color={isWhiteHeader ? '#222' : '#fff'} />
             ) : (
-              <Menu size={24} color={isNewsMain ? '#222' : '#fff'} />
+              <Menu size={24} color={isWhiteHeader ? '#222' : '#fff'} />
             )}
           </button>
         </div>
