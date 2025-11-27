@@ -11,33 +11,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="text-2xl font-bold text-slate-900">
-                Puzzio<span className="text-purple-500">.io</span>
-              </Link>
-              <div className="hidden md:flex gap-6">
-                <Link
-                  href="/play"
-                  className="text-gray-600 font-medium hover:text-slate-900"
-                >
-                  PLAY
-                </Link>
-                <Link
-                  href="/news"
-                  className="text-gray-600 font-medium hover:text-slate-900"
-                >
-                  NEWS
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
-
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
@@ -51,7 +24,7 @@ export default function ContactPage() {
         <div className="mt-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Contact Us</h1>
           <p className="text-gray-600 text-lg mb-12">
-            Have a question or feedback? We'd love to hear from you. Get in
+            Have a question or feedback? We&apos;d love to hear from you. Get in
             touch using the information below.
           </p>
 
@@ -200,7 +173,7 @@ export default function ContactPage() {
                 </button>
 
                 <p className="text-xs text-gray-500 mt-4">
-                  Note: This is a demo form. To make it functional, you'll need
+                  Note: This is a demo form. To make it functional, you&apos;ll need
                   to implement backend handling.
                 </p>
               </form>

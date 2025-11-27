@@ -10,33 +10,6 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="text-2xl font-bold text-slate-900">
-                Puzzio<span className="text-purple-500">.io</span>
-              </Link>
-              <div className="hidden md:flex gap-6">
-                <Link
-                  href="/play"
-                  className="text-gray-600 font-medium hover:text-slate-900"
-                >
-                  PLAY
-                </Link>
-                <Link
-                  href="/news"
-                  className="text-gray-600 font-medium hover:text-slate-900"
-                >
-                  NEWS
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
-
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
