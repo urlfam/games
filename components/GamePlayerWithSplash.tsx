@@ -122,9 +122,21 @@ export default function GamePlayerWithSplash({
       ) : (
         // Game Iframe with Custom Toolbar
         <>
-          {/* Custom Toolbar */}
-          <div className="absolute top-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 px-4 py-3 flex items-center justify-between">
-            <h3 className="text-white font-semibold text-lg truncate flex-1">{gameTitle}</h3>
+          {/* Custom Toolbar - Bottom */}
+          <div className="absolute bottom-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3 flex-1">
+              {/* Game Thumbnail */}
+              <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50">
+                <Image
+                  src={gameImage}
+                  alt={gameTitle}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Game Title */}
+              <h3 className="text-white font-semibold text-lg truncate">{gameTitle}</h3>
+            </div>
             
             <div className="flex items-center gap-2">
               {/* Like Button */}
@@ -199,7 +211,7 @@ export default function GamePlayerWithSplash({
           )}
           
           {/* Iframe with bottom bar hidden */}
-          <div className="absolute top-[60px] left-0 right-0 bottom-0 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 bottom-[68px] overflow-hidden">
             <iframe
               src={gameUrl}
               className="absolute top-0 left-0 w-full border-0"
