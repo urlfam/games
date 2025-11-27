@@ -9,6 +9,7 @@ export default async function PlayPage({
   searchParams?: { [key: string]: string | undefined };
 }) {
   const categoryParam = searchParams?.category?.toLowerCase() || 'all';
+  const searchQuery = searchParams?.search?.toLowerCase() || '';
 
   // Handle special categories
   let filteredGames;
@@ -24,6 +25,16 @@ export default async function PlayPage({
     filteredGames = allGames.filter((game) => {
       const gameCategory = game.category.toLowerCase().replace(/\s+/g, '-');
       return gameCategory === categoryParam;
+    });
+  }
+
+  // Apply search filter if search query exists
+  if (searchQuery) {
+    filteredGames = filteredGames.filter((game) => {
+      const titleMatch = game.title.toLowerCase().includes(searchQuery);
+      const descMatch = game.description.toLowerCase().includes(searchQuery);
+      const categoryMatch = game.category.toLowerCase().includes(searchQuery);
+      return titleMatch || descMatch || categoryMatch;
     });
   }
 
@@ -51,7 +62,18 @@ export default async function PlayPage({
   if (!featuredGame) {
     return (
       <div className="flex items-center justify-center p-8 text-white">
-        <p>No games found. Please run the import workflow.</p>
+        <div className="text-center">
+          <p className="text-xl mb-2">
+            {searchQuery 
+              ? `No games found for "${searchQuery}"` 
+              : 'No games found. Please run the import workflow.'}
+          </p>
+          {searchQuery && (
+            <Link href="/play" className="text-purple-400 hover:text-purple-300 underline">
+              Clear search and view all games
+            </Link>
+          )}
+        </div>
       </div>
     );
   }
@@ -100,7 +122,7 @@ export default async function PlayPage({
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-white mb-8">
-            🔥 Trending Games
+            {searchQuery ? `� Search results for "${searchQuery}"` : '�🔥 Trending Games'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {trendingGames.map((game) => (
