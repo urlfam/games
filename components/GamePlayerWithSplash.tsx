@@ -136,13 +136,14 @@ export default function GamePlayerWithSplash({
         await supabase.rpc('decrement_like', { game_slug_param: gameSlug });
       }
 
-      // Reload stats to ensure consistency
-      await loadGameStats();
+      // Ne PAS recharger les stats ici car on a déjà fait la mise à jour optimiste
+      // Les stats seront rechargées au prochain refresh de la page
     } catch (error) {
       console.error('Error updating like:', error);
       // Revert optimistic update on error
       setIsLiked(!newLikedState);
       if (wasDisliked) setIsDisliked(true);
+      // Recharger les stats depuis la DB en cas d'erreur
       await loadGameStats();
     }
   };
@@ -189,13 +190,14 @@ export default function GamePlayerWithSplash({
         await supabase.rpc('decrement_dislike', { game_slug_param: gameSlug });
       }
 
-      // Reload stats to ensure consistency
-      await loadGameStats();
+      // Ne PAS recharger les stats ici car on a déjà fait la mise à jour optimiste
+      // Les stats seront rechargées au prochain refresh de la page
     } catch (error) {
       console.error('Error updating dislike:', error);
       // Revert optimistic update on error
       setIsDisliked(!newDislikedState);
       if (wasLiked) setIsLiked(true);
+      // Recharger les stats depuis la DB en cas d'erreur
       await loadGameStats();
     }
   };
