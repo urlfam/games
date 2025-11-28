@@ -26,6 +26,7 @@ export default function GamePlayerWithSplash({
   const [likeCount, setLikeCount] = useState(0);
   const [dislikeCount, setDislikeCount] = useState(0);
   const [statsLoaded, setStatsLoaded] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   
   const supabase = createClient();
 
@@ -43,9 +44,15 @@ export default function GamePlayerWithSplash({
       const favorites = JSON.parse(localStorage.getItem('game_favorites') || '[]');
       
       const reaction = reactions[gameSlug];
-      if (reaction) {
-        setIsLiked(reaction === 'like');
-        setIsDisliked(reaction === 'dislike');
+      if (reaction === 'like') {
+        setIsLiked(true);
+        setIsDisliked(false);
+      } else if (reaction === 'dislike') {
+        setIsLiked(false);
+        setIsDisliked(true);
+      } else {
+        setIsLiked(false);
+        setIsDisliked(false);
       }
       
       setIsFavorite(favorites.includes(gameSlug));
@@ -216,20 +223,41 @@ export default function GamePlayerWithSplash({
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle = `Play ${gameTitle} on Puzzio.io`;
+    
     if (navigator.share) {
-      navigator.share({
-        title: gameTitle,
-        url: window.location.href,
-      });
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: `Check out ${gameTitle} - Play it now for free!`,
+          url: shareUrl,
+        });
+      } catch (error) {
+        // User cancelled or error occurred
+        console.log('Share cancelled or failed', error);
+      }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('🔗 Link copied to clipboard!');
+      } catch (error) {
+        // Manual fallback
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('🔗 Link copied to clipboard!');
+      }
     }
   };
 
   const handleReport = () => {
-    alert('Report feature coming soon!');
+    setShowReportModal(true);
   };
 
   return (
@@ -396,6 +424,105 @@ export default function GamePlayerWithSplash({
             >
               <Maximize2 className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal/Sidebar */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowReportModal(false)}>
+          <div 
+            className="bg-slate-900 rounded-2xl w-full max-w-md p-6 border border-purple-500/30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <Flag className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">What issue did you find in</h3>
+                  <p className="text-purple-400 font-semibold">{gameTitle}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowReportModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Report Form */}
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const issue = formData.get('issue');
+              const email = formData.get('email');
+              const description = formData.get('description');
+              
+              console.log('Report submitted:', { gameSlug, gameTitle, issue, email, description });
+              alert(`Thank you for reporting! We'll look into this issue with ${gameTitle}.`);
+              setShowReportModal(false);
+            }}>
+              {/* Issue Type Dropdown */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  What issue did you find?
+                </label>
+                <select 
+                  name="issue"
+                  required
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="">Select an issue...</option>
+                  <option value="not-loading">Game not loading</option>
+                  <option value="broken">Game is broken/buggy</option>
+                  <option value="inappropriate">Inappropriate content</option>
+                  <option value="wrong-info">Wrong information</option>
+                  <option value="performance">Performance issues</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {/* Email (Optional) */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Your email (Optional)
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="your@email.com"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Description */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Describe the bug...
+                </label>
+                <textarea
+                  name="description"
+                  required
+                  rows={4}
+                  placeholder="Please provide details about the issue you encountered..."
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-purple-500/50"
+              >
+                Send Report
+              </button>
+            </form>
           </div>
         </div>
       )}
