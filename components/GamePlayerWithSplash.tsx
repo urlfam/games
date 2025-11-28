@@ -60,6 +60,7 @@ export default function GamePlayerWithSplash({
   };
 
   const loadGameStats = async () => {
+    console.log('[loadGameStats] Fetching stats for:', gameSlug);
     const { data, error } = await supabase
       .from('game_stats')
       .select('likes, dislikes')
@@ -67,15 +68,19 @@ export default function GamePlayerWithSplash({
       .single();
 
     if (data) {
+      console.log('[loadGameStats] Stats loaded:', data);
       setLikeCount(data.likes || 0);
       setDislikeCount(data.dislikes || 0);
     } else if (error && error.code === 'PGRST116') {
       // No stats yet, initialize
+      console.log('[loadGameStats] No stats found, initializing...');
       await supabase
         .from('game_stats')
         .insert({ game_slug: gameSlug, game_name: gameTitle, likes: 0, dislikes: 0 });
       setLikeCount(0);
       setDislikeCount(0);
+    } else if (error) {
+      console.error('[loadGameStats] Error loading stats:', error);
     }
     setStatsLoaded(true);
   };
@@ -124,18 +129,25 @@ export default function GamePlayerWithSplash({
       // Update game stats in database
       if (newLikedState) {
         if (wasDisliked) {
-          await supabase.rpc('update_game_reaction', {
+          console.log('[handleLike] Switching from dislike to like');
+          const { error } = await supabase.rpc('update_game_reaction', {
             p_game_slug: gameSlug,
             p_old_reaction: 'dislike',
             p_new_reaction: 'like'
           });
+          if (error) console.error('[handleLike] RPC error:', error);
         } else {
-          await supabase.rpc('increment_like', { game_slug_param: gameSlug });
+          console.log('[handleLike] Incrementing like');
+          const { error } = await supabase.rpc('increment_like', { game_slug_param: gameSlug });
+          if (error) console.error('[handleLike] RPC error:', error);
         }
       } else {
-        await supabase.rpc('decrement_like', { game_slug_param: gameSlug });
+        console.log('[handleLike] Decrementing like');
+        const { error } = await supabase.rpc('decrement_like', { game_slug_param: gameSlug });
+        if (error) console.error('[handleLike] RPC error:', error);
       }
 
+      console.log('[handleLike] Database updated successfully');
       // Ne PAS recharger les stats ici car on a déjà fait la mise à jour optimiste
       // Les stats seront rechargées au prochain refresh de la page
     } catch (error) {
