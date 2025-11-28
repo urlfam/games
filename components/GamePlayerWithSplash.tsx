@@ -138,12 +138,12 @@ export default function GamePlayerWithSplash({
           if (error) console.error('[handleLike] RPC error:', error);
         } else {
           console.log('[handleLike] Incrementing like');
-          const { error } = await supabase.rpc('increment_like', { game_slug_param: gameSlug });
+          const { error } = await supabase.rpc('increment_like', { p_game_slug: gameSlug });
           if (error) console.error('[handleLike] RPC error:', error);
         }
       } else {
         console.log('[handleLike] Decrementing like');
-        const { error } = await supabase.rpc('decrement_like', { game_slug_param: gameSlug });
+        const { error } = await supabase.rpc('decrement_like', { p_game_slug: gameSlug });
         if (error) console.error('[handleLike] RPC error:', error);
       }
 
@@ -196,10 +196,10 @@ export default function GamePlayerWithSplash({
             p_new_reaction: 'dislike'
           });
         } else {
-          await supabase.rpc('increment_dislike', { game_slug_param: gameSlug });
+          await supabase.rpc('increment_dislike', { p_game_slug: gameSlug });
         }
       } else {
-        await supabase.rpc('decrement_dislike', { game_slug_param: gameSlug });
+        await supabase.rpc('decrement_dislike', { p_game_slug: gameSlug });
       }
 
       // Ne PAS recharger les stats ici car on a déjà fait la mise à jour optimiste

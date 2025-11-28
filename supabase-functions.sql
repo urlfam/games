@@ -1,11 +1,11 @@
 -- Database functions for game reactions and stats
 
 -- Function to increment like count
-CREATE OR REPLACE FUNCTION increment_like(game_slug_param TEXT)
+CREATE OR REPLACE FUNCTION increment_like(p_game_slug TEXT)
 RETURNS void AS $$
 BEGIN
   INSERT INTO game_stats (game_slug, game_name, likes, dislikes)
-  VALUES (game_slug_param, game_slug_param, 1, 0)
+  VALUES (p_game_slug, p_game_slug, 1, 0)
   ON CONFLICT (game_slug)
   DO UPDATE SET 
     likes = game_stats.likes + 1,
@@ -14,23 +14,23 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to decrement like count
-CREATE OR REPLACE FUNCTION decrement_like(game_slug_param TEXT)
+CREATE OR REPLACE FUNCTION decrement_like(p_game_slug TEXT)
 RETURNS void AS $$
 BEGIN
   UPDATE game_stats
   SET 
     likes = GREATEST(0, likes - 1),
     updated_at = NOW()
-  WHERE game_slug = game_slug_param;
+  WHERE game_slug = p_game_slug;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to increment dislike count
-CREATE OR REPLACE FUNCTION increment_dislike(game_slug_param TEXT)
+CREATE OR REPLACE FUNCTION increment_dislike(p_game_slug TEXT)
 RETURNS void AS $$
 BEGIN
   INSERT INTO game_stats (game_slug, game_name, likes, dislikes)
-  VALUES (game_slug_param, game_slug_param, 0, 1)
+  VALUES (p_game_slug, p_game_slug, 0, 1)
   ON CONFLICT (game_slug)
   DO UPDATE SET 
     dislikes = game_stats.dislikes + 1,
@@ -39,14 +39,14 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to decrement dislike count
-CREATE OR REPLACE FUNCTION decrement_dislike(game_slug_param TEXT)
+CREATE OR REPLACE FUNCTION decrement_dislike(p_game_slug TEXT)
 RETURNS void AS $$
 BEGIN
   UPDATE game_stats
   SET 
     dislikes = GREATEST(0, dislikes - 1),
     updated_at = NOW()
-  WHERE game_slug = game_slug_param;
+  WHERE game_slug = p_game_slug;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
