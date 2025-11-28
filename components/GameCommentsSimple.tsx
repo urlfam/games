@@ -76,7 +76,7 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
 
     setSubmitting(true)
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('game_comments_simple')
         .insert([
           {
@@ -86,8 +86,14 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
             rating: newRating > 0 ? newRating : null
           }
         ])
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error details:', error)
+        throw error
+      }
+
+      console.log('Comment posted successfully:', data)
 
       // Clear form
       setNewComment('')
@@ -95,9 +101,10 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
       
       // Refresh comments
       await fetchComments()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error posting comment:', error)
-      alert('Failed to post comment. Please try again.')
+      const errorMessage = error?.message || 'Unknown error'
+      alert(`Failed to post comment: ${errorMessage}`)
     } finally {
       setSubmitting(false)
     }
