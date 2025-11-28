@@ -88,6 +88,22 @@ export default function GamePlayerWithSplash({
   const handlePlay = async () => {
     setIsLoading(true);
     setIsPlaying(true);
+    
+    // Auto fullscreen on mobile after a short delay to let iframe load
+    setTimeout(() => {
+      const container = document.getElementById('game-container');
+      if (container && window.innerWidth <= 768) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen().catch(err => {
+            console.log('Fullscreen request failed:', err);
+          });
+        } else if ((container as any).webkitRequestFullscreen) {
+          (container as any).webkitRequestFullscreen();
+        } else if ((container as any).mozRequestFullScreen) {
+          (container as any).mozRequestFullScreen();
+        }
+      }
+    }, 500);
   };
 
   const handleFullscreen = () => {
@@ -95,6 +111,10 @@ export default function GamePlayerWithSplash({
     if (container) {
       if (container.requestFullscreen) {
         container.requestFullscreen();
+      } else if ((container as any).webkitRequestFullscreen) {
+        (container as any).webkitRequestFullscreen();
+      } else if ((container as any).mozRequestFullScreen) {
+        (container as any).mozRequestFullScreen();
       }
     }
   };
@@ -278,7 +298,7 @@ export default function GamePlayerWithSplash({
     <>
       <div id="game-container" className="relative w-full overflow-hidden rounded-xl shadow-2xl bg-gradient-to-br from-slate-900 to-slate-800" style={{ minHeight: '70vh' }}>
         {!isPlaying ? (
-        // Splash Screen
+        // Splash Screen - Optimized for Mobile
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-purple-900/90 via-slate-900/95 to-black/95 backdrop-blur-sm z-10">
           {/* Game Image Background */}
           <div className="absolute inset-0 opacity-20">
@@ -292,9 +312,9 @@ export default function GamePlayerWithSplash({
           </div>
 
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center gap-8 p-8">
-            {/* Game Thumbnail */}
-            <div className="relative w-64 h-64 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-purple-500/50">
+          <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8 p-4 md:p-8 w-full max-w-lg">
+            {/* Game Thumbnail - Smaller on mobile */}
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-purple-500/50 transition-all">
               <Image
                 src={gameImage}
                 alt={gameTitle}
@@ -304,26 +324,45 @@ export default function GamePlayerWithSplash({
               />
             </div>
 
-            {/* Game Title */}
-            <h2 className="text-4xl md:text-5xl font-bold text-white text-center drop-shadow-2xl">
+            {/* Game Title - Responsive text size */}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center drop-shadow-2xl px-4">
               {gameTitle}
             </h2>
 
-            {/* Play Button */}
+            {/* Stats Display - Mobile Friendly */}
+            {statsLoaded && (
+              <div className="flex items-center gap-6 text-white/80 text-sm md:text-base">
+                <div className="flex items-center gap-2">
+                  <ThumbsUp className="w-5 h-5 text-green-400" />
+                  <span className="font-semibold">{likeCount}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ThumbsDown className="w-5 h-5 text-red-400" />
+                  <span className="font-semibold">{dislikeCount}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Play Button - Touch-optimized */}
             <button
               onClick={handlePlay}
-              className="group relative px-12 py-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-2xl rounded-full shadow-2xl transform hover:scale-110 transition-all duration-300 flex items-center gap-4"
+              className="group relative px-8 sm:px-10 md:px-12 py-4 sm:py-5 md:py-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 active:scale-95 text-white font-bold text-xl sm:text-2xl rounded-full shadow-2xl transform hover:scale-105 md:hover:scale-110 transition-all duration-300 flex items-center gap-3 md:gap-4 w-full max-w-xs justify-center"
             >
-              <Play className="w-8 h-8 fill-current" />
-              <span>Play Now</span>
+              <Play className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 fill-current" />
+              <span>Play now</span>
               
               {/* Glow effect */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity -z-10"></div>
             </button>
 
+            {/* Mobile-specific hint */}
+            <p className="text-white/60 text-xs sm:text-sm text-center md:hidden mt-2">
+              🔲 Game will open in fullscreen
+            </p>
+
             {/* Puzzio.io Branding */}
-            <div className="mt-8 text-center">
-              <p className="text-gray-400 text-sm">
+            <div className="mt-4 md:mt-8 text-center">
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Powered by <span className="text-purple-400 font-semibold">Puzzio.io</span>
               </p>
             </div>
