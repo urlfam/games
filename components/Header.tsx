@@ -14,7 +14,13 @@ export default function Header() {
   // Determine header style - white for news and static pages, dark for play
   const isNewsMain = pathname === '/news';
   const isNewsArticle = pathname.startsWith('/news/');
-  const isStaticPage = ['/contact', '/privacy', '/terms', '/about', '/about-us'].includes(pathname);
+  const isStaticPage = [
+    '/contact',
+    '/privacy',
+    '/terms',
+    '/about',
+    '/about-us',
+  ].includes(pathname);
   const isWhiteHeader = isNewsMain || isStaticPage;
 
   // Header style
@@ -58,7 +64,7 @@ export default function Header() {
   const searchContainerClass = isWhiteHeader
     ? 'relative flex-1 max-w-md mx-4'
     : 'relative flex-1 max-w-md mx-4';
-  
+
   const searchInputClass = isWhiteHeader
     ? 'w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all'
     : 'w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all';
@@ -92,10 +98,13 @@ export default function Header() {
           </div>
 
           {/* Search bar - Desktop */}
-          <form onSubmit={handleSearch} className={`hidden md:flex ${searchContainerClass}`}>
-            <Search 
-              size={20} 
-              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" 
+          <form
+            onSubmit={handleSearch}
+            className={`hidden md:flex ${searchContainerClass}`}
+          >
+            <Search
+              size={20}
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
               color={searchIconColor}
             />
             <input
@@ -128,9 +137,9 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
             {/* Mobile search bar */}
             <form onSubmit={handleSearch} className="relative mb-4">
-              <Search 
-                size={20} 
-                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" 
+              <Search
+                size={20}
+                className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
                 color={searchIconColor}
               />
               <input

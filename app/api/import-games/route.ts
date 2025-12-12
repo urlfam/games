@@ -73,7 +73,8 @@ export async function POST(req: Request) {
       ...newGame,
     };
 
-    allGames.push(gameToSave);
+    // Add new game at the beginning of the array (most recent first)
+    allGames.unshift(gameToSave);
 
     // 5. --- Write the entire file back ---
     await saveGames(allGames);

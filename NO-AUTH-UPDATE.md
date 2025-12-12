@@ -7,21 +7,25 @@ Cette mise à jour **retire l'obligation de se connecter** pour interagir avec l
 ## ✨ Fonctionnalités principales
 
 ### 1. **Likes/Dislikes anonymes**
+
 - Les préférences sont stockées dans `localStorage`
 - Les compteurs globaux sont mis à jour dans Supabase
 - Persistance des préférences même après fermeture du navigateur
 
 ### 2. **Favoris anonymes**
+
 - Gestion locale des favoris via `localStorage`
 - Aucune authentication requise
 
 ### 3. **Commentaires anonymes**
+
 - Nouveau système de commentaires simplifié
 - L'utilisateur choisit un pseudo (sauvegardé dans `localStorage`)
 - Option d'ajouter une note avec des étoiles (1-5)
 - Table database indépendante: `game_comments_simple`
 
 ### 4. **Interface épurée**
+
 - **Bouton "Sign in with Google" retiré** du header
 - Design plus simple et cohérent
 - Expérience utilisateur sans friction
@@ -29,15 +33,18 @@ Cette mise à jour **retire l'obligation de se connecter** pour interagir avec l
 ## 🗂️ Fichiers modifiés
 
 ### Composants React
+
 - ✅ `components/Header.tsx` - Bouton d'authentification retiré
 - ✅ `components/GamePlayerWithSplash.tsx` - Likes/dislikes/favoris sans auth
 - ✅ `components/GameCommentsSimple.tsx` - Nouveau composant de commentaires
 - ✅ `app/play/[slug]/page.tsx` - Utilise GameCommentsSimple
 
 ### Database
+
 - ✅ `game-comments-simple.sql` - Nouvelle table pour commentaires anonymes
 
 ### Fichiers sauvegardés
+
 - `components/GameComments.tsx.old` - Ancien composant (sauvegardé)
 
 ## 🗄️ Base de données - Configuration requise
@@ -62,6 +69,7 @@ CREATE TABLE IF NOT EXISTS game_comments_simple (
 ```
 
 **Étapes** :
+
 1. Aller sur https://supabase.com/dashboard/project/vpwvcgqbepomocrnfurz/editor
 2. Cliquer sur "SQL Editor"
 3. Copier-coller le contenu de `game-comments-simple.sql`
@@ -70,6 +78,7 @@ CREATE TABLE IF NOT EXISTS game_comments_simple (
 ## 📦 LocalStorage Schema
 
 ### `game_reactions`
+
 ```json
 {
   "void-siege": "like",
@@ -78,11 +87,13 @@ CREATE TABLE IF NOT EXISTS game_comments_simple (
 ```
 
 ### `game_favorites`
+
 ```json
 ["void-siege", "merge-miners-tycoon", "voxel-playground"]
 ```
 
 ### `puzzio_username`
+
 ```
 "Player123"
 ```
@@ -90,9 +101,11 @@ CREATE TABLE IF NOT EXISTS game_comments_simple (
 ## 🚀 Déploiement
 
 ### 1. **Exécuter le script SQL dans Supabase** (OBLIGATOIRE)
+
 Voir section "Base de données" ci-dessus
 
 ### 2. **Commit et Push**
+
 ```bash
 git add .
 git commit -m "feat: Enable anonymous interactions (likes, comments, favorites)"
@@ -100,6 +113,7 @@ git push origin main
 ```
 
 ### 3. **Déployer sur le serveur**
+
 ```bash
 ssh root@147.93.7.103
 cd /root/puzzio
@@ -124,7 +138,7 @@ docker-compose up -d --build
 ✅ **Engagement accru** - Les utilisateurs peuvent interagir immédiatement  
 ✅ **Design épuré** - Interface plus simple sans options d'auth  
 ✅ **Performance** - Moins de requêtes Supabase Auth  
-✅ **Simplicité** - Code plus simple à maintenir  
+✅ **Simplicité** - Code plus simple à maintenir
 
 ## 📝 Notes techniques
 

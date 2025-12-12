@@ -35,9 +35,9 @@ export default function AboutUsPage() {
               At Puzzio.io, we believe that everyone deserves access to
               high-quality entertainment. Our mission is to provide a vast
               collection of free online games that can be enjoyed instantly,
-              without downloads, installations, or barriers. We&apos;re committed to
-              delivering fun, engaging, and accessible gaming experiences to
-              players worldwide.
+              without downloads, installations, or barriers. We&apos;re
+              committed to delivering fun, engaging, and accessible gaming
+              experiences to players worldwide.
             </p>
           </section>
 
@@ -118,8 +118,8 @@ export default function AboutUsPage() {
             <p className="text-gray-300 leading-relaxed">
               We set out to change that by creating a platform where anyone with
               an internet connection could enjoy quality games instantly. Today,
-              we&apos;re proud to serve millions of players worldwide, offering a
-              constantly growing library of games that cater to all tastes and
+              we&apos;re proud to serve millions of players worldwide, offering
+              a constantly growing library of games that cater to all tastes and
               skill levels.
             </p>
           </section>
@@ -191,8 +191,8 @@ export default function AboutUsPage() {
               Get in Touch
             </h2>
             <p className="text-gray-300 mb-6">
-              Have questions, feedback, or suggestions? We&apos;d love to hear from
-              you!
+              Have questions, feedback, or suggestions? We&apos;d love to hear
+              from you!
             </p>
             <Link
               href="/contact"

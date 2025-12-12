@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllGames, getNewGames, getTrendingGames } from '@/lib/games'; // Import our new function
+import { stripHtml } from '@/lib/utils';
+
+// ISR: Regenerate this page every 60 seconds in the background
+// This keeps the site blazing fast while showing fresh content
+export const revalidate = 60;
 
 // This is a Server Component
 export default async function PlayPage({
@@ -53,8 +58,14 @@ export default async function PlayPage({
         '@type': 'VideoGame',
         name: game.title,
         url: `https://puzzio.io/play/${game.slug}`,
-        image: game.image_url,
-        description: game.description,
+        image: {
+          '@type': 'ImageObject',
+          url: game.image_url,
+          description: game.image_description || stripHtml(game.description),
+          name: game.image_title || game.title,
+        },
+        description: stripHtml(game.description),
+        keywords: game.image_keywords?.join(', '),
       },
     })),
   };
@@ -64,12 +75,15 @@ export default async function PlayPage({
       <div className="flex items-center justify-center p-8 text-white">
         <div className="text-center">
           <p className="text-xl mb-2">
-            {searchQuery 
-              ? `No games found for "${searchQuery}"` 
+            {searchQuery
+              ? `No games found for "${searchQuery}"`
               : 'No games found. Please run the import workflow.'}
           </p>
           {searchQuery && (
-            <Link href="/play" className="text-purple-400 hover:text-purple-300 underline">
+            <Link
+              href="/play"
+              className="text-purple-400 hover:text-purple-300 underline"
+            >
               Clear search and view all games
             </Link>
           )}
@@ -96,7 +110,7 @@ export default async function PlayPage({
               {featuredGame.title}
             </h1>
             <p className="text-xl text-gray-300 mb-6 line-clamp-3">
-              {featuredGame.description}
+              {stripHtml(featuredGame.description)}
             </p>
             <Link href={`/play/${featuredGame.slug}`}>
               <button className="px-8 py-3 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
@@ -108,7 +122,8 @@ export default async function PlayPage({
           <div className="relative hidden md:block w-1/2 h-full rounded-lg overflow-hidden">
             <Image
               src={featuredGame.image_url}
-              alt={featuredGame.title}
+              alt={featuredGame.image_alt || featuredGame.title}
+              title={featuredGame.image_title || featuredGame.title}
               fill
               className="object-cover rounded-lg shadow-lg"
               sizes="50vw"
@@ -122,10 +137,12 @@ export default async function PlayPage({
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-white mb-8">
-            {searchQuery ? `Search results for "${searchQuery}"` : 'Trending Games'}
+            {searchQuery
+              ? `Search results for "${searchQuery}"`
+              : 'Trending Games'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trendingGames.map((game) => (
+            {trendingGames.map((game, index) => (
               <div
                 key={game.id}
                 className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
@@ -133,11 +150,13 @@ export default async function PlayPage({
                 <div className="relative h-48 overflow-hidden">
                   <Image
                     src={game.image_url}
-                    alt={game.title}
+                    alt={game.image_alt || game.title}
+                    title={game.image_title || game.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    loading="lazy"
+                    loading={index < 4 ? "eager" : "lazy"}
+                    priority={index < 2}
                   />
                 </div>
                 <div className="p-4">
@@ -148,7 +167,7 @@ export default async function PlayPage({
                     {game.title}
                   </h3>
                   <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {game.description}
+                    {stripHtml(game.description)}
                   </p>
                   <Link href={`/play/${game.slug}`}>
                     <button className="w-full py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
@@ -175,7 +194,8 @@ export default async function PlayPage({
                 <div className="relative h-48 overflow-hidden">
                   <Image
                     src={game.image_url}
-                    alt={game.title}
+                    alt={game.image_alt || game.title}
+                    title={game.image_title || game.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -190,7 +210,7 @@ export default async function PlayPage({
                     {game.title}
                   </h3>
                   <p className="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {game.description}
+                    {stripHtml(game.description)}
                   </p>
                   <Link href={`/play/${game.slug}`}>
                     <button className="w-full py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">

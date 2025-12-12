@@ -1,32 +1,32 @@
-'use client'
+'use client';
 
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import { useState, useEffect } from 'react'
-import { User as UserIcon, LogOut } from 'lucide-react'
-import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
+import { useState, useEffect } from 'react';
+import { User as UserIcon, LogOut } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AuthButton() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
+      setUser(session?.user ?? null);
+    });
 
-    return () => subscription.unsubscribe()
-  }, [supabase])
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
@@ -34,17 +34,17 @@ export default function AuthButton() {
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
-    })
-  }
+    });
+  };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-  }
+    await supabase.auth.signOut();
+  };
 
   if (loading) {
     return (
       <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
-    )
+    );
   }
 
   if (user) {
@@ -73,7 +73,7 @@ export default function AuthButton() {
           <LogOut className="w-4 h-4" />
         </button>
       </div>
-    )
+    );
   }
 
   return (
@@ -83,5 +83,5 @@ export default function AuthButton() {
     >
       Sign in with Google
     </button>
-  )
+  );
 }

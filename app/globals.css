@@ -35,3 +35,66 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
+
+/* Game description styling - optimized for SEO and readability */
+.game-description h3 {
+  color: #a78bfa;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #4c1d95;
+  padding-bottom: 0.5rem;
+}
+
+.game-description h4 {
+  color: #c4b5fd;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.game-description p {
+  color: #d1d5db;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.game-description strong {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.game-description ul,
+.game-description ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  color: #d1d5db;
+}
+
+.game-description li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.game-description ul li {
+  list-style-type: disc;
+}
+
+.game-description ol li {
+  list-style-type: decimal;
+}
+
+/* Internal links styling */
+.game-description a {
+  color: #a78bfa;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.game-description a:hover {
+  color: #c4b5fd;
+}

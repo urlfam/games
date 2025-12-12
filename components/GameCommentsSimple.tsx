@@ -1,32 +1,34 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Star, Send, User as UserIcon } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { Star, Send, User as UserIcon } from 'lucide-react';
 
 interface Comment {
-  id: string
-  username: string
-  content: string
-  rating: number | null
-  created_at: string
+  id: string;
+  username: string;
+  content: string;
+  rating: number | null;
+  created_at: string;
 }
 
 interface GameCommentsSimpleProps {
-  gameSlug: string
+  gameSlug: string;
 }
 
-export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps) {
-  const [comments, setComments] = useState<Comment[]>([])
-  const [loading, setLoading] = useState(true)
-  const [newComment, setNewComment] = useState('')
-  const [username, setUsername] = useState('')
-  const [newRating, setNewRating] = useState<number>(0)
-  const [hoverRating, setHoverRating] = useState<number>(0)
-  const [submitting, setSubmitting] = useState(false)
-  const [showUsernamePrompt, setShowUsernamePrompt] = useState(false)
-  
-  const supabase = createClient()
+export default function GameCommentsSimple({
+  gameSlug,
+}: GameCommentsSimpleProps) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newComment, setNewComment] = useState('');
+  const [username, setUsername] = useState('');
+  const [newRating, setNewRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
+
+  const supabase = createClient();
 
   // Load username from localStorage
   useEffect(() => {
@@ -34,12 +36,12 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
       const savedUsername = localStorage.getItem('puzzio_username') || '';
       setUsername(savedUsername);
     }
-  }, [])
+  }, []);
 
   // Fetch comments
   useEffect(() => {
-    fetchComments()
-  }, [gameSlug])
+    fetchComments();
+  }, [gameSlug]);
 
   const fetchComments = async () => {
     try {
@@ -47,34 +49,34 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
         .from('game_comments_simple')
         .select('*')
         .eq('game_slug', gameSlug)
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching comments:', error)
-        setComments([])
+        console.error('Error fetching comments:', error);
+        setComments([]);
       } else {
-        setComments(data || [])
+        setComments(data || []);
       }
     } catch (error) {
-      console.error('Error fetching comments:', error)
-      setComments([])
+      console.error('Error fetching comments:', error);
+      setComments([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!newComment.trim()) return
+    e.preventDefault();
+
+    if (!newComment.trim()) return;
 
     // Check if username is set
     if (!username.trim()) {
-      setShowUsernamePrompt(true)
-      return
+      setShowUsernamePrompt(true);
+      return;
     }
 
-    setSubmitting(true)
+    setSubmitting(true);
     try {
       const { data, error } = await supabase
         .from('game_comments_simple')
@@ -83,70 +85,74 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
             game_slug: gameSlug,
             username: username.trim(),
             content: newComment.trim(),
-            rating: newRating > 0 ? newRating : null
-          }
+            rating: newRating > 0 ? newRating : null,
+          },
         ])
-        .select()
+        .select();
 
       if (error) {
-        console.error('Supabase error details:', error)
-        throw error
+        console.error('Supabase error details:', error);
+        throw error;
       }
 
-      console.log('Comment posted successfully:', data)
+      console.log('Comment posted successfully:', data);
 
       // Clear form
-      setNewComment('')
-      setNewRating(0)
-      
+      setNewComment('');
+      setNewRating(0);
+
       // Refresh comments
-      await fetchComments()
+      await fetchComments();
     } catch (error: any) {
-      console.error('Error posting comment:', error)
-      const errorMessage = error?.message || 'Unknown error'
-      alert(`Failed to post comment: ${errorMessage}`)
+      console.error('Error posting comment:', error);
+      const errorMessage = error?.message || 'Unknown error';
+      alert(`Failed to post comment: ${errorMessage}`);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleUsernameSubmit = () => {
     if (username.trim()) {
-      localStorage.setItem('puzzio_username', username.trim())
-      setShowUsernamePrompt(false)
+      localStorage.setItem('puzzio_username', username.trim());
+      setShowUsernamePrompt(false);
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffMs = now.getTime() - date.getTime()
-    const diffMins = Math.floor(diffMs / 60000)
-    const diffHours = Math.floor(diffMs / 3600000)
-    const diffDays = Math.floor(diffMs / 86400000)
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now'
-    if (diffMins < 60) return `${diffMins}m ago`
-    if (diffHours < 24) return `${diffHours}h ago`
-    if (diffDays < 7) return `${diffDays}d ago`
-    
-    return date.toLocaleDateString()
-  }
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    return date.toLocaleDateString();
+  };
 
   const renderStars = (rating: number | null) => {
-    if (!rating) return null
+    if (!rating) return null;
     return (
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
             size={14}
-            className={star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}
+            className={
+              star <= rating
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-gray-400'
+            }
           />
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="mt-8">
@@ -158,8 +164,12 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
       {showUsernamePrompt && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-slate-800 rounded-xl p-6 max-w-md w-full border border-purple-500/20">
-            <h4 className="text-xl font-bold text-white mb-4">Choose a Username</h4>
-            <p className="text-gray-400 mb-4">Enter a username to post your comment:</p>
+            <h4 className="text-xl font-bold text-white mb-4">
+              Choose a Username
+            </h4>
+            <p className="text-gray-400 mb-4">
+              Enter a username to post your comment:
+            </p>
             <input
               type="text"
               value={username}
@@ -189,7 +199,10 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
       )}
 
       {/* Comment Form */}
-      <form onSubmit={handleSubmitComment} className="mb-8 bg-slate-800/50 rounded-xl p-6 border border-purple-500/20">
+      <form
+        onSubmit={handleSubmitComment}
+        className="mb-8 bg-slate-800/50 rounded-xl p-6 border border-purple-500/20"
+      >
         {/* Rating */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -244,8 +257,8 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
         {/* Username Display */}
         {username && (
           <div className="mb-4 text-sm text-gray-400">
-            Posting as: <span className="text-purple-400 font-medium">{username}</span>
-            {' '}
+            Posting as:{' '}
+            <span className="text-purple-400 font-medium">{username}</span>{' '}
             <button
               type="button"
               onClick={() => setShowUsernamePrompt(true)}
@@ -274,7 +287,9 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
         </div>
       ) : comments.length === 0 ? (
         <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-slate-700">
-          <p className="text-gray-400 text-lg">No comments yet. Be the first to share your thoughts!</p>
+          <p className="text-gray-400 text-lg">
+            No comments yet. Be the first to share your thoughts!
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -312,5 +327,5 @@ export default function GameCommentsSimple({ gameSlug }: GameCommentsSimpleProps
         </div>
       )}
     </div>
-  )
+  );
 }

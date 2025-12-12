@@ -5,6 +5,11 @@ import GameCommentsSimple from '@/components/GameCommentsSimple';
 import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { stripHtml } from '@/lib/utils';
+
+// ISR: Regenerate game pages every 60 seconds
+// Keeps pages fast while showing updated content
+export const revalidate = 60;
 
 interface GamePageProps {
   params: { slug: string };
@@ -24,16 +29,19 @@ export async function generateMetadata({
 
   return {
     title: `${game.title} - Play on Puzzio.io`,
-    description: game.description,
+    description: game.image_description || stripHtml(game.description).substring(0, 160),
     openGraph: {
       title: game.title,
-      description: game.description,
-      images: [{ url: game.image_url }],
+      description: game.image_description || stripHtml(game.description).substring(0, 200),
+      images: [{ 
+        url: game.image_url,
+        alt: game.image_alt || game.title
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: game.title,
-      description: game.description,
+      description: game.image_description || stripHtml(game.description).substring(0, 200),
       images: [game.image_url],
     },
   };
@@ -71,6 +79,9 @@ export default async function GamePage({ params }: GamePageProps) {
               gameUrl={gameProxyUrl}
               gameImage={game.image_url}
               gameSlug={game.slug || params.slug}
+              gameCategory={game.category}
+              imageAlt={game.image_alt}
+              imageTitle={game.image_title}
             />
           </div>
 
@@ -91,11 +102,12 @@ export default async function GamePage({ params }: GamePageProps) {
           </div>
 
           {/* Game Description */}
-          <div className="bg-slate-800 rounded-lg p-4 mb-6">
-            <h2 className="text-2xl font-bold text-white mb-3">Description</h2>
-            <div className="prose prose-invert max-w-none text-gray-300">
-              <p>{game.description}</p>
-            </div>
+          <div className="bg-slate-800 rounded-lg p-6 mb-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Description</h2>
+            <div 
+              className="game-description prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: game.description }}
+            />
           </div>
 
           {/* Comments Section */}

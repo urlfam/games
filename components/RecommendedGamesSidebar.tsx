@@ -41,7 +41,8 @@ export default function RecommendedGamesSidebar({
                 <div className="relative aspect-video overflow-hidden bg-slate-900">
                   <Image
                     src={game.image_url} // Use image_url
-                    alt={game.title}
+                    alt={game.image_alt || game.title}
+                    title={game.image_title || game.title}
                     fill
                     sizes="(max-width: 1280px) 50vw, 128px"
                     className="object-cover group-hover:scale-110 transition-transform duration-300"

@@ -77,6 +77,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <head>
+        {/* Preconnect to Cloudinary CDN for faster image loading */}
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        {/* Preconnect to CrazyGames for faster game loading */}
+        <link rel="preconnect" href="https://imgs.crazygames.com" />
+        <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
+        
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}

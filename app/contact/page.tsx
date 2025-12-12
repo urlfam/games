@@ -173,8 +173,8 @@ export default function ContactPage() {
                 </button>
 
                 <p className="text-xs text-gray-500 mt-4">
-                  Note: This is a demo form. To make it functional, you&apos;ll need
-                  to implement backend handling.
+                  Note: This is a demo form. To make it functional, you&apos;ll
+                  need to implement backend handling.
                 </p>
               </form>
             </div>

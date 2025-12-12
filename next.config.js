@@ -15,6 +15,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.crazygames.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
   eslint: {
