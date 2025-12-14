@@ -1,0 +1,21 @@
+# ============================================
+# PUZZIO PROXY - Nginx avec Anti-Pub v2.0
+# ============================================
+FROM nginx:alpine
+
+# Copier la configuration nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copier le script injector.js (NOUVEAU - v2.0)
+COPY injector.js /usr/share/nginx/html/injector.js
+
+# Créer les dossiers de logs
+RUN mkdir -p /var/log/nginx && \
+    touch /var/log/nginx/access.log && \
+    touch /var/log/nginx/error.log
+
+# Exposer le port 9999
+EXPOSE 9999
+
+# Démarrer nginx
+CMD ["nginx", "-g", "daemon off;"]
