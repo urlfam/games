@@ -33,6 +33,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Generated data files (managed by n8n workflow)
+data/games.json
+
 # docker
 .dockerignore
 # Dockerfile
