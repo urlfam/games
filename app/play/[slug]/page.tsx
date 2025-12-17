@@ -29,23 +29,23 @@ export async function generateMetadata({
 
   return {
     title: `${game.title} - Play on Puzzio.io`,
-    description: game.image_description || stripHtml(game.description).substring(0, 160),
+    description: (game as any).image_description || stripHtml(game.description).substring(0, 160),
     alternates: {
       canonical: `https://puzzio.io/play/${params.slug}`,
     },
     openGraph: {
       title: game.title,
-      description: game.image_description || stripHtml(game.description).substring(0, 200),
+      description: (game as any).image_description || stripHtml(game.description).substring(0, 200),
       url: `https://puzzio.io/play/${params.slug}`,
       images: [{ 
         url: game.image_url,
-        alt: game.image_alt || game.title
+        alt: (game as any).image_alt || game.title
       }],
     },
     twitter: {
       card: 'summary_large_image',
       title: game.title,
-      description: game.image_description || stripHtml(game.description).substring(0, 200),
+      description: (game as any).image_description || stripHtml(game.description).substring(0, 200),
       images: [game.image_url],
     },
   };
