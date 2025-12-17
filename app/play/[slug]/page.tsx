@@ -84,8 +84,8 @@ export default async function GamePage({ params }: GamePageProps) {
               gameImage={game.image_url}
               gameSlug={game.slug || params.slug}
               gameCategory={game.category}
-              imageAlt={game.image_alt}
-              imageTitle={game.image_title}
+              imageAlt={(game as any).image_alt}
+              imageTitle={(game as any).image_title}
             />
           </div>
 
