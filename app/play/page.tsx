@@ -147,7 +147,7 @@ export default async function PlayPage({
                 key={game.id}
                 className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <Image
                     src={game.image_url}
                     alt={game.image_alt || game.title}
@@ -191,7 +191,7 @@ export default async function PlayPage({
                 key={game.id}
                 className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <Image
                     src={game.image_url}
                     alt={game.image_alt || game.title}
