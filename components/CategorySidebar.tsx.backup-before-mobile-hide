@@ -70,23 +70,13 @@ export default function CategorySidebar() {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <>
-      {/* Inject custom CSS to hide on mobile */}
-      <style jsx>{`
-        @media (max-width: 767px) {
-          .category-sidebar {
-            display: none !important;
-          }
-        }
-      `}</style>
-      
-      <aside
-        className={`category-sidebar fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-20 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent ${
-          isHovered ? 'w-56' : 'w-16'
-        }`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+    <aside
+      className={`fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-20 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent ${
+        isHovered ? 'w-56' : 'w-16'
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Categories */}
       <nav className="flex flex-col gap-1 mt-16 px-2 flex-1">
         {categories.map((category) => {
@@ -220,6 +210,5 @@ export default function CategorySidebar() {
         </div>
       </div>
     </aside>
-    </>
   );
 }

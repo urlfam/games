@@ -30,4 +30,15 @@ services:
       - '9999:9999'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./injector.js:/usr/share/nginx/html/injector.js:ro
     restart: unless-stopped
+
+  validator:
+    image: puzzio-validator:latest
+    container_name: puzzio-validator
+    network_mode: host
+    volumes:
+      - ./test_game.py:/app/test_game.py:ro
+      - ./validation-results:/app/results
+    restart: unless-stopped
+    command: tail -f /dev/null

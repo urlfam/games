@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/Header';
+import HeaderServer from '@/components/HeaderServer';
 import ConditionalFooter from '@/components/ConditionalFooter';
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const nunito = Nunito({ 
+  subsets: ['latin'], 
+  display: 'swap',
+  weight: ['400', '600', '700', '800', '900']
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://puzzio.io'), // Remplacez par votre domaine
@@ -75,7 +79,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={nunito.className}>
       <head>
         {/* Preconnect to Cloudinary CDN for faster image loading */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
@@ -96,7 +100,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Header />
+        <HeaderServer />
         <main>{children}</main>
         <ConditionalFooter />
       </body>

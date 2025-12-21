@@ -49,7 +49,7 @@ export default function GamePlayerWithSplash({
   // Calculate rating based on likes and dislikes
   const calculateRating = () => {
     const total = likeCount + dislikeCount;
-    if (total === 0) return 7.5; // Default rating
+    if (total === 0) return 10.0; // Default rating
     const ratio = likeCount / total;
     // Scale from 5.0 to 10.0 based on like ratio
     return Math.max(5.0, Math.min(10.0, 5.0 + ratio * 5.0));
@@ -565,7 +565,7 @@ export default function GamePlayerWithSplash({
               {/* Content */}
               <div className="relative z-10 flex flex-col items-center gap-8 p-8 w-full max-w-4xl">
                 {/* Game Thumbnail */}
-                <div className="relative w-64 h-64 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-purple-500/50 transition-all">
+                <div className="relative w-96 aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-purple-500/50 transition-all">
                   <Image
                     src={gameImage}
                     alt={imageAlt || gameTitle}

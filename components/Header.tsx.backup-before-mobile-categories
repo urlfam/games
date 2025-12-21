@@ -3,70 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Search } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-  Home,
-  Clock,
-  Sparkles,
-  Flame,
-  RefreshCw,
-  Gamepad2,
-  Users,
-  UsersRound,
-  Sword,
-  Compass,
-  Dumbbell,
-  Crosshair,
-  Spade,
-  PersonStanding,
-  MousePointer2,
-  Car,
-  Gem,
-  Trophy,
-  Ghost,
-  Circle,
-  Castle,
-  PanelLeft,
-  Music,
-  Palette,
-} from 'lucide-react';
-
-// Category configuration (same as CategorySidebar)
-const categories = [
-  { name: 'Home', slug: 'all', icon: Home },
-  { name: 'Recently played', slug: 'recent', icon: Clock },
-  { name: 'New', slug: 'new', icon: Sparkles },
-  { name: 'Popular Games', slug: 'trending', icon: Flame },
-  { name: 'Updated', slug: 'updated', icon: RefreshCw },
-  { name: 'Originals', slug: 'originals', icon: Gamepad2 },
-  { name: 'Multiplayer', slug: 'multiplayer', icon: Users },
-  { name: '2 Player', slug: '2-player', icon: UsersRound },
-  { name: 'Action', slug: 'action', icon: Sword },
-  { name: 'Adventure', slug: 'adventure', icon: Compass },
-  { name: 'Basketball', slug: 'basketball', icon: Dumbbell },
-  { name: 'Pool', slug: 'pool', icon: Circle },
-  { name: 'Card', slug: 'cards', icon: Spade },
-  { name: 'Casual', slug: 'casual', icon: PersonStanding },
-  { name: 'Clicker', slug: 'clicker', icon: MousePointer2 },
-  { name: 'Driving', slug: 'driving', icon: Car },
-  { name: 'Tower Defense', slug: 'tower-defense', icon: Castle },
-  { name: 'Escape', slug: 'escape', icon: PanelLeft },
-  { name: 'Flash', slug: 'flash', icon: Music },
-  { name: 'Soccer', slug: 'soccer', icon: Trophy },
-  { name: 'Horror', slug: 'horror', icon: Ghost },
-  { name: '.io', slug: 'io', icon: Circle },
-  { name: 'Mahjong', slug: 'mahjong', icon: Palette },
-  { name: 'Shooting', slug: 'shooting', icon: Crosshair },
-  { name: 'Puzzle', slug: 'puzzle', icon: Gem },
-];
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
 
   // Determine header style - white for news and static pages, dark for play
   const isNewsMain = pathname === '/news';
@@ -222,41 +165,6 @@ export default function Header() {
             >
               NEWS
             </Link>
-
-            {/* Divider */}
-            <div className={`my-2 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>
-
-            {/* Categories - Mobile only */}
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                const isActive =
-                  activeCategory === category.slug ||
-                  (category.slug === 'all' && activeCategory === 'all');
-
-                return (
-                  <Link
-                    key={category.slug}
-                    href={
-                      category.slug === 'all'
-                        ? '/play'
-                        : `/play?category=${category.slug}`
-                    }
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
-                      isActive
-                        ? 'bg-purple-600 text-white'
-                        : isWhiteHeader
-                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    <Icon size={18} />
-                    <span className="text-sm font-medium truncate">{category.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
           </div>
         </div>
       )}

@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Star, Send, User as UserIcon } from 'lucide-react';
+import { Send, User as UserIcon } from 'lucide-react';
 
 interface Comment {
   id: string;
   username: string;
   content: string;
-  rating: number | null;
   created_at: string;
 }
 
@@ -23,8 +22,6 @@ export default function GameCommentsSimple({
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [username, setUsername] = useState('');
-  const [newRating, setNewRating] = useState<number>(0);
-  const [hoverRating, setHoverRating] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
 
@@ -85,7 +82,6 @@ export default function GameCommentsSimple({
             game_slug: gameSlug,
             username: username.trim(),
             content: newComment.trim(),
-            rating: newRating > 0 ? newRating : null,
           },
         ])
         .select();
@@ -99,7 +95,6 @@ export default function GameCommentsSimple({
 
       // Clear form
       setNewComment('');
-      setNewRating(0);
 
       // Refresh comments
       await fetchComments();
@@ -133,25 +128,6 @@ export default function GameCommentsSimple({
     if (diffDays < 7) return `${diffDays}d ago`;
 
     return date.toLocaleDateString();
-  };
-
-  const renderStars = (rating: number | null) => {
-    if (!rating) return null;
-    return (
-      <div className="flex gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={14}
-            className={
-              star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-400'
-            }
-          />
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -203,39 +179,6 @@ export default function GameCommentsSimple({
         onSubmit={handleSubmitComment}
         className="mb-8 bg-slate-800/50 rounded-xl p-6 border border-purple-500/20"
       >
-        {/* Rating */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Rate this game (optional)
-          </label>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setNewRating(star === newRating ? 0 : star)}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                className="transition-transform hover:scale-110"
-              >
-                <Star
-                  size={28}
-                  className={
-                    star <= (hoverRating || newRating)
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-gray-500 hover:text-gray-400'
-                  }
-                />
-              </button>
-            ))}
-            {newRating > 0 && (
-              <span className="ml-2 text-gray-400 self-center">
-                {newRating} / 5
-              </span>
-            )}
-          </div>
-        </div>
-
         {/* Comment Input */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -312,7 +255,6 @@ export default function GameCommentsSimple({
                     <span className="font-semibold text-white">
                       {comment.username}
                     </span>
-                    {comment.rating && renderStars(comment.rating)}
                     <span className="text-sm text-gray-500">
                       {formatDate(comment.created_at)}
                     </span>

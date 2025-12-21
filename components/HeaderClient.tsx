@@ -2,65 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, Mail, Info, FileText, Shield, Heart } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-  Home,
-  Clock,
-  Sparkles,
-  Flame,
-  RefreshCw,
-  Gamepad2,
-  Users,
-  UsersRound,
-  Sword,
-  Compass,
-  Dumbbell,
-  Crosshair,
-  Spade,
-  PersonStanding,
-  MousePointer2,
-  Car,
-  Gem,
-  Trophy,
-  Ghost,
-  Circle,
-  Castle,
-  PanelLeft,
-  Music,
-  Palette,
-} from 'lucide-react';
+import { getCategoryIcon } from '@/lib/categoryIcons';
 
-// Category configuration (same as CategorySidebar)
-const categories = [
-  { name: 'Home', slug: 'all', icon: Home },
-  { name: 'Recently played', slug: 'recent', icon: Clock },
-  { name: 'New', slug: 'new', icon: Sparkles },
-  { name: 'Popular Games', slug: 'trending', icon: Flame },
-  { name: 'Updated', slug: 'updated', icon: RefreshCw },
-  { name: 'Originals', slug: 'originals', icon: Gamepad2 },
-  { name: 'Multiplayer', slug: 'multiplayer', icon: Users },
-  { name: '2 Player', slug: '2-player', icon: UsersRound },
-  { name: 'Action', slug: 'action', icon: Sword },
-  { name: 'Adventure', slug: 'adventure', icon: Compass },
-  { name: 'Basketball', slug: 'basketball', icon: Dumbbell },
-  { name: 'Pool', slug: 'pool', icon: Circle },
-  { name: 'Card', slug: 'cards', icon: Spade },
-  { name: 'Casual', slug: 'casual', icon: PersonStanding },
-  { name: 'Clicker', slug: 'clicker', icon: MousePointer2 },
-  { name: 'Driving', slug: 'driving', icon: Car },
-  { name: 'Tower Defense', slug: 'tower-defense', icon: Castle },
-  { name: 'Escape', slug: 'escape', icon: PanelLeft },
-  { name: 'Flash', slug: 'flash', icon: Music },
-  { name: 'Soccer', slug: 'soccer', icon: Trophy },
-  { name: 'Horror', slug: 'horror', icon: Ghost },
-  { name: '.io', slug: 'io', icon: Circle },
-  { name: 'Mahjong', slug: 'mahjong', icon: Palette },
-  { name: 'Shooting', slug: 'shooting', icon: Crosshair },
-  { name: 'Puzzle', slug: 'puzzle', icon: Gem },
-];
+interface Category {
+  name: string;
+  slug: string;
+}
 
-export default function Header() {
+interface HeaderProps {
+  categories: Category[];
+}
+
+export default function Header({ categories }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const pathname = usePathname();
@@ -106,8 +61,8 @@ export default function Header() {
 
   // Mobile menu dropdown style
   const mobileMenuDropdownClass = isWhiteHeader
-    ? 'md:hidden border-t border-gray-200 bg-white'
-    : 'md:hidden border-t border-slate-700 bg-slate-800';
+    ? 'md:hidden fixed inset-0 top-16 bg-white z-40 overflow-y-auto'
+    : 'md:hidden fixed inset-0 top-16 bg-slate-800 z-40 overflow-y-auto';
 
   // Mobile menu link colors
   const mobilePlayLinkClass = isWhiteHeader
@@ -132,6 +87,7 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/play?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsMobileMenuOpen(false);
     }
   };
 
@@ -191,7 +147,7 @@ export default function Header() {
       {/* Mobile menu dropdown */}
       {isMobileMenuOpen && (
         <div className={mobileMenuDropdownClass}>
-          <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
+          <div className="max-w-7xl mx-auto px-4 py-4 pb-24 space-y-3">
             {/* Mobile search bar */}
             <form onSubmit={handleSearch} className="relative mb-4">
               <Search
@@ -229,7 +185,7 @@ export default function Header() {
             {/* Categories - Mobile only */}
             <div className="grid grid-cols-2 gap-2 mt-2">
               {categories.map((category) => {
-                const Icon = category.icon;
+                const Icon = getCategoryIcon(category.slug);
                 const isActive =
                   activeCategory === category.slug ||
                   (category.slug === 'all' && activeCategory === 'all');
@@ -256,6 +212,63 @@ export default function Header() {
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Divider */}
+            <div className={`my-4 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>
+
+            {/* Legal Pages - Mobile only */}
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/play/favorites"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
+                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Heart size={18} className="text-pink-500" />
+                <span>My Favorites</span>
+              </Link>
+              <Link
+                href="/contact"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
+                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Mail size={18} />
+                <span>Contact us</span>
+              </Link>
+              <Link
+                href="/about-us"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
+                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Info size={18} />
+                <span>About</span>
+              </Link>
+              <Link
+                href="/terms"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
+                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <FileText size={18} />
+                <span>Terms & conditions</span>
+              </Link>
+              <Link
+                href="/privacy"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
+                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Shield size={18} />
+                <span>Privacy</span>
+              </Link>
             </div>
           </div>
         </div>

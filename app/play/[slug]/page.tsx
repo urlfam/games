@@ -6,6 +6,10 @@ import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/server';
+import Script from 'next/script';
+import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
+import { headers } from 'next/headers';
 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
@@ -61,6 +65,58 @@ export default async function GamePage({ params }: GamePageProps) {
     notFound();
   }
 
+  // Fetch ratings for Schema (based on Likes/Dislikes)
+  const supabase = await createClient();
+  
+  // Increment play count on page load (server-side)
+  // We use a simple RPC call. In a real high-traffic app, you might want to debounce this or use a queue.
+  // But for now, this ensures every visit counts and seeds new games.
+  // We wrap in try/catch to not block page load if DB is slow/down
+  try {
+    await supabase.rpc('increment_play_count', { p_game_slug: params.slug });
+  } catch (e) {
+    console.error('Failed to increment play count', e);
+  }
+
+  const { data: stats } = await supabase
+    .from('game_stats')
+    .select('likes, dislikes, plays')
+    .eq('game_slug', params.slug)
+    .single();
+
+  const likes = stats?.likes || 0;
+  const dislikes = stats?.dislikes || 0;
+  const plays = stats?.plays || 0;
+  const totalVotes = likes + dislikes;
+  
+  // Calculate rating on 5-point scale for Schema: (Likes / Total) * 5
+  const ratingValueSchema = totalVotes > 0 ? (likes / totalVotes) * 5 : 0;
+  
+  // Calculate rating on 10-point scale for Visual: (Likes / Total) * 10
+  // If no votes, default to 10.0 as per user request for visual consistency with player
+  const ratingValueVisual = totalVotes > 0 ? (likes / totalVotes) * 10 : 10.0;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: game.title,
+    description: stripHtml(game.description),
+    image: game.image_url,
+    genre: game.category,
+    playMode: 'SinglePlayer',
+    applicationCategory: 'Game',
+    url: `https://puzzio.io/play/${params.slug}`,
+    ...(totalVotes > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: ratingValueSchema.toFixed(1),
+        ratingCount: totalVotes,
+        bestRating: '5',
+        worstRating: '1'
+      }
+    })
+  };
+
   const recommendedGames = allGames
     .filter((g) => g.category === game.category && g.id !== game.id)
     .slice(0, 12);
@@ -73,6 +129,11 @@ export default async function GamePage({ params }: GamePageProps) {
 
   return (
     <div className="p-4 lg:p-6">
+      <Script
+        id="game-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content (Game, Description, Comments) */}
         <div className="lg:col-span-3">
@@ -90,19 +151,106 @@ export default async function GamePage({ params }: GamePageProps) {
           </div>
 
           {/* Game Info Header */}
-          <div className="bg-slate-800 rounded-lg p-4 mb-6">
-            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+          <div className="bg-slate-800 rounded-lg p-6 mb-6">
+            <h1 className="text-3xl lg:text-4xl font-black text-white mb-6">
               {game.title}
             </h1>
-            <Link
-              href={`/play?category=${game.category.toLowerCase()}`}
-              className="text-sm text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Category:{' '}
-              <span className="font-semibold text-purple-400">
-                {game.category}
-              </span>
-            </Link>
+            
+            {/* Compact Info List */}
+            <div className="space-y-2 text-base text-gray-300 mb-8">
+              {/* Rating */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Rating:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-black text-white text-xl">{ratingValueVisual.toFixed(1)}</span>
+                  <span className="text-gray-500 text-sm">({totalVotes.toLocaleString()} votes)</span>
+                </div>
+              </div>
+
+              {/* Played (Real data from DB) */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Played:</span>
+                <span className="text-white font-semibold">{plays.toLocaleString()} times</span>
+              </div>
+              
+              {/* Released */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Released:</span>
+                <span className="text-white font-semibold">
+                  {new Date(game.importedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+
+              {/* Last Updated */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Last Updated:</span>
+                <span className="text-white font-semibold">
+                  {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+
+              {/* Technology */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Technology:</span>
+                <span className="text-white font-semibold">HTML5</span>
+              </div>
+
+              {/* Platform */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Platform:</span>
+                <span className="text-white font-semibold">Browser (desktop, mobile, tablet)</span>
+              </div>
+
+              {/* Classification */}
+              <div className="flex items-center">
+                <span className="w-32 text-gray-500 font-medium">Classification:</span>
+                <div className="flex items-center gap-1 text-purple-400 font-bold">
+                  <Link href="/play" className="hover:underline">Games</Link>
+                  <span className="text-gray-600">»</span>
+                  <Link href={`/play?category=${game.category.toLowerCase()}`} className="hover:underline">{game.category}</Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Smart Tags */}
+            <div className="flex flex-wrap gap-3">
+              {/* Main Category Tag */}
+              <Link 
+                href={`/play?category=${game.category.toLowerCase()}`} 
+                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-purple-600 rounded-full text-white transition-all transform hover:scale-105"
+              >
+                <Tag size={14} />
+                <span className="font-bold capitalize">{game.category}</span>
+              </Link>
+              
+              {/* Dynamic Keywords Tags */}
+              {game.image_keywords && game.image_keywords.length > 0 ? (
+                game.image_keywords.slice(0, 5).map((keyword, index) => (
+                  <Link 
+                    key={index}
+                    href={`/play?search=${encodeURIComponent(keyword)}`}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors"
+                  >
+                    {keyword}
+                  </Link>
+                ))
+              ) : (
+                <>
+                  <Link href="/play?search=browser" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
+                    Browser
+                  </Link>
+                  <Link href="/play?search=html5" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
+                    HTML5
+                  </Link>
+                  <Link href="/play?search=free" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
+                    Free
+                  </Link>
+                  <Link href="/play?search=online" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
+                    Online
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Game Description */}

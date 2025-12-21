@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { Mail, Info, FileText, Shield, Gamepad } from 'lucide-react';
+import { Mail, Info, FileText, Shield, Gamepad, Heart } from 'lucide-react';
 import { getCategoryIcon } from '@/lib/categoryIcons';
 
 interface Category {
@@ -24,7 +24,7 @@ export default function CategorySidebarClient({
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-20 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent ${
+      className={`fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-20 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent hidden md:flex ${
         isHovered ? 'w-56' : 'w-16'
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -82,6 +82,21 @@ export default function CategorySidebarClient({
 
         {/* Footer Links */}
         <div className="flex flex-col gap-1">
+          <Link
+            href="/play/favorites"
+            className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
+            title="My Favorites"
+          >
+            <Heart size={18} className="flex-shrink-0 text-pink-500" />
+            <span
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                isHovered ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+              }`}
+            >
+              My Favorites
+            </span>
+          </Link>
+
           <Link
             href="/about-us"
             className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"

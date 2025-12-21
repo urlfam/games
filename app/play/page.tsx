@@ -100,26 +100,38 @@ export default async function PlayPage({
       />
 
       {/* Hero Section */}
-      <section className="relative h-96 bg-gradient-to-r from-slate-800 to-slate-900 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center h-full gap-8">
-          <div className="w-1/2 max-w-xl">
-            <span className="inline-block px-3 py-1 bg-purple-500 rounded-full text-white text-sm font-medium mb-4">
+      <section className="relative h-64 sm:h-96 bg-slate-900 sm:bg-gradient-to-r sm:from-slate-800 sm:to-slate-900 px-0 sm:px-4 lg:px-8 overflow-hidden">
+        {/* Mobile Background Image */}
+        <div className="absolute inset-0 sm:hidden">
+          <Image
+            src={featuredGame.image_url}
+            alt={featuredGame.image_alt || featuredGame.title}
+            fill
+            className="object-cover opacity-60"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+        </div>
+
+        <div className="relative z-10 w-full sm:max-w-7xl sm:mx-auto flex flex-col justify-center sm:flex-row sm:items-center h-full gap-4 sm:gap-8 px-4 sm:px-0">
+          <div className="w-full sm:w-1/2 max-w-xl flex flex-col items-start justify-center">
+            <span className="inline-block px-3 py-1 bg-purple-500 rounded-full text-white text-xs sm:text-sm font-medium mb-2 sm:mb-4 shadow-sm">
               Featured Game
             </span>
-            <h1 className="text-5xl font-bold text-white mb-4">
+            <h1 className="text-2xl sm:text-5xl font-bold text-white mb-2 sm:mb-4 drop-shadow-md sm:drop-shadow-none">
               {featuredGame.title}
             </h1>
-            <p className="text-xl text-gray-300 mb-6 line-clamp-3">
+            <p className="text-xl text-gray-300 mb-6 hidden sm:line-clamp-3">
               {stripHtml(featuredGame.description)}
             </p>
             <Link href={`/play/${featuredGame.slug}`}>
-              <button className="px-8 py-3 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+              <button className="px-6 py-2 sm:px-8 sm:py-3 bg-purple-500 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-purple-600 transition-colors shadow-lg">
                 Play Now →
               </button>
             </Link>
           </div>
 
-          <div className="relative hidden md:block w-1/2 h-full rounded-lg overflow-hidden">
+          <div className="relative hidden sm:block w-1/2 h-full rounded-lg overflow-hidden py-4 sm:py-8">
             <Image
               src={featuredGame.image_url}
               alt={featuredGame.image_alt || featuredGame.title}
@@ -134,43 +146,43 @@ export default async function PlayPage({
       </section>
 
       {/* Trending Games */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-8">
+      <section className="py-12 px-0 sm:px-6 lg:px-8">
+        <div className="w-full sm:max-w-7xl sm:mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-8 px-2 sm:px-0">
             {searchQuery
               ? `Search results for "${searchQuery}"`
               : 'Trending Games'}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0">
             {trendingGames.map((game, index) => (
               <div
                 key={game.id}
                 className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
               >
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-40 sm:h-60 overflow-hidden">
                   <Image
                     src={game.image_url}
                     alt={game.image_alt || game.title}
                     title={game.image_title || game.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                     loading={index < 4 ? "eager" : "lazy"}
                     priority={index < 2}
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
                     {game.category}
                   </span>
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+                  <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
                     {game.title}
                   </h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                  <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
                     {stripHtml(game.description)}
                   </p>
                   <Link href={`/play/${game.slug}`}>
-                    <button className="w-full py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                    <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
                       Play
                     </button>
                   </Link>
@@ -182,38 +194,38 @@ export default async function PlayPage({
       </section>
 
       {/* All Games */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-800/50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-8">All Games</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="py-12 px-0 sm:px-6 lg:px-8 bg-slate-800/50">
+        <div className="w-full sm:max-w-7xl sm:mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-8 px-2 sm:px-0">All Games</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0">
             {filteredGames.map((game) => (
               <div
                 key={game.id}
                 className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
               >
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-40 sm:h-60 overflow-hidden">
                   <Image
                     src={game.image_url}
                     alt={game.image_alt || game.title}
                     title={game.image_title || game.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                     loading="lazy"
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
                     {game.category}
                   </span>
-                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+                  <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
                     {game.title}
                   </h3>
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                  <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
                     {stripHtml(game.description)}
                   </p>
                   <Link href={`/play/${game.slug}`}>
-                    <button className="w-full py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                    <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
                       Play
                     </button>
                   </Link>
