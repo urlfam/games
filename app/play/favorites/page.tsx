@@ -2,6 +2,8 @@ import { getAllGames } from '@/lib/games';
 import FavoritesClient from './FavoritesClient';
 import { Metadata } from 'next';
 
+export const revalidate = 0; // Ensure this page is always fresh
+
 export const metadata: Metadata = {
   title: 'My Favorites | Puzzio',
   description: 'Your collection of favorite games on Puzzio.io',

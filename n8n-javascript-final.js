@@ -39,6 +39,7 @@ const currentCategory = gameData.category || 'Driving';
 const currentPageUrl = gameData.page_url || '';
 const currentIframeUrl = gameData.iframe_url || '';
 const currentImageUrl = gameData.image_url || '';
+const currentVideoUrl = gameData.video_url || '';
 
 console.log('✅ Données du jeu:');
 console.log('🎮 Title:', currentTitle);
@@ -155,7 +156,9 @@ return {
   title: currentTitle,
   description: finalDescription,
   category: currentCategory,
+  tags: gameData.tags || [],
   page_url: currentPageUrl,
   iframe_url: currentIframeUrl,
-  image_url: currentImageUrl
+  image_url: currentImageUrl,
+  video_url: currentVideoUrl
 };

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,9 +12,16 @@ export default function Footer() {
           <div className="col-span-1">
             <Link
               href="/"
-              className="text-2xl font-bold text-white inline-block mb-4"
+              className="inline-block mb-4"
             >
-              Puzzio<span className="text-purple-500">.io</span>
+              <Image
+                src="/puzzio.webp"
+                alt="Puzzio"
+                width={180}
+                height={56}
+                className="h-14 w-auto object-contain"
+                unoptimized
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Your destination for browser games and gaming news. Play

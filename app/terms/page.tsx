@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-slate-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -20,15 +20,15 @@ export default function TermsPage() {
         />
 
         {/* Content */}
-        <article className="mt-8 prose prose-lg max-w-none">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+        <article className="mt-8 prose prose-lg prose-invert max-w-none">
+          <h1 className="text-4xl font-bold text-white mb-4">
             Terms of Service
           </h1>
-          <p className="text-gray-600 mb-8">Last updated: November 6, 2025</p>
+          <p className="text-gray-400 mb-8">Last updated: November 6, 2025</p>
 
-          <div className="space-y-8 text-gray-700">
+          <div className="space-y-8 text-gray-300">
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Agreement to Terms
               </h2>
               <p>
@@ -40,7 +40,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Use License
               </h2>
               <p>
@@ -65,7 +65,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 User Accounts
               </h2>
               <p>
@@ -84,7 +84,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Intellectual Property
               </h2>
               <p>
@@ -100,7 +100,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Third-Party Games and Content
               </h2>
               <p>
@@ -115,7 +115,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Prohibited Uses
               </h2>
               <p>You agree not to use the Service:</p>
@@ -151,7 +151,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Disclaimer
               </h2>
               <p>
@@ -165,7 +165,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Limitations of Liability
               </h2>
               <p>
@@ -177,7 +177,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Governing Law
               </h2>
               <p>
@@ -188,7 +188,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Changes to Terms
               </h2>
               <p>
@@ -199,7 +199,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Contact Information
               </h2>
               <p>
@@ -220,7 +220,7 @@ export default function TermsPage() {
             </section>
           </div>
         </article>
-      </main>
+      </div>
     </div>
   );
 }

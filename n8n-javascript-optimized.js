@@ -102,6 +102,7 @@ return {
     title: currentTitle,
     description: finalDescription,
     category: currentCategory,
+    tags: $json.tags || [],
     page_url: currentPageUrl,
     iframe_url: $json.iframe_url,
     image_url: $json.image_url

@@ -3,6 +3,7 @@ import { getAllGames, getGameBySlug } from '@/lib/games';
 import RecommendedGamesSidebar from '@/components/RecommendedGamesSidebar';
 import GameCommentsSimple from '@/components/GameCommentsSimple';
 import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
+import FAQAccordion from '@/components/FAQAccordion';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
@@ -117,6 +118,22 @@ export default async function GamePage({ params }: GamePageProps) {
     })
   };
 
+  let faqJsonLd = null;
+  if (game.faq_schema && game.faq_schema.length > 0) {
+    faqJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: game.faq_schema.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    };
+  }
+
   const recommendedGames = allGames
     .filter((g) => g.category === game.category && g.id !== game.id)
     .slice(0, 12);
@@ -134,6 +151,13 @@ export default async function GamePage({ params }: GamePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {faqJsonLd && (
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Main Content (Game, Description, Comments) */}
         <div className="lg:col-span-3">
@@ -157,7 +181,7 @@ export default async function GamePage({ params }: GamePageProps) {
             </h1>
             
             {/* Compact Info List */}
-            <div className="space-y-2 text-base text-gray-300 mb-8">
+            <div className="space-y-2 text-base text-gray-300">
               {/* Rating */}
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Rating:</span>
@@ -210,46 +234,32 @@ export default async function GamePage({ params }: GamePageProps) {
                   <Link href={`/play?category=${game.category.toLowerCase()}`} className="hover:underline">{game.category}</Link>
                 </div>
               </div>
-            </div>
 
-            {/* Smart Tags */}
-            <div className="flex flex-wrap gap-3">
-              {/* Main Category Tag */}
-              <Link 
-                href={`/play?category=${game.category.toLowerCase()}`} 
-                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-purple-600 rounded-full text-white transition-all transform hover:scale-105"
-              >
-                <Tag size={14} />
-                <span className="font-bold capitalize">{game.category}</span>
-              </Link>
-              
-              {/* Dynamic Keywords Tags */}
-              {game.image_keywords && game.image_keywords.length > 0 ? (
-                game.image_keywords.slice(0, 5).map((keyword, index) => (
+              {/* Tags */}
+              <div className="flex items-start mt-4 pt-4 border-t border-gray-700">
+                <div className="flex flex-wrap gap-2">
+                  {/* Category Tag */}
                   <Link 
-                    key={index}
-                    href={`/play?search=${encodeURIComponent(keyword)}`}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors"
+                    href={`/play?category=${game.category.toLowerCase()}`}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 text-sm hover:bg-purple-800 transition-colors"
                   >
-                    {keyword}
+                    <Tag size={14} />
+                    {game.category}
                   </Link>
-                ))
-              ) : (
-                <>
-                  <Link href="/play?search=browser" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
-                    Browser
-                  </Link>
-                  <Link href="/play?search=html5" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
-                    HTML5
-                  </Link>
-                  <Link href="/play?search=free" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
-                    Free
-                  </Link>
-                  <Link href="/play?search=online" className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600 rounded-full text-gray-300 text-sm font-medium border border-slate-600/50 transition-colors">
-                    Online
-                  </Link>
-                </>
-              )}
+                  
+                  {/* Other Tags */}
+                  {game.tags && game.tags.map((tag) => (
+                    <Link 
+                      key={tag}
+                      href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-700 text-gray-300 text-sm hover:bg-slate-600 transition-colors"
+                    >
+                      <Tag size={14} />
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -261,6 +271,11 @@ export default async function GamePage({ params }: GamePageProps) {
               dangerouslySetInnerHTML={{ __html: game.description }}
             />
           </div>
+
+          {/* FAQ Section */}
+          {game.faq_schema && game.faq_schema.length > 0 && (
+            <FAQAccordion items={game.faq_schema} />
+          )}
 
           {/* Comments Section */}
           <GameCommentsSimple gameSlug={game.slug || params.slug} />

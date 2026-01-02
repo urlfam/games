@@ -3,6 +3,9 @@ import { Nunito } from 'next/font/google';
 import './globals.css';
 import HeaderServer from '@/components/HeaderServer';
 import ConditionalFooter from '@/components/ConditionalFooter';
+import { SidebarProvider } from '@/components/SidebarContext';
+import CategorySidebarServer from '@/components/CategorySidebarServer';
+import PlayMainContent from '@/components/PlayMainContent';
 
 const nunito = Nunito({ 
   subsets: ['latin'], 
@@ -48,7 +51,7 @@ export default function RootLayout({
       name: 'Puzzio.io',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://puzzio.io/logo.png', // Assurez-vous que ce logo existe
+        url: 'https://puzzio.io/puzzio.webp', // Updated logo
         width: 600,
         height: 60,
       },
@@ -62,13 +65,19 @@ export default function RootLayout({
     url: 'https://puzzio.io',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://puzzio.io/logo.png', // Assurez-vous que ce logo existe
+      url: 'https://puzzio.io/puzzio.webp', // Updated logo
       width: 600,
       height: 60,
     },
     sameAs: [
-      // "https://twitter.com/puzzio",
-      // "https://facebook.com/puzzio",
+      "https://twitter.com/puzzio",
+      "https://facebook.com/puzzio",
+      "https://instagram.com/puzzio",
+      "https://youtube.com/puzzio",
+      "https://discord.gg/puzzio",
+      "https://pinterest.com/puzzio",
+      "https://reddit.com/r/puzzio",
+      "https://tiktok.com/@puzzio"
     ],
     contactPoint: {
       '@type': 'ContactPoint',
@@ -100,9 +109,12 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <HeaderServer />
-        <main>{children}</main>
-        <ConditionalFooter />
+        <SidebarProvider>
+          <HeaderServer />
+          <CategorySidebarServer />
+          <PlayMainContent>{children}</PlayMainContent>
+          {/* <ConditionalFooter /> - Hidden as per request */}
+        </SidebarProvider>
       </body>
     </html>
   );

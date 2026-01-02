@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-slate-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
@@ -21,19 +21,19 @@ export default function PrivacyPage() {
         />
 
         {/* Content */}
-        <article className="mt-8 prose prose-lg max-w-none">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+        <article className="mt-8 prose prose-lg prose-invert max-w-none">
+          <h1 className="text-4xl font-bold text-white mb-4">
             Privacy Policy
           </h1>
-          <p className="text-gray-600 mb-8">Last updated: November 6, 2025</p>
+          <p className="text-gray-400 mb-8">Last updated: November 6, 2025</p>
 
-          <div className="space-y-8 text-gray-700">
+          <div className="space-y-8 text-gray-300">
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Introduction
               </h2>
               <p>
-                Welcome to Puzzio.io ("we," "our," or "us"). We are committed to
+                Welcome to Puzzio.io (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to
                 protecting your privacy and ensuring you have a positive
                 experience on our website. This Privacy Policy explains how we
                 collect, use, disclose, and safeguard your information when you
@@ -42,10 +42,10 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Information We Collect
               </h2>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              <h3 className="text-xl font-semibold text-white mb-2">
                 Personal Information
               </h3>
               <p>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
                 information you choose to provide.
               </p>
 
-              <h3 className="text-xl font-semibold text-slate-900 mb-2 mt-6">
+              <h3 className="text-xl font-semibold text-white mb-2 mt-6">
                 Automatically Collected Information
               </h3>
               <p>
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 How We Use Your Information
               </h2>
               <p>We use the information we collect to:</p>
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Cookies and Tracking Technologies
               </h2>
               <p>
@@ -117,7 +117,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Third-Party Services
               </h2>
               <p>
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Data Security
               </h2>
               <p>
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Your Rights
               </h2>
               <p>
@@ -165,8 +165,8 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                Children's Privacy
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Children&apos;s Privacy
               </h2>
               <p>
                 Our website is not intended for children under 13 years of age.
@@ -177,18 +177,18 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Changes to This Privacy Policy
               </h2>
               <p>
                 We may update our Privacy Policy from time to time. We will
                 notify you of any changes by posting the new Privacy Policy on
-                this page and updating the "Last updated" date.
+                this page and updating the &quot;Last updated&quot; date.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">
+              <h2 className="text-2xl font-bold text-white mb-4">
                 Contact Us
               </h2>
               <p>
@@ -210,7 +210,7 @@ export default function PrivacyPage() {
             </section>
           </div>
         </article>
-      </main>
+      </div>
     </div>
   );
 }

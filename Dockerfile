@@ -17,14 +17,15 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Install Chromium for Puppeteer
+# Install Chromium for Puppeteer and FFmpeg for video processing
 RUN apk add --no-cache \
     chromium \
     nss \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont
+    ttf-freefont \
+    ffmpeg
 
 # Tell Puppeteer to use the installed Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
@@ -41,7 +42,8 @@ COPY --from=builder /app/next.config.js ./next.config.js
 
 # Create a dedicated, writable directory for our dynamic data
 RUN mkdir -p /app/data
-RUN chown node:node /app/data
+RUN mkdir -p /app/public/previews
+RUN chown -R node:node /app/data /app/public/previews
 
 # Switch to a non-root user for security
 USER node

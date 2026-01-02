@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -140,8 +141,16 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/play" className={logoClass}>
-              Puzzio<span className={dotClass}>.io</span>
+            <Link href="/play" className="flex items-center">
+              <Image
+                src="/puzzio.webp"
+                alt="Puzzio"
+                width={180}
+                height={56}
+                className="h-14 w-auto object-contain"
+                priority
+                unoptimized
+              />
             </Link>
             {/* Desktop menu */}
             <div className="hidden md:flex gap-6">

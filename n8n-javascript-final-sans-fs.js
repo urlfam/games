@@ -183,6 +183,7 @@ return {
   title: currentTitle,
   description: finalDescription,
   category: currentCategory,
+  tags: gameData.tags || [],
   page_url: currentPageUrl,
   iframe_url: currentIframeUrl,
   image_url: currentImageUrl

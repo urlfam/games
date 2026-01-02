@@ -81,7 +81,7 @@ export default function CategorySidebar() {
       `}</style>
       
       <aside
-        className={`category-sidebar fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-20 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent ${
+        className={`category-sidebar fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-[100] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent ${
           isHovered ? 'w-56' : 'w-16'
         }`}
         onMouseEnter={() => setIsHovered(true)}

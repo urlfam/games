@@ -2,15 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import time
-import os
 import sys
 from datetime import datetime
 
 # --- Configuration ---
 BASE_URL = "https://www.crazygames.com"
 NEW_GAMES_URL = f"{BASE_URL}/new"
-# DATABASE_FILE = "jeux_traites.json" # DÉSACTIVÉ : On ne filtre plus localement
 IMAGE_BASE_URL = "https://imgs.crazygames.com"
+VIDEO_BASE_URL = "https://videos.crazygames.com" # Base pour les previews vidéo
 MAX_GAMES_TO_PROCESS = 70 
 
 HEADERS = {
@@ -33,20 +32,18 @@ def get_new_games_list():
     soup = BeautifulSoup(resp.text, "html.parser")
     script_tag = soup.find('script', {'id': '__NEXT_DATA__'})
     if not script_tag:
-        log_message("  -> Balise __NEXT_DATA__ non trouvée")
         return []
 
     try:
         data = json.loads(script_tag.string)
-        # Adaptation aux différentes structures possibles de CrazyGames
         games_list_data = []
         
+        # Exploration de la structure Next.js pour trouver la liste des jeux
         if 'props' in data and 'pageProps' in data['props']:
             page_props = data['props']['pageProps']
             if 'games' in page_props and 'items' in page_props['games']:
                 games_list_data = page_props['games']['items']
             elif 'apolloState' in page_props and 'ROOT_QUERY' in page_props['apolloState']:
-                # Fallback pour structure Apollo/GraphQL
                 root_query = page_props['apolloState']['ROOT_QUERY']
                 for key, value in root_query.items():
                     if 'newGames' in key or 'games' in key:
@@ -57,36 +54,29 @@ def get_new_games_list():
         
         games = []
         for game in games_list_data:
-            # Gestion des références Apollo (ex: {"__ref": "Game:slug"})
             if isinstance(game, dict):
                 slug = game.get('slug')
                 if not slug and '__ref' in game:
                     ref = game['__ref']
-                    if ':' in ref:
-                        slug = ref.split(':')[-1]
-                
+                    if ':' in ref: slug = ref.split(':')[-1]
                 if slug:
                     games.append({'url': f"{BASE_URL}/game/{slug}", 'slug': slug})
         
-        log_message(f"  -> {len(games)} jeux trouvés sur la page New")
         return games
-    except (json.JSONDecodeError, KeyError, AttributeError) as e:
-        log_message(f"  -> Erreur parsing JSON liste: {e}")
+    except Exception as e:
+        log_message(f"  -> Erreur parsing liste: {e}")
         return []
 
 def get_game_details_from_page(game_url):
-    # log_message(f"Analyse : {game_url}")
     try:
         resp = requests.get(game_url, headers=HEADERS, timeout=10)
         resp.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        log_message(f"  -> Erreur d'accès {game_url} : {e}")
+    except Exception as e:
         return None
 
     soup = BeautifulSoup(resp.text, "html.parser")
     script_tag = soup.find('script', {'id': '__NEXT_DATA__'})
-    if not script_tag:
-        return None
+    if not script_tag: return None
 
     try:
         data = json.loads(script_tag.string)
@@ -94,6 +84,7 @@ def get_game_details_from_page(game_url):
 
         title = game_data.get('name')
         
+        # Nettoyage de la description
         description_raw = game_data.get('descriptionFirst') or game_data.get('description')
         description = "Pas de description"
         if description_raw:
@@ -103,17 +94,27 @@ def get_game_details_from_page(game_url):
         cover_path = game_data.get('cover')
         image_url = f"{IMAGE_BASE_URL}/{cover_path}" if cover_path else "Non trouvée"
         
+        # --- LOGIQUE CATÉGORIE (Genre Principal) ---
         category = "Non classé"
         primary_cat = game_data.get('category')
         if primary_cat and isinstance(primary_cat, dict):
             category = primary_cat.get('name')
         
-        if not category or category == "Non classé":
-            tags_list = game_data.get('tags')
-            if tags_list and isinstance(tags_list, list) and len(tags_list) > 0:
-                category = tags_list[0].get('name')
+        # --- LOGIQUE TAGS (Étiquettes secondaires) ---
+        raw_tags = game_data.get('tags', [])
+        tags = []
+        if raw_tags:
+            # On prend tous les tags sauf celui qui est déjà la catégorie
+            tags = [t.get('name') for t in raw_tags if isinstance(t, dict) and t.get('name') != category]
 
-        # log_message(f"  -> '{title}' : {category}")
+        # --- LOGIQUE VIDÉO (Hover Preview) ---
+        video_url = None
+        videos_obj = game_data.get('videos')
+        if videos_obj and isinstance(videos_obj, dict):
+            # Sélection de la meilleure qualité disponible
+            path = videos_obj.get('original') or videos_obj.get('high') or videos_obj.get('medium')
+            if path:
+                video_url = f"{VIDEO_BASE_URL}/{path}" # Construction de l'URL complète
 
         return {
             'title': title,
@@ -121,25 +122,19 @@ def get_game_details_from_page(game_url):
             'iframe_url': iframe_url,
             'image_url': image_url,
             'category': category,
+            'tags': tags,           # Nouveau champ tags
+            'video_url': video_url, # Nouveau champ vidéo
             'page_url': game_url
         }
-    except (json.JSONDecodeError, KeyError) as e:
-        log_message(f"  -> ERREUR JSON détail {game_url} : {e}")
+    except Exception as e:
+        log_message(f"  -> Erreur parsing {game_url}: {e}")
         return None
 
 if __name__ == "__main__":
-    # ON NE CHARGE PLUS LES JEUX TRAITÉS LOCALEMENT
-    # processed_slugs = load_processed_slugs(DATABASE_FILE)
-    
     games_today = get_new_games_list()
     
-    # ON PREND TOUT CE QUI EST SUR LA PAGE "NEW"
-    truly_new_games = games_today
-    
-    if MAX_GAMES_TO_PROCESS:
-        games_to_process = truly_new_games[:MAX_GAMES_TO_PROCESS]
-    else:
-        games_to_process = truly_new_games
+    # Limitation du nombre de jeux à traiter pour éviter les surcharges
+    games_to_process = games_today[:MAX_GAMES_TO_PROCESS] if MAX_GAMES_TO_PROCESS else games_today
 
     results = []
     if games_to_process:
@@ -148,9 +143,7 @@ if __name__ == "__main__":
             game_details = get_game_details_from_page(game['url'])
             if game_details:
                 results.append(game_details)
-                # processed_slugs.add(game['slug']) # ON NE SAUVEGARDE PLUS
-            time.sleep(1) 
-
-        # save_processed_slugs(DATABASE_FILE, processed_slugs) # ON NE SAUVEGARDE PLUS
+            time.sleep(1) # Délai de courtoisie entre les requêtes
     
+    # Sortie JSON finale pour capture par n8n
     print(json.dumps(results, indent=2, ensure_ascii=False))

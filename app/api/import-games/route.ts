@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { exec } from 'child_process';
+import util from 'util';
+
+const execPromise = util.promisify(exec);
 
 // The data directory is now inside the container, at a writable location.
 const DATA_DIR = path.join(process.cwd(), 'data');
 const GAMES_DB_PATH = path.join(DATA_DIR, 'games.json');
+const PREVIEWS_DIR = path.join(process.cwd(), 'public', 'previews');
 
 // This is a simple file-based lock to prevent race conditions.
 let isWriting = false;
@@ -73,6 +78,15 @@ export async function POST(req: Request) {
       ...newGame,
     };
 
+    // Process video if available
+    if (newGame.video_url) {
+      const slug = newGame.slug || newGame.page_url.substring(newGame.page_url.lastIndexOf('/') + 1);
+      const processedVideoUrl = await processVideo(newGame.video_url, slug);
+      if (processedVideoUrl) {
+        gameToSave.video_url = processedVideoUrl;
+      }
+    }
+
     // Add new game at the beginning of the array (most recent first)
     allGames.unshift(gameToSave);
 
@@ -103,5 +117,42 @@ async function saveGames(games: any) {
     await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
   } catch (error) {
     console.error('Error saving games:', error);
+  }
+}
+
+async function processVideo(videoUrl: string, slug: string): Promise<string | null> {
+  try {
+    // Ensure previews directory exists
+    await fs.mkdir(PREVIEWS_DIR, { recursive: true });
+
+    const outputPath = path.join(PREVIEWS_DIR, `${slug}.mp4`);
+    const publicPath = `/previews/${slug}.mp4`;
+
+    // Check if file already exists
+    try {
+      await fs.access(outputPath);
+      return publicPath; // File exists, return path
+    } catch {
+      // File doesn't exist, proceed with download and compression
+    }
+
+    console.log(`Processing video for ${slug}...`);
+
+    // FFmpeg command:
+    // -i "${videoUrl}" : Input URL
+    // -vf "scale=480:-2" : Resize to 480px width, keep aspect ratio (height divisible by 2)
+    // -b:v 800k : Max video bitrate 800kbps
+    // -an : Remove audio
+    // -movflags +faststart : Optimize for web streaming
+    // -y : Overwrite output file
+    const command = `ffmpeg -i "${videoUrl}" -vf "scale=480:-2" -b:v 800k -an -movflags +faststart -y "${outputPath}"`;
+
+    await execPromise(command);
+    console.log(`Video processed successfully: ${outputPath}`);
+    return publicPath;
+
+  } catch (error) {
+    console.error(`Error processing video for ${slug}:`, error);
+    return null;
   }
 }

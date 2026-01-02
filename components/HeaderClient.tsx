@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, Mail, Info, FileText, Shield, Heart } from 'lucide-react';
+import Image from 'next/image';
+import { Menu, X, Search, Mail, Info, FileText, Shield, Heart, Gamepad2, Newspaper, AlignLeft } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { getCategoryIcon } from '@/lib/categoryIcons';
+import { useSidebar } from '@/components/SidebarContext';
 
 interface Category {
   name: string;
@@ -22,23 +24,19 @@ export default function Header({ categories }: HeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
+  const { toggleSidebar } = useSidebar();
 
   // Determine header style - white for news and static pages, dark for play
   const isNewsMain = pathname === '/news';
   const isNewsArticle = pathname.startsWith('/news/');
-  const isStaticPage = [
-    '/contact',
-    '/privacy',
-    '/terms',
-    '/about',
-    '/about-us',
-  ].includes(pathname);
-  const isWhiteHeader = isNewsMain || isStaticPage;
+  // Static pages should now use the dark header as requested
+  const isStaticPage = false; 
+  const isWhiteHeader = isNewsMain;
 
   // Header style
   const headerClass = isWhiteHeader
-    ? 'bg-white border-b border-gray-200 sticky top-0 z-50'
-    : 'bg-slate-800 border-b border-purple-500/20 sticky top-0 z-50';
+    ? 'bg-white border-b border-gray-200 sticky top-0 z-[110]'
+    : 'bg-slate-800 border-b border-purple-500/20 sticky top-0 z-[110]';
 
   // Logo color
   const logoClass = isWhiteHeader
@@ -48,11 +46,11 @@ export default function Header({ categories }: HeaderProps) {
 
   // Desktop menu link colors
   const playLinkClass = isWhiteHeader
-    ? 'text-gray-600 font-medium hover:text-gray-900 transition-colors'
-    : 'text-white font-medium hover:text-purple-400 transition-colors';
+    ? 'flex items-center gap-2 px-5 py-2 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 transition-all shadow-md'
+    : 'flex items-center gap-2 px-5 py-2 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/20';
   const newsLinkClass = isWhiteHeader
-    ? 'text-gray-900 font-medium hover:text-purple-500 transition-colors'
-    : 'text-gray-400 font-medium hover:text-white transition-colors';
+    ? 'flex items-center gap-2 px-5 py-2 bg-gray-100 text-gray-700 font-bold rounded-full hover:bg-gray-200 transition-all'
+    : 'flex items-center gap-2 px-5 py-2 bg-slate-700/50 text-gray-200 font-bold rounded-full hover:bg-slate-700 transition-all border border-slate-600/50';
 
   // Mobile menu button color
   const mobileMenuBtnClass = isWhiteHeader
@@ -66,11 +64,11 @@ export default function Header({ categories }: HeaderProps) {
 
   // Mobile menu link colors
   const mobilePlayLinkClass = isWhiteHeader
-    ? 'block py-4 px-4 text-gray-900 text-base font-semibold hover:bg-gray-100 rounded-lg transition-colors'
-    : 'block py-4 px-4 text-white text-base font-semibold hover:bg-slate-700/50 rounded-lg transition-colors';
+    ? 'flex items-center justify-center w-full py-3 px-4 bg-purple-600 text-white text-base font-bold rounded-xl hover:bg-purple-700 transition-all shadow-md mb-3'
+    : 'flex items-center justify-center w-full py-3 px-4 bg-purple-600 text-white text-base font-bold rounded-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/20 mb-3';
   const mobileNewsLinkClass = isWhiteHeader
-    ? 'block py-4 px-4 text-purple-600 text-base font-semibold hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors'
-    : 'block py-4 px-4 text-gray-300 text-base font-semibold hover:bg-slate-700/50 hover:text-white rounded-lg transition-colors';
+    ? 'flex items-center justify-center w-full py-3 px-4 bg-gray-100 text-gray-900 text-base font-bold rounded-xl hover:bg-gray-200 transition-all border border-gray-200'
+    : 'flex items-center justify-center w-full py-3 px-4 bg-slate-700/50 text-gray-200 text-base font-bold rounded-xl hover:bg-slate-700 transition-all border border-slate-600/50';
 
   // Search bar styles
   const searchContainerClass = isWhiteHeader
@@ -93,21 +91,44 @@ export default function Header({ categories }: HeaderProps) {
 
   return (
     <header className={headerClass}>
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="w-full px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-8">
-            <Link href="/play" className={logoClass}>
-              Puzzio<span className={dotClass}>.io</span>
+          <div className="flex items-center gap-4">
+            {/* Sidebar Toggle Button (Desktop) */}
+            <button 
+              onClick={toggleSidebar}
+              className={`hidden md:flex p-2 rounded-lg transition-colors ${
+                isWhiteHeader 
+                  ? 'text-gray-600 hover:bg-gray-100' 
+                  : 'text-gray-300 hover:bg-slate-700'
+              }`}
+              aria-label="Toggle Sidebar"
+            >
+              <AlignLeft size={24} />
+            </button>
+
+            <Link href="/play" className="flex items-center">
+              <Image
+                src="/puzzio.webp"
+                alt="Puzzio"
+                width={180}
+                height={56}
+                className="h-14 w-auto object-contain"
+                priority
+                unoptimized
+              />
             </Link>
-            {/* Desktop menu */}
-            <div className="hidden md:flex gap-6">
+            {/* Desktop menu - Hidden for now (Uncomment to reactivate) */}
+            {/* <div className="hidden md:flex items-center gap-4">
               <Link href="/play" className={playLinkClass}>
+                <Gamepad2 size={18} />
                 PLAY
               </Link>
               <Link href="/news" className={newsLinkClass}>
+                <Newspaper size={18} />
                 NEWS
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Search bar - Desktop */}
@@ -164,11 +185,14 @@ export default function Header({ categories }: HeaderProps) {
               />
             </form>
 
+            {/* Hidden for now (Uncomment to reactivate) */}
+            {/*
             <Link
               href="/play"
               className={mobilePlayLinkClass}
               onClick={() => setIsMobileMenuOpen(false)}
             >
+              <Gamepad2 size={20} className="mr-2" />
               PLAY
             </Link>
             <Link
@@ -176,8 +200,10 @@ export default function Header({ categories }: HeaderProps) {
               className={mobileNewsLinkClass}
               onClick={() => setIsMobileMenuOpen(false)}
             >
+              <Newspaper size={20} className="mr-2" />
               NEWS
             </Link>
+            */}
 
             {/* Divider */}
             <div className={`my-2 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>

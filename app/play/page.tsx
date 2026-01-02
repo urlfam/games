@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
+import HorizontalGameSection from '@/components/HorizontalGameSection';
+import TrendingSection from '@/components/TrendingSection';
 import { getAllGames, getNewGames, getTrendingGames, sortGamesByPlays } from '@/lib/games'; // Import our new function
 import { stripHtml } from '@/lib/utils';
 
@@ -59,14 +61,14 @@ export default async function PlayPage({
 
   // --- Logic for Homepage Sections ---
   
-  // 1. Trending Games (Top 5 for the special layout)
+  // 1. Trending Games (for horizontal scroll)
   let trendingGames: any[] = [];
   if (isHomePage) {
-     // Try to get trending
-     trendingGames = await getTrendingGames(5);
+     // Get more trending games for horizontal scroll
+     trendingGames = await getTrendingGames(20);
      // Fallback if not enough trending data
-     if (trendingGames.length < 5) {
-         trendingGames = filteredGames.slice(0, 5);
+     if (trendingGames.length < 20) {
+         trendingGames = filteredGames.slice(0, 20);
      }
   } else {
      // For category/search pages, we might use trendingGames differently or not at all
@@ -133,53 +135,30 @@ export default async function PlayPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
 
-      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-8 sm:space-y-12">
+      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         
         {isHomePage ? (
           <>
-            {/* Trending Section - Portal Style */}
-            <section>
-              <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 flex items-center gap-2 px-1">
-                <span className="text-purple-500">🔥</span> Trending Now
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
-                {/* Big Card (First Item) - Spans 2x2 on Desktop */}
-                {trendingGames.length > 0 && (
-                  <div className="md:col-span-2 md:row-span-2 h-full">
-                     <GameCard game={trendingGames[0]} priority className="h-full w-full" />
-                  </div>
-                )}
-                {/* Small Cards (Next 4 Items) */}
-                {trendingGames.slice(1, 5).map((game) => (
-                  <div key={game.id} className="md:col-span-1 md:row-span-1">
-                    <GameCard game={game} />
-                  </div>
-                ))}
-              </div>
-            </section>
+            {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
+            <TrendingSection games={trendingGames} />
 
-            {/* New Games Section */}
-            <section>
-               <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 flex items-center gap-2 px-1">
-                <span className="text-blue-500">🆕</span> New Games
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-                {newGames.map((game) => (
-                  <GameCard key={game.id} game={game} />
-                ))}
-              </div>
-            </section>
+            {/* New Games Section - Horizontal Scroll */}
+            <HorizontalGameSection
+              title="New Games"
+              games={newGames}
+              viewMoreLink="/play?category=new"
+              badgeText="All New Games"
+            />
 
-            {/* Dynamic Tag Sections */}
+            {/* Dynamic Tag Sections - Horizontal Scroll */}
             {tagSections.map(({ tag, games }) => (
-              <section key={tag}>
-                <h2 className="text-lg sm:text-xl font-bold text-white mb-3 capitalize px-1">{tag}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-                  {games.map((game) => (
-                    <GameCard key={game.id} game={game} />
-                  ))}
-                </div>
-              </section>
+              <HorizontalGameSection
+                key={tag}
+                title={tag}
+                games={games}
+                viewMoreLink={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                badgeText={`All ${tag}`}
+              />
             ))}
           </>
         ) : (

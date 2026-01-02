@@ -61,8 +61,8 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
           onLoad={() => setIsImageLoaded(true)}
         />
 
-        {/* Video Preview (Always in DOM if video exists, z-index 0) */}
-        {game.video_url && (
+        {/* Video Preview (Only rendered when hovered and src is set) */}
+        {game.video_url && videoSrc && (
            <video
             src={videoSrc}
             poster={game.image_url}
