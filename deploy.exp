@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 600
+spawn ssh root@147.93.7.103 "cd /root/puzzio && ./safe-pull.sh && docker-compose down && docker-compose up -d --build"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof
