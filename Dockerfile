@@ -38,6 +38,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/app ./app
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/components ./components
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./next.config.js
 
 # Create a dedicated, writable directory for our dynamic data
