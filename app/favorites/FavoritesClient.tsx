@@ -48,7 +48,7 @@ export default function FavoritesClient({ games }: FavoritesClientProps) {
           Click the heart icon on any game to add it to your favorites list and play it later.
         </p>
         <Link
-          href="/play"
+          href="/"
           className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors"
         >
           Browse Games
@@ -85,7 +85,7 @@ export default function FavoritesClient({ games }: FavoritesClientProps) {
             <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
               {stripHtml(game.description)}
             </p>
-            <Link href={`/play/${game.slug}`}>
+            <Link href={`/game/${game.slug}`}>
               <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
                 Play
               </button>

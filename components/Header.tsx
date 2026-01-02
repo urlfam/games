@@ -132,7 +132,7 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/play?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -141,7 +141,7 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/play" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
@@ -154,7 +154,7 @@ export default function Header() {
             </Link>
             {/* Desktop menu */}
             <div className="hidden md:flex gap-6">
-              <Link href="/play" className={playLinkClass}>
+              <Link href="/" className={playLinkClass}>
                 PLAY
               </Link>
               <Link href="/news" className={newsLinkClass}>
@@ -218,7 +218,7 @@ export default function Header() {
             </form>
 
             <Link
-              href="/play"
+              href="/"
               className={mobilePlayLinkClass}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -248,8 +248,8 @@ export default function Header() {
                     key={category.slug}
                     href={
                       category.slug === 'all'
-                        ? '/play'
-                        : `/play?category=${category.slug}`
+                        ? '/'
+                        : `/c/${category.slug}`
                     }
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${

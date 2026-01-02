@@ -42,7 +42,7 @@ export default function RootLayout({
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://puzzio.io/play?search={search_term_string}',
+        urlTemplate: 'https://puzzio.io/?search={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },

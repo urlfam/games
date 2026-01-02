@@ -33,7 +33,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
 
   return (
     <Link 
-      href={`/play/${game.slug}`}
+      href={`/game/${game.slug}`}
       className={`block group relative bg-slate-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all shadow-lg ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

@@ -206,7 +206,7 @@ export default function AboutPage() {
                 </p>
                 <div className="flex gap-4 mt-6">
                   <Link
-                    href="/play"
+                    href="/"
                     className="inline-block px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-lg transition-colors"
                   >
                     Browse Games

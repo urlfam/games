@@ -36,12 +36,12 @@ export async function generateMetadata({
     title: `${game.title} - Play on Puzzio.io`,
     description: (game as any).image_description || stripHtml(game.description).substring(0, 160),
     alternates: {
-      canonical: `https://puzzio.io/play/${params.slug}`,
+      canonical: `https://puzzio.io/game/${params.slug}`,
     },
     openGraph: {
       title: game.title,
       description: (game as any).image_description || stripHtml(game.description).substring(0, 200),
-      url: `https://puzzio.io/play/${params.slug}`,
+      url: `https://puzzio.io/game/${params.slug}`,
       images: [{ 
         url: game.image_url,
         alt: (game as any).image_alt || game.title
@@ -106,7 +106,7 @@ export default async function GamePage({ params }: GamePageProps) {
     genre: game.category,
     playMode: 'SinglePlayer',
     applicationCategory: 'Game',
-    url: `https://puzzio.io/play/${params.slug}`,
+    url: `https://puzzio.io/game/${params.slug}`,
     ...(totalVotes > 0 && {
       aggregateRating: {
         '@type': 'AggregateRating',
@@ -229,9 +229,9 @@ export default async function GamePage({ params }: GamePageProps) {
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Classification:</span>
                 <div className="flex items-center gap-1 text-purple-400 font-bold">
-                  <Link href="/play" className="hover:underline">Games</Link>
+                  <Link href="/" className="hover:underline">Games</Link>
                   <span className="text-gray-600">»</span>
-                  <Link href={`/play?category=${game.category.toLowerCase()}`} className="hover:underline">{game.category}</Link>
+                  <Link href={`/c/${game.category.toLowerCase()}`} className="hover:underline">{game.category}</Link>
                 </div>
               </div>
 
@@ -240,7 +240,7 @@ export default async function GamePage({ params }: GamePageProps) {
                 <div className="flex flex-wrap gap-2">
                   {/* Category Tag */}
                   <Link 
-                    href={`/play?category=${game.category.toLowerCase()}`}
+                    href={`/c/${game.category.toLowerCase()}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 text-sm hover:bg-purple-800 transition-colors"
                   >
                     <Tag size={14} />
@@ -251,7 +251,7 @@ export default async function GamePage({ params }: GamePageProps) {
                   {game.tags && game.tags.map((tag) => (
                     <Link 
                       key={tag}
-                      href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                      href={`/t/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                       className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-700 text-gray-300 text-sm hover:bg-slate-600 transition-colors"
                     >
                       <Tag size={14} />

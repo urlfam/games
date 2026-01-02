@@ -47,7 +47,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
   
     return (
       <Link 
-        href={`/play/${game.slug}`}
+        href={`/game/${game.slug}`}
         className={`block group relative overflow-hidden rounded-lg bg-slate-800 ring-0 hover:ring-2 hover:ring-purple-500 transition-all ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

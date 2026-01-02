@@ -178,7 +178,7 @@ export default function AboutUsPage() {
               Ready to start playing? Explore thousands of free games now!
             </p>
             <Link
-              href="/play"
+              href="/"
               className="inline-block bg-white text-purple-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors"
             >
               Start Playing Now

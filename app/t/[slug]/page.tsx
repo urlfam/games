@@ -40,9 +40,13 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   return {
     title,
     description,
+    alternates: {
+      canonical: `/t/${tagSlug}`,
+    },
     openGraph: {
       title,
       description,
+      url: `/t/${tagSlug}`,
       type: 'website',
     },
     twitter: {
@@ -76,7 +80,7 @@ export default async function TagPage({ params }: TagPageProps) {
       item: {
         '@type': 'VideoGame',
         name: game.title,
-        url: `https://puzzio.io/play/${game.slug}`,
+        url: `https://puzzio.io/game/${game.slug}`,
         image: {
           '@type': 'ImageObject',
           url: game.image_url,

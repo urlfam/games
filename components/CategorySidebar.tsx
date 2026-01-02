@@ -100,8 +100,8 @@ export default function CategorySidebar() {
               key={category.slug}
               href={
                 category.slug === 'all'
-                  ? '/play'
-                  : `/play?category=${category.slug}`
+                  ? '/'
+                  : `/c/${category.slug}`
               }
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                 isActive
@@ -193,7 +193,7 @@ export default function CategorySidebar() {
           </Link>
 
           <Link
-            href="/play"
+            href="/"
             className="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-sm"
             title="All games"
           >

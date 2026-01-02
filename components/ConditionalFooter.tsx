@@ -5,7 +5,7 @@ import Footer from './Footer';
 
 export default function ConditionalFooter() {
   const pathname = usePathname();
-  const showFooter = !pathname.startsWith('/play');
+  const showFooter = !pathname.startsWith('/game');
 
   return <>{showFooter && <Footer />}</>;
 }

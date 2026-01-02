@@ -84,7 +84,7 @@ export default function Header({ categories }: HeaderProps) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/play?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsMobileMenuOpen(false);
     }
   };
@@ -107,7 +107,7 @@ export default function Header({ categories }: HeaderProps) {
               <AlignLeft size={24} />
             </button>
 
-            <Link href="/play" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
@@ -120,7 +120,7 @@ export default function Header({ categories }: HeaderProps) {
             </Link>
             {/* Desktop menu - Hidden for now (Uncomment to reactivate) */}
             {/* <div className="hidden md:flex items-center gap-4">
-              <Link href="/play" className={playLinkClass}>
+              <Link href="/" className={playLinkClass}>
                 <Gamepad2 size={18} />
                 PLAY
               </Link>
@@ -188,7 +188,7 @@ export default function Header({ categories }: HeaderProps) {
             {/* Hidden for now (Uncomment to reactivate) */}
             {/*
             <Link
-              href="/play"
+              href="/"
               className={mobilePlayLinkClass}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -221,8 +221,8 @@ export default function Header({ categories }: HeaderProps) {
                     key={category.slug}
                     href={
                       category.slug === 'all'
-                        ? '/play'
-                        : `/play?category=${category.slug}`
+                        ? '/'
+                        : `/c/${category.slug}`
                     }
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
@@ -246,7 +246,7 @@ export default function Header({ categories }: HeaderProps) {
             {/* Legal Pages - Mobile only */}
             <div className="flex flex-col gap-2">
               <Link
-                href="/play/favorites"
+                href="/favorites"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
                   isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}

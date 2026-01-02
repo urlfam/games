@@ -37,7 +37,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/play"
+                  href="/"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   All Games
@@ -45,7 +45,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/play?category=puzzle"
+                  href="/c/puzzle"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   Puzzle Games
@@ -53,7 +53,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/play?category=action"
+                  href="/c/action"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   Action Games
@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/play?category=strategy"
+                  href="/c/strategy"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   Strategy Games
@@ -69,7 +69,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/play?category=arcade"
+                  href="/c/arcade"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   Arcade Games
@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/play?category=adventure"
+                  href="/c/adventure"
                   className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
                 >
                   Adventure Games

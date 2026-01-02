@@ -13,12 +13,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/play`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 1,
-    },
-    {
       url: `${baseUrl}/news`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
@@ -76,7 +70,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const gamePages = GAMES_DATA.map((game) => ({
-    url: `${baseUrl}/play/${game.slug}`,
+    url: `${baseUrl}/game/${game.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,

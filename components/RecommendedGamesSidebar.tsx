@@ -34,7 +34,7 @@ export default function RecommendedGamesSidebar({
             {games.map((game) => (
               <Link
                 key={game.id}
-                href={`/play/${game.slug}`}
+                href={`/game/${game.slug}`}
                 className="group block bg-slate-700/50 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
               >
                 {/* Thumbnail */}
