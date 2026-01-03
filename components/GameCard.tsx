@@ -50,7 +50,6 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
         <Image
           src={game.image_url}
           alt={game.image_alt || game.title}
-          title={game.image_title || game.title}
           fill
           className={`object-cover transition-opacity duration-300 z-10 ${
             isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'

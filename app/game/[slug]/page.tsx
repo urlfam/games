@@ -136,7 +136,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
   const recommendedGames = allGames
     .filter((g) => g.category === game.category && g.id !== game.id)
-    .slice(0, 12);
+    .slice(0, 40);
 
   // Construire l'URL pour le proxy Nginx
   // Note: Assurez-vous que votre variable d'environnement est définie.
