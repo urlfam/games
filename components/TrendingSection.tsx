@@ -74,7 +74,6 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
               }`}
               priority={priority}
               onLoad={() => setIsImageLoaded(true)}
-              loader={cloudinaryLoader}
            />
   
            {/* Video */}
