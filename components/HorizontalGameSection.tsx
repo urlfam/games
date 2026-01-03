@@ -57,7 +57,7 @@ export default function HorizontalGameSection({
 
   return (
     <section>
-      <div className="flex items-center gap-3 mb-3 px-1">
+      <div className="flex items-center gap-3 mb-2 px-1">
         <h2 className="text-lg sm:text-xl font-bold text-white">{title}</h2>
         {showViewMore && viewMoreLink && (
           <Link href={viewMoreLink} className="text-purple-400 hover:text-purple-300 text-sm font-medium">
@@ -68,7 +68,7 @@ export default function HorizontalGameSection({
       <div className="relative group -mx-1 px-1">
         <div 
           ref={scrollContainerRef}
-          className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-3 pt-1" 
+          className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2 pt-1" 
           style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
         >
           <style jsx>{`

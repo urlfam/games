@@ -143,14 +143,14 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
 
   return (
     <section>
-      <div className="flex items-center gap-3 mb-3 px-1">
+      <div className="flex items-center gap-3 mb-2 px-1">
         <h2 className="text-lg sm:text-xl font-bold text-white">Trending Now</h2>
       </div>
       
       <div className="relative group -mx-1 px-1">
         <div 
           ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-3 pt-1 px-1" 
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2 pt-1 px-1" 
           style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
         >
           <style jsx>{`
