@@ -4,7 +4,8 @@ const nextConfig = {
   images: {
     // Limit max width to 1920px to avoid generating 3840px (4K) images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Add more intermediate sizes (200, 400, 512) to better match grid layouts (approx 190px and 400px)
+    imageSizes: [16, 32, 48, 64, 96, 128, 200, 256, 384, 400, 512],
     remotePatterns: [
       {
         protocol: 'https',
