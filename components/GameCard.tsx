@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Game } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
+import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface GameCardProps {
   game: Game;
@@ -48,6 +49,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
 
         {/* Static Image (Always present, z-index 10 to stay on top) */}
         <Image
+          loader={game.image_url.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
           src={game.image_url}
           alt={game.image_alt || game.title}
           fill

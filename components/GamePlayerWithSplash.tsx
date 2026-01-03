@@ -12,6 +12,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface GamePlayerWithSplashProps {
   gameTitle: string;
@@ -414,6 +415,7 @@ export default function GamePlayerWithSplash({
                 {/* Background blur */}
                 <div className="absolute inset-0 opacity-30 blur-2xl">
                   <Image
+                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
@@ -426,6 +428,7 @@ export default function GamePlayerWithSplash({
                 {/* Main Game Image - Compact, no empty spaces */}
                 <div className="relative z-10 w-full max-w-[300px] aspect-video rounded-2xl overflow-hidden shadow-2xl">
                   <Image
+                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
@@ -553,6 +556,7 @@ export default function GamePlayerWithSplash({
               {/* Game Image Background */}
               <div className="absolute inset-0 opacity-20">
                 <Image
+                  loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                   src={gameImage}
                   alt={imageAlt || gameTitle}
                   title={imageTitle || gameTitle}
@@ -567,6 +571,7 @@ export default function GamePlayerWithSplash({
                 {/* Game Thumbnail */}
                 <div className="relative w-96 aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-purple-500/50 transition-all">
                   <Image
+                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
