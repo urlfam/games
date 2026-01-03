@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Game } from '@/lib/games';
+import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface TrendingSectionProps {
   games: Game[];
@@ -62,6 +63,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
   
            {/* Image */}
            <Image
+              loader={game.image_url.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
               src={game.image_url}
               alt={game.image_alt || game.title}
               title={game.image_title || game.title}
@@ -72,6 +74,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
               }`}
               priority={priority}
               onLoad={() => setIsImageLoaded(true)}
+              loader={cloudinaryLoader}
            />
   
            {/* Video */}
@@ -171,7 +174,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
                   game={mainGame}
                   className="col-span-2 row-span-2 h-full"
                   priority={index === 0}
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 640px) 90vw, (max-width: 768px) 600px, 400px"
                   isMain={true}
                 />
 
@@ -181,7 +184,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
                     key={game.id}
                     game={game}
                     className="col-span-1"
-                    sizes="(max-width: 768px) 50vw, 25vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 300px, 200px"
                   />
                 ))}
               </div>
