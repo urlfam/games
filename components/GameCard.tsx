@@ -34,7 +34,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
   return (
     <Link 
       href={`/game/${game.slug}`}
-      className={`block group relative bg-slate-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all shadow-lg ${className}`}
+      className={`block group/card relative bg-slate-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all shadow-lg ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -84,7 +84,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
         )}
         
         {/* Title Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none transition-opacity duration-300 opacity-0 group-hover/card:opacity-100">
           <h3 className="text-xs sm:text-sm font-bold text-white truncate drop-shadow-md">
             {game.title}
           </h3>
