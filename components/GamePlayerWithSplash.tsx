@@ -43,7 +43,7 @@ export default function GamePlayerWithSplash({
   const [statsLoaded, setStatsLoaded] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const supabase = createClient();
 
@@ -426,15 +426,22 @@ export default function GamePlayerWithSplash({
                 </div>
 
                 {/* Main Game Image - Compact, no empty spaces */}
-                <div className="relative z-10 w-full max-w-[300px] aspect-video rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative z-10 w-full max-w-[300px] aspect-video rounded-2xl overflow-hidden shadow-2xl bg-slate-800">
+                  {/* Loading Spinner */}
+                  {!isImageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center z-0">
+                      <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
+                    </div>
+                  )}
                   <Image
                     loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-300 ${!isImageLoaded ? 'opacity-0' : 'opacity-100'}`}
                     priority
+                    onLoad={() => setIsImageLoaded(true)}
                   />
                 </div>
               </div>
@@ -646,8 +653,9 @@ export default function GamePlayerWithSplash({
         <div className="mt-4 bg-slate-900/95 backdrop-blur-sm border border-slate-700 rounded-xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
             {/* Game Thumbnail */}
-            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50">
+            <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50 bg-slate-800">
               <Image
+                loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
                 src={gameImage}
                 alt={imageAlt || gameTitle}
                 title={imageTitle || gameTitle}
