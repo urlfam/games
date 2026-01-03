@@ -31,7 +31,7 @@ export default function RecommendedGamesSidebar({
         <div className="bg-slate-800 rounded-lg p-2">
           <div className="grid grid-cols-2 gap-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800/50 p-1">
             {games.map((game) => (
-              <GameCard key={game.id} game={game} hideTitleOnLoad={true} />
+              <GameCard key={game.id} game={game} />
             ))}
           </div>
         </div>

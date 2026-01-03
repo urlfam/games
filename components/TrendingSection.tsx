@@ -97,7 +97,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20 pointer-events-none" />
   
           {/* Title Overlay */}
-          <div className={`absolute bottom-0 left-0 right-0 z-20 pointer-events-none ${isMain ? 'p-3 sm:p-4' : 'p-2'}`}>
+          <div className={`absolute bottom-0 left-0 right-0 z-20 pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100 ${isMain ? 'p-3 sm:p-4' : 'p-2'}`}>
             <h3 className={`text-white font-bold drop-shadow-lg line-clamp-2 ${isMain ? 'text-base sm:text-lg md:text-xl' : 'text-xs sm:text-sm'}`}>
               {game.title}
             </h3>
