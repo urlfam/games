@@ -3,7 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Search, Mail, Info, FileText, Shield, Heart, Gamepad2, Newspaper, AlignLeft } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Search,
+  Mail,
+  Info,
+  FileText,
+  Shield,
+  Heart,
+  Gamepad2,
+  Newspaper,
+  AlignLeft,
+} from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { getCategoryIcon } from '@/lib/categoryIcons';
 import { useSidebar } from '@/components/SidebarContext';
@@ -30,7 +42,7 @@ export default function Header({ categories }: HeaderProps) {
   const isNewsMain = pathname === '/news';
   const isNewsArticle = pathname.startsWith('/news/');
   // Static pages should now use the dark header as requested
-  const isStaticPage = false; 
+  const isStaticPage = false;
   const isWhiteHeader = isNewsMain;
 
   // Header style
@@ -95,11 +107,11 @@ export default function Header({ categories }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {/* Sidebar Toggle Button (Desktop) */}
-            <button 
+            <button
               onClick={toggleSidebar}
               className={`hidden md:flex p-2 rounded-lg transition-colors ${
-                isWhiteHeader 
-                  ? 'text-gray-600 hover:bg-gray-100' 
+                isWhiteHeader
+                  ? 'text-gray-600 hover:bg-gray-100'
                   : 'text-gray-300 hover:bg-slate-700'
               }`}
               aria-label="Toggle Sidebar"
@@ -111,11 +123,10 @@ export default function Header({ categories }: HeaderProps) {
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
-                width={180}
+                width={132}
                 height={56}
                 className="h-14 w-auto object-contain"
                 priority
-                unoptimized
               />
             </Link>
             {/* Desktop menu - Hidden for now (Uncomment to reactivate) */}
@@ -206,7 +217,11 @@ export default function Header({ categories }: HeaderProps) {
             */}
 
             {/* Divider */}
-            <div className={`my-2 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>
+            <div
+              className={`my-2 border-t ${
+                isWhiteHeader ? 'border-gray-200' : 'border-slate-700'
+              }`}
+            ></div>
 
             {/* Categories - Mobile only */}
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -219,11 +234,7 @@ export default function Header({ categories }: HeaderProps) {
                 return (
                   <Link
                     key={category.slug}
-                    href={
-                      category.slug === 'all'
-                        ? '/'
-                        : `/c/${category.slug}`
-                    }
+                    href={category.slug === 'all' ? '/' : `/c/${category.slug}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
                       isActive
@@ -234,21 +245,29 @@ export default function Header({ categories }: HeaderProps) {
                     }`}
                   >
                     <Icon size={18} />
-                    <span className="text-sm font-medium truncate">{category.name}</span>
+                    <span className="text-sm font-medium truncate">
+                      {category.name}
+                    </span>
                   </Link>
                 );
               })}
             </div>
 
             {/* Divider */}
-            <div className={`my-4 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>
+            <div
+              className={`my-4 border-t ${
+                isWhiteHeader ? 'border-gray-200' : 'border-slate-700'
+              }`}
+            ></div>
 
             {/* Legal Pages - Mobile only */}
             <div className="flex flex-col gap-2">
               <Link
                 href="/favorites"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                  isWhiteHeader
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -258,7 +277,9 @@ export default function Header({ categories }: HeaderProps) {
               <Link
                 href="/contact"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                  isWhiteHeader
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -268,7 +289,9 @@ export default function Header({ categories }: HeaderProps) {
               <Link
                 href="/about-us"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                  isWhiteHeader
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -278,7 +301,9 @@ export default function Header({ categories }: HeaderProps) {
               <Link
                 href="/terms"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                  isWhiteHeader
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -288,7 +313,9 @@ export default function Header({ categories }: HeaderProps) {
               <Link
                 href="/privacy"
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                  isWhiteHeader ? 'text-gray-600 hover:bg-gray-100' : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
+                  isWhiteHeader
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:bg-slate-700/50 hover:text-white'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

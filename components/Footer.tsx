@@ -10,17 +10,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo & Description */}
           <div className="col-span-1">
-            <Link
-              href="/"
-              className="inline-block mb-4"
-            >
+            <Link href="/" className="inline-block mb-4">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
-                width={180}
+                width={132}
                 height={56}
                 className="h-14 w-auto object-contain"
-                unoptimized
               />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">

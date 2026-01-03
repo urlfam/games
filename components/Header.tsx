@@ -145,11 +145,10 @@ export default function Header() {
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
-                width={180}
+                width={132}
                 height={56}
                 className="h-14 w-auto object-contain"
                 priority
-                unoptimized
               />
             </Link>
             {/* Desktop menu */}
@@ -233,7 +232,11 @@ export default function Header() {
             </Link>
 
             {/* Divider */}
-            <div className={`my-2 border-t ${isWhiteHeader ? 'border-gray-200' : 'border-slate-700'}`}></div>
+            <div
+              className={`my-2 border-t ${
+                isWhiteHeader ? 'border-gray-200' : 'border-slate-700'
+              }`}
+            ></div>
 
             {/* Categories - Mobile only */}
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -246,11 +249,7 @@ export default function Header() {
                 return (
                   <Link
                     key={category.slug}
-                    href={
-                      category.slug === 'all'
-                        ? '/'
-                        : `/c/${category.slug}`
-                    }
+                    href={category.slug === 'all' ? '/' : `/c/${category.slug}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
                       isActive
@@ -261,7 +260,9 @@ export default function Header() {
                     }`}
                   >
                     <Icon size={18} />
-                    <span className="text-sm font-medium truncate">{category.name}</span>
+                    <span className="text-sm font-medium truncate">
+                      {category.name}
+                    </span>
                   </Link>
                 );
               })}
