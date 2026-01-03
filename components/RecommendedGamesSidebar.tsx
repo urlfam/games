@@ -15,7 +15,7 @@ export default function RecommendedGamesSidebar({
   }
 
   return (
-    <aside className="block w-full lg:w-64 flex-shrink-0">
+    <aside className="block w-full lg:w-[340px] flex-shrink-0">
       {/* Sticky container */}
       <div className="sticky top-20 space-y-3">
         {/* Header */}
@@ -28,10 +28,10 @@ export default function RecommendedGamesSidebar({
         </div>
 
         {/* Game grid */}
-        <div className="bg-slate-800 rounded-lg p-3">
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800/50">
+        <div className="bg-slate-800 rounded-lg p-2">
+          <div className="grid grid-cols-2 gap-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800/50 p-1">
             {games.map((game) => (
-              <GameCard key={game.id} game={game} />
+              <GameCard key={game.id} game={game} hideTitleOnLoad={true} />
             ))}
           </div>
         </div>

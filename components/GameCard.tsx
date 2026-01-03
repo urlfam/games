@@ -10,9 +10,10 @@ interface GameCardProps {
   game: Game;
   priority?: boolean;
   className?: string;
+  hideTitleOnLoad?: boolean;
 }
 
-export default function GameCard({ game, priority = false, className = '' }: GameCardProps) {
+export default function GameCard({ game, priority = false, className = '', hideTitleOnLoad = false }: GameCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -84,7 +85,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
         )}
         
         {/* Title Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none">
+        <div className={`absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none transition-opacity duration-300 ${hideTitleOnLoad ? 'opacity-0 group-hover:opacity-100' : ''}`}>
           <h3 className="text-xs sm:text-sm font-bold text-white truncate drop-shadow-md">
             {game.title}
           </h3>
