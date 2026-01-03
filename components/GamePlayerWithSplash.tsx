@@ -44,6 +44,7 @@ export default function GamePlayerWithSplash({
   const [showReportModal, setShowReportModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const supabase = createClient();
 
