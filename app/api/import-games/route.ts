@@ -109,7 +109,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Error importing game:', error);
     return NextResponse.json(
-      { message: 'An internal server error occurred.' },
+      { message: 'An internal server error occurred.', error: String(error) },
       { status: 500 },
     );
   } finally {
@@ -118,13 +118,9 @@ export async function POST(req: Request) {
 }
 
 async function saveGames(games: any) {
-  try {
-    // Ensure the directory exists before writing the file
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error saving games:', error);
-  }
+  // Ensure the directory exists before writing the file
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
 }
 
 async function processVideo(
