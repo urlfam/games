@@ -78,9 +78,16 @@ export async function POST(req: Request) {
       ...newGame,
     };
 
+    // Ensure slug is present and saved
+    if (!gameToSave.slug && gameToSave.page_url) {
+      gameToSave.slug = gameToSave.page_url.substring(
+        gameToSave.page_url.lastIndexOf('/') + 1,
+      );
+    }
+
     // Process video if available
     if (newGame.video_url) {
-      const slug = newGame.slug || newGame.page_url.substring(newGame.page_url.lastIndexOf('/') + 1);
+      const slug = gameToSave.slug;
       const processedVideoUrl = await processVideo(newGame.video_url, slug);
       if (processedVideoUrl) {
         gameToSave.video_url = processedVideoUrl;
@@ -120,7 +127,10 @@ async function saveGames(games: any) {
   }
 }
 
-async function processVideo(videoUrl: string, slug: string): Promise<string | null> {
+async function processVideo(
+  videoUrl: string,
+  slug: string,
+): Promise<string | null> {
   try {
     // Ensure previews directory exists
     await fs.mkdir(PREVIEWS_DIR, { recursive: true });
@@ -150,7 +160,6 @@ async function processVideo(videoUrl: string, slug: string): Promise<string | nu
     await execPromise(command);
     console.log(`Video processed successfully: ${outputPath}`);
     return publicPath;
-
   } catch (error) {
     console.error(`Error processing video for ${slug}:`, error);
     return null;
