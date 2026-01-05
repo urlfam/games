@@ -34,23 +34,31 @@ export async function generateMetadata({
 
   return {
     title: `${game.title} - Play on Puzzio.io`,
-    description: (game as any).image_description || stripHtml(game.description).substring(0, 160),
+    description:
+      (game as any).image_description ||
+      stripHtml(game.description).substring(0, 160),
     alternates: {
       canonical: `https://puzzio.io/game/${params.slug}`,
     },
     openGraph: {
       title: game.title,
-      description: (game as any).image_description || stripHtml(game.description).substring(0, 200),
+      description:
+        (game as any).image_description ||
+        stripHtml(game.description).substring(0, 200),
       url: `https://puzzio.io/game/${params.slug}`,
-      images: [{ 
-        url: game.image_url,
-        alt: (game as any).image_alt || game.title
-      }],
+      images: [
+        {
+          url: game.image_url,
+          alt: (game as any).image_alt || game.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: game.title,
-      description: (game as any).image_description || stripHtml(game.description).substring(0, 200),
+      description:
+        (game as any).image_description ||
+        stripHtml(game.description).substring(0, 200),
       images: [game.image_url],
     },
   };
@@ -68,7 +76,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
   // Fetch ratings for Schema (based on Likes/Dislikes)
   const supabase = await createClient();
-  
+
   // Increment play count on page load (server-side)
   // We use a simple RPC call. In a real high-traffic app, you might want to debounce this or use a queue.
   // But for now, this ensures every visit counts and seeds new games.
@@ -89,10 +97,10 @@ export default async function GamePage({ params }: GamePageProps) {
   const dislikes = stats?.dislikes || 0;
   const plays = stats?.plays || 0;
   const totalVotes = likes + dislikes;
-  
+
   // Calculate rating on 5-point scale for Schema: (Likes / Total) * 5
   const ratingValueSchema = totalVotes > 0 ? (likes / totalVotes) * 5 : 0;
-  
+
   // Calculate rating on 10-point scale for Visual: (Likes / Total) * 10
   // If no votes, default to 10.0 as per user request for visual consistency with player
   const ratingValueVisual = totalVotes > 0 ? (likes / totalVotes) * 10 : 10.0;
@@ -113,9 +121,9 @@ export default async function GamePage({ params }: GamePageProps) {
         ratingValue: ratingValueSchema.toFixed(1),
         ratingCount: totalVotes,
         bestRating: '5',
-        worstRating: '1'
-      }
-    })
+        worstRating: '1',
+      },
+    }),
   };
 
   let faqJsonLd = null;
@@ -179,59 +187,90 @@ export default async function GamePage({ params }: GamePageProps) {
             <h1 className="text-3xl lg:text-4xl font-black text-white mb-6">
               {game.title}
             </h1>
-            
+
             {/* Compact Info List */}
             <div className="space-y-2 text-base text-gray-300">
               {/* Rating */}
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Rating:</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-white text-xl">{ratingValueVisual.toFixed(1)}</span>
-                  <span className="text-gray-500 text-sm">({totalVotes.toLocaleString()} votes)</span>
+                  <span className="font-black text-white text-xl">
+                    {ratingValueVisual.toFixed(1)}
+                  </span>
+                  <span className="text-gray-500 text-sm">
+                    ({totalVotes.toLocaleString()} votes)
+                  </span>
                 </div>
               </div>
 
               {/* Played (Real data from DB) */}
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Played:</span>
-                <span className="text-white font-semibold">{plays.toLocaleString()} times</span>
+                <span className="text-white font-semibold">
+                  {plays.toLocaleString()} times
+                </span>
               </div>
-              
+
               {/* Released */}
               <div className="flex items-center">
-                <span className="w-32 text-gray-500 font-medium">Released:</span>
+                <span className="w-32 text-gray-500 font-medium">
+                  Released:
+                </span>
                 <span className="text-white font-semibold">
-                  {new Date(game.importedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  {new Date(game.importedAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </span>
               </div>
 
               {/* Last Updated */}
               <div className="flex items-center">
-                <span className="w-32 text-gray-500 font-medium">Last Updated:</span>
+                <span className="w-32 text-gray-500 font-medium">
+                  Last Updated:
+                </span>
                 <span className="text-white font-semibold">
-                  {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  {new Date().toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </span>
               </div>
 
               {/* Technology */}
               <div className="flex items-center">
-                <span className="w-32 text-gray-500 font-medium">Technology:</span>
+                <span className="w-32 text-gray-500 font-medium">
+                  Technology:
+                </span>
                 <span className="text-white font-semibold">HTML5</span>
               </div>
 
               {/* Platform */}
               <div className="flex items-center">
-                <span className="w-32 text-gray-500 font-medium">Platform:</span>
-                <span className="text-white font-semibold">Browser (desktop, mobile, tablet)</span>
+                <span className="w-32 text-gray-500 font-medium">
+                  Platform:
+                </span>
+                <span className="text-white font-semibold">
+                  Browser (desktop, mobile, tablet)
+                </span>
               </div>
 
               {/* Classification */}
               <div className="flex items-center">
-                <span className="w-32 text-gray-500 font-medium">Classification:</span>
+                <span className="w-32 text-gray-500 font-medium">
+                  Classification:
+                </span>
                 <div className="flex items-center gap-1 text-purple-400 font-bold">
-                  <Link href="/" className="hover:underline">Games</Link>
+                  <Link href="/" className="hover:underline">
+                    Games
+                  </Link>
                   <span className="text-gray-600">»</span>
-                  <Link href={`/c/${game.category.toLowerCase()}`} className="hover:underline">{game.category}</Link>
+                  <Link
+                    href={`/c/${game.category.toLowerCase()}`}
+                    className="hover:underline"
+                  >
+                    {game.category}
+                  </Link>
                 </div>
               </div>
 
@@ -239,25 +278,26 @@ export default async function GamePage({ params }: GamePageProps) {
               <div className="flex items-start mt-4 pt-4 border-t border-gray-700">
                 <div className="flex flex-wrap gap-2">
                   {/* Category Tag */}
-                  <Link 
+                  <Link
                     href={`/c/${game.category.toLowerCase()}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 text-sm hover:bg-purple-800 transition-colors"
                   >
                     <Tag size={14} />
                     {game.category}
                   </Link>
-                  
+
                   {/* Other Tags */}
-                  {game.tags && game.tags.map((tag) => (
-                    <Link 
-                      key={tag}
-                      href={`/t/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-700 text-gray-300 text-sm hover:bg-slate-600 transition-colors"
-                    >
-                      <Tag size={14} />
-                      {tag}
-                    </Link>
-                  ))}
+                  {game.tags &&
+                    game.tags.map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/t/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-700 text-gray-300 text-sm hover:bg-slate-600 transition-colors"
+                      >
+                        <Tag size={14} />
+                        {tag}
+                      </Link>
+                    ))}
                 </div>
               </div>
             </div>
@@ -266,7 +306,7 @@ export default async function GamePage({ params }: GamePageProps) {
           {/* Game Description */}
           <div className="bg-slate-800 rounded-lg p-6 mb-6">
             <h2 className="text-2xl font-bold text-white mb-4">Description</h2>
-            <div 
+            <div
               className="game-description prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: game.description }}
             />
@@ -275,6 +315,24 @@ export default async function GamePage({ params }: GamePageProps) {
           {/* FAQ Section */}
           {game.faq_schema && game.faq_schema.length > 0 && (
             <FAQAccordion items={game.faq_schema} />
+          )}
+
+          {/* YouTube Video Section */}
+          {game.youtube_video_url && (
+            <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-6">
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Gameplay Video
+              </h2>
+              <div className="relative w-full pt-[56.25%] rounded-lg overflow-hidden bg-black">
+                <iframe
+                  src={game.youtube_video_url}
+                  title={`${game.title} Gameplay Video`}
+                  className="absolute top-0 left-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
           )}
 
           {/* Comments Section */}

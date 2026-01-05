@@ -32,6 +32,9 @@ export interface Game {
 
   // Tags (scraped from the game page)
   tags?: string[];
+
+  // YouTube Video URL (scraped from the game page)
+  youtube_video_url?: string;
 }
 
 /**

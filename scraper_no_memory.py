@@ -75,6 +75,24 @@ def get_game_details_from_page(game_url):
         return None
 
     soup = BeautifulSoup(resp.text, "html.parser")
+    # --- Extraction de l'URL Youtube via JSON-LD ---
+    youtube_video_url = None
+    try:
+        json_ld_scripts = soup.find_all('script', type="application/ld+json")
+        for script in json_ld_scripts:
+            if script.string:
+                try:
+                    data = json.loads(script.string)
+                    if isinstance(data, dict): data = [data]
+                    for item in data:
+                        if item.get('@type') == 'VideoObject' and 'embedUrl' in item:
+                            youtube_video_url = item['embedUrl']
+                            break
+                except: continue
+            if youtube_video_url: break
+    except Exception: pass
+    # -----------------------------------------------
+
     script_tag = soup.find('script', {'id': '__NEXT_DATA__'})
     if not script_tag: return None
 
@@ -93,6 +111,27 @@ def get_game_details_from_page(game_url):
         iframe_url = game_data.get('desktopUrl') or game_data.get('url')
         cover_path = game_data.get('cover')
         image_url = f"{IMAGE_BASE_URL}/{cover_path}" if cover_path else "Non trouvée"
+
+        # --- DEBUT AJOUT : EXTRACTION IMAGES MOBILES (2x3 ET 1x1) ---
+        mobile_image_url = image_url # Par défaut (fallback)
+        mobile_1x1_url = "Non trouvée" # Par défaut pour la 1x1
+
+        covers = game_data.get('covers')
+        if covers and isinstance(covers, dict):
+            # 1. Image Portrait (2x3)
+            path_2x3 = covers.get('2x3')
+            path_1x1 = covers.get('1x1')
+
+            # Logique pour l'image mobile principale (priorité 2x3, sinon 1x1)
+            if path_2x3:
+                mobile_image_url = f"{IMAGE_BASE_URL}/{path_2x3}"
+            elif path_1x1:
+                mobile_image_url = f"{IMAGE_BASE_URL}/{path_1x1}"
+            
+            # 2. Image Carrée (1x1) spécifique
+            if path_1x1:
+                mobile_1x1_url = f"{IMAGE_BASE_URL}/{path_1x1}"
+        # --- FIN AJOUT ---
         
         # --- LOGIQUE CATÉGORIE (Genre Principal) ---
         category = "Non classé"
@@ -120,10 +159,13 @@ def get_game_details_from_page(game_url):
             'title': title,
             'description': description,
             'iframe_url': iframe_url,
-            'image_url': image_url,
+            'image_url': image_url,       # Image desktop (16x9 généralement)
+            'mobile_image_url': mobile_image_url, # Image mobile portrait (2x3)
+            'mobile_1x1_url': mobile_1x1_url,     # Image mobile carrée (1x1) <--- AJOUTÉ ICI
             'category': category,
-            'tags': tags,           # Nouveau champ tags
-            'video_url': video_url, # Nouveau champ vidéo
+            'tags': tags,           
+            'video_url': video_url, 
+            'youtube_video_url': youtube_video_url,
             'page_url': game_url
         }
     except Exception as e:
