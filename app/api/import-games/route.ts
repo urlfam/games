@@ -42,6 +42,25 @@ export async function POST(req: Request) {
     // 2. --- Get the new game data from the request body ---
     const newGame = await req.json();
 
+    // --- FIX: Sanitize Tags (Handle malformed n8n/scraper output) ---
+    // Correction pour les tags mal formatés (ex: '["Mobile"', '"2D"')
+    if (newGame.tags && Array.isArray(newGame.tags)) {
+      newGame.tags = newGame.tags.map((tag: any) => {
+        if (typeof tag !== 'string') return tag;
+        let clean = tag.trim();
+        // Cas 1: Le tag commence par [" (artefact de split incorrect)
+        if (clean.startsWith('["')) clean = clean.substring(2);
+        // Cas 2: Le tag finit par "]
+        if (clean.endsWith('"]')) clean = clean.substring(0, clean.length - 2);
+        // Cas 3: Le tag a des guillemets autour
+        if (clean.startsWith('"')) clean = clean.substring(1);
+        if (clean.endsWith('"')) clean = clean.substring(0, clean.length - 1);
+        // Cas 4: Guillemets échappés résiduels
+        clean = clean.replace(/\\"/g, '"');
+        return clean;
+      });
+    }
+
     if (!newGame.title || !newGame.iframe_url) {
       return NextResponse.json(
         { message: 'Missing required fields: title and iframe_url' },
