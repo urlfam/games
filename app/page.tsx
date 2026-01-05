@@ -3,7 +3,12 @@ import Image from 'next/image';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
-import { getAllGames, getNewGames, getTrendingGames, sortGamesByPlays } from '@/lib/games'; // Import our new function
+import {
+  getAllGames,
+  getNewGames,
+  getTrendingGames,
+  sortGamesByPlays,
+} from '@/lib/games'; // Import our new function
 import { stripHtml } from '@/lib/utils';
 
 // ISR: Regenerate this page every 60 seconds in the background
@@ -27,7 +32,10 @@ export default async function HomePage({
   if (categoryParam === 'all') {
     filteredGames = await getAllGames();
     // Sort by Newest for "All Games" section
-    filteredGames.sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime());
+    filteredGames.sort(
+      (a, b) =>
+        new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime(),
+    );
   } else if (categoryParam === 'new') {
     filteredGames = await getNewGames(50);
   } else if (categoryParam === 'trending' || categoryParam === 'popular') {
@@ -39,12 +47,15 @@ export default async function HomePage({
       const gameCategory = game.category.toLowerCase().replace(/\s+/g, '-');
       return gameCategory === categoryParam;
     });
-    
+
     // Capture these games for the trending section calculation
     gamesForTrendingSection = [...filteredGames];
 
     // Sort "All Games" list by Newest (Date)
-    filteredGames.sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime());
+    filteredGames.sort(
+      (a, b) =>
+        new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime(),
+    );
   }
 
   // Apply search filter if search query exists
@@ -60,26 +71,28 @@ export default async function HomePage({
   const isHomePage = categoryParam === 'all' && !searchQuery;
 
   // --- Logic for Homepage Sections ---
-  
+
   // 1. Trending Games (for horizontal scroll)
   let trendingGames: any[] = [];
   if (isHomePage) {
-     // Get more trending games for horizontal scroll
-     trendingGames = await getTrendingGames(20);
-     // Fallback if not enough trending data
-     if (trendingGames.length < 20) {
-         trendingGames = filteredGames.slice(0, 20);
-     }
+    // Get more trending games for horizontal scroll
+    trendingGames = await getTrendingGames(20);
+    // Fallback if not enough trending data
+    if (trendingGames.length < 20) {
+      trendingGames = filteredGames.slice(0, 20);
+    }
   } else {
-     // For category/search pages, we might use trendingGames differently or not at all
-     // But let's keep the variable for consistency if needed
-     trendingGames = [];
+    // For category/search pages, we might use trendingGames differently or not at all
+    // But let's keep the variable for consistency if needed
+    trendingGames = [];
   }
 
   // 2. New Games (Next batch)
   // Exclude games already in trending to avoid duplicates on homepage
   const trendingIds = new Set(trendingGames.map((g: any) => g.id));
-  const newGames = filteredGames.filter((g) => !trendingIds.has(g.id)).slice(0, 12);
+  const newGames = filteredGames
+    .filter((g) => !trendingIds.has(g.id))
+    .slice(0, 12);
 
   // 3. Tag Sections
   let tagSections: { tag: string; games: any[] }[] = [];
@@ -88,6 +101,18 @@ export default async function HomePage({
     filteredGames.forEach((game) => {
       // We can include trending games in tags, or exclude them. Let's include them.
       game.tags?.forEach((tag: string) => {
+        // --- FIX: Filter out malformed tags (e.g. starting with " or [") ---
+        if (
+          !tag ||
+          tag.startsWith('[') ||
+          tag.startsWith('"') ||
+          tag.endsWith(']') ||
+          tag.endsWith('"') ||
+          tag.length < 2
+        ) {
+          return;
+        }
+
         if (!tagGroups[tag]) tagGroups[tag] = [];
         tagGroups[tag].push(game);
       });
@@ -125,7 +150,7 @@ export default async function HomePage({
   };
 
   if (filteredGames.length === 0 && !searchQuery) {
-     // Handle empty state if needed, but usually we have games.
+    // Handle empty state if needed, but usually we have games.
   }
 
   return (
@@ -136,7 +161,6 @@ export default async function HomePage({
       />
 
       <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
-        
         {isHomePage ? (
           <>
             {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
@@ -164,14 +188,18 @@ export default async function HomePage({
         ) : (
           /* Standard Grid for Search/Category Pages */
           <section>
-             <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
-                {searchQuery ? `Search: ${searchQuery}` : (categoryParam === 'all' ? 'All Games' : categoryParam)}
-             </h2>
-             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-                {filteredGames.map((game) => (
-                  <GameCard key={game.id} game={game} />
-                ))}
-             </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
+              {searchQuery
+                ? `Search: ${searchQuery}`
+                : categoryParam === 'all'
+                ? 'All Games'
+                : categoryParam}
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+              {filteredGames.map((game) => (
+                <GameCard key={game.id} game={game} />
+              ))}
+            </div>
           </section>
         )}
       </div>
