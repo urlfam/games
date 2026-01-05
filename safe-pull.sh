@@ -24,6 +24,7 @@ fi
 # Faire le git pull
 cd /root/puzzio
 echo "🔄 Git pull en cours..."
-git pull
+git fetch --all
+git reset --hard origin/main
 
 echo "✅ Mise à jour terminée !"

@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
 set timeout 600
-spawn ssh root@147.93.7.103 "cd /root/puzzio && ./safe-pull.sh && mkdir -p /root/crazygames-import && cp scraper_no_memory.py /root/crazygames-import/ && chmod -R 777 data && docker-compose down && docker-compose up -d --build"
+spawn ssh root@147.93.7.103 "cd /root/puzzio && git fetch --all && git reset --hard origin/main && mkdir -p /root/crazygames-import && cp scraper_no_memory.py /root/crazygames-import/ && grep 'youtube_video_url' /root/crazygames-import/scraper_no_memory.py && chmod -R 777 data && docker-compose down && docker-compose up -d --build"
 expect {
   "yes/no" { send "yes\r"; exp_continue }
   "password:" { send "Aissayoub21\r" }
