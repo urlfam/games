@@ -3,6 +3,7 @@ import Image from 'next/image';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
+import FooterActions from '@/components/FooterActions';
 import {
   getAllGames,
   getNewGames,
@@ -61,9 +62,9 @@ export default async function HomePage({
   // Apply search filter if search query exists
   if (searchQuery) {
     filteredGames = filteredGames.filter((game) => {
-      const titleMatch = game.title.toLowerCase().includes(searchQuery);
-      const descMatch = game.description.toLowerCase().includes(searchQuery);
-      const categoryMatch = game.category.toLowerCase().includes(searchQuery);
+      const titleMatch = game.title?.toLowerCase().includes(searchQuery) ?? false;
+      const descMatch = game.description?.toLowerCase().includes(searchQuery) ?? false;
+      const categoryMatch = game.category?.toLowerCase().includes(searchQuery) ?? false;
       return titleMatch || descMatch || categoryMatch;
     });
   }
@@ -184,6 +185,9 @@ export default async function HomePage({
                 badgeText={`All ${tag}`}
               />
             ))}
+
+            {/* Footer Actions (Random Game & Back to Top) */}
+            <FooterActions />
           </>
         ) : (
           /* Standard Grid for Search/Category Pages */
