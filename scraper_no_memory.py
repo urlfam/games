@@ -108,7 +108,11 @@ def get_game_details_from_page(game_url):
         if description_raw:
             description = BeautifulSoup(description_raw, "html.parser").get_text(separator=" ").strip()
         
-        iframe_url = game_data.get('desktopUrl') or game_data.get('url')
+        # iframe_url = game_data.get('desktopUrl') or game_data.get('url')
+        # Modification pour utiliser le proxy
+        slug = game_url.rstrip('/').split('/')[-1]
+        iframe_url = f"http://147.93.7.103:9999/game/{slug}"
+
         cover_path = game_data.get('cover')
         image_url = f"{IMAGE_BASE_URL}/{cover_path}" if cover_path else "Non trouvée"
 
