@@ -1,7 +1,6 @@
 import asyncio
 import sys
 import json
-import os
 import cloudinary
 import cloudinary.uploader
 from playwright.async_api import async_playwright
@@ -49,44 +48,8 @@ async def get_stable_game_frame(page):
         await page.wait_for_timeout(3000)
     return None
 
-def update_game_database(slug, image_url):
-    # Try different paths
-    paths = ["/app/data/games.json", "data/games.json"]
-    target_path = None
-    
-    for path in paths:
-        if os.path.exists(path):
-            target_path = path
-            break
-            
-    if not target_path:
-        return "Database file not found"
-
-    try:
-        with open(target_path, "r", encoding="utf-8") as f:
-            games = json.load(f)
-        
-        updated = False
-        for game in games:
-            # Match by explicit slug or derived slug from page_url
-            current_slug = game.get("slug")
-            if not current_slug and "page_url" in game:
-                 current_slug = game["page_url"].split("/")[-1]
-            
-            if current_slug == slug:
-                game["image_url"] = image_url
-                updated = True
-                break
-        
-        if updated:
-            with open(target_path, "w", encoding="utf-8") as f:
-                json.dump(games, f, indent=2, ensure_ascii=False)
-            return "Updated"
-        else:
-            return "Game not found"
-
-    except Exception as e:
-        return f"Error: {str(e)}"
+// ...existing code...
+// ...existing code...
 
 async def run():
     async with async_playwright() as p:
@@ -141,21 +104,13 @@ async def run():
             secure_url = response['secure_url']
             url_propre = secure_url.replace('/upload/', '/upload/e_trim/f_auto,q_auto/')
             
-            # Update DB
-            db_status = update_game_database(FILE_NAME, url_propre)
-
             # 7. Retour à n8n (JSON pur)
             print(json.dumps({
                 "status": "SUCCESS",
                 "image_url": url_propre,
                 "name_used": FILE_NAME,
-                "original_url": secure_url,
-                "db_update": db_status
+                "original_url": secure_url
             }))
-
-            # 8. Mettre à jour la base de données locale
-            update_result = update_game_database(FILE_NAME, url_propre)
-            # print(f"Mise à jour de la base de données: {update_result}")
 
         except Exception as e:
             print(json.dumps({"status": "ERROR", "message": str(e)}))
