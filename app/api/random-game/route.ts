@@ -9,8 +9,9 @@ export async function GET(request: Request) {
     const games = await getAllGames();
     
     // Determine the base URL from the incoming request headers to support proper redirects behind Nginx/Docker
-    const host = request.headers.get('host') || 'puzzio.io';
-    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    const host = request.headers.get('host') || '147.93.7.103';
+    // Force HTTP as requested for now, or respect header if safer
+    const protocol = 'http'; 
     const baseUrl = `${protocol}://${host}`;
     
     if (!games || games.length === 0) {

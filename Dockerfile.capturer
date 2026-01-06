@@ -1,0 +1,17 @@
+# Use the official Playwright Python image which includes necessary browsers and dependencies
+FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+
+WORKDIR /app
+
+# Install python dependencies
+RUN pip install cloudinary playwright nest_asyncio
+
+# Install browsers (chromium is enough for this task)
+# The base image includes them, but running this ensures we have what the script expects if using default launch
+RUN playwright install chromium
+
+# Copy the script
+COPY capture_screenshot.py /app/capture_screenshot.py
+
+# Keep the container running so we can exec into it
+CMD ["tail", "-f", "/dev/null"]

@@ -43,3 +43,10 @@ services:
       - ./validation-results:/app/results
     restart: unless-stopped
     command: tail -f /dev/null
+
+  image-capturer:
+    build:
+      context: .
+      dockerfile: Dockerfile.capturer
+    container_name: puzzio-image-description
+    restart: unless-stopped
