@@ -49,4 +49,6 @@ services:
       context: .
       dockerfile: Dockerfile.capturer
     container_name: puzzio-image-description
+    volumes:
+      - ./data:/app/data
     restart: unless-stopped
