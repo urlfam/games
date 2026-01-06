@@ -48,9 +48,6 @@ async def get_stable_game_frame(page):
         await page.wait_for_timeout(3000)
     return None
 
-// ...existing code...
-// ...existing code...
-
 async def run():
     async with async_playwright() as p:
         # Launch options for Docker environment
