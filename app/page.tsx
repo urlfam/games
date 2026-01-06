@@ -150,8 +150,21 @@ export default async function HomePage({
     })),
   };
 
-  if (filteredGames.length === 0 && !searchQuery) {
-    // Handle empty state if needed, but usually we have games.
+  if (filteredGames.length === 0 && searchQuery) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <h2 className="text-2xl font-bold text-white">No games found</h2>
+        <p className="text-slate-400">
+          Try adjusting your search for &quot;{searchQuery}&quot;
+        </p>
+        <Link
+          href="/"
+          className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+        >
+          Browse All Games
+        </Link>
+      </div>
+    );
   }
 
   return (
