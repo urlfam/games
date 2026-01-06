@@ -62,9 +62,9 @@ export default async function HomePage({
   // Apply search filter if search query exists
   if (searchQuery) {
     filteredGames = filteredGames.filter((game) => {
-      const titleMatch = game.title?.toLowerCase().includes(searchQuery) ?? false;
-      const descMatch = game.description?.toLowerCase().includes(searchQuery) ?? false;
-      const categoryMatch = game.category?.toLowerCase().includes(searchQuery) ?? false;
+      const titleMatch = game.title.toLowerCase().includes(searchQuery);
+      const descMatch = game.description.toLowerCase().includes(searchQuery);
+      const categoryMatch = game.category.toLowerCase().includes(searchQuery);
       return titleMatch || descMatch || categoryMatch;
     });
   }
