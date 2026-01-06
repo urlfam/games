@@ -14,14 +14,8 @@ export async function GET() {
 
     const randomIndex = Math.floor(Math.random() * games.length);
     const randomGame = games[randomIndex];
-
-    // Build the absolute URL if needed, or relative
-    // Next.js NextResponse.redirect handles relative paths nicely or absolute URLs.
-    // We want to redirect to current_origin/game/[slug]
-    const url = new NextResponse('').nextUrl.clone();
-    url.pathname = `/game/${randomGame.slug}`;
     
-    // Easier way using relative path if on same domain:
+    // Redirect to the random game
     return NextResponse.redirect(new URL(`/game/${randomGame.slug}`, process.env.NEXT_PUBLIC_BASE_URL || 'https://puzzio.io'));
     
   } catch (error) {
