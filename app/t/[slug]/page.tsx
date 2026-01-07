@@ -96,27 +96,29 @@ export default async function TagPage({ params }: TagPageProps) {
   };
 
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4">
+    <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
       
-      {/* Header */}
-      <h1 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-        <span className="text-purple-400">#</span>
-        {tag.name} Games
-      </h1>
+      {/* Header - Styled like Category Page */}
+      <section>
+        <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1 flex items-center gap-2">
+          <span className="text-purple-400">#</span>
+          {tag.name} Games
+        </h1>
 
-      {/* Grid Layout - Standard Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-        {games.map((game) => (
-          <GameCard 
-            key={game.id} 
-            game={game}
-          />
-        ))}
-      </div>
+        {/* Grid Layout - Standard Grid (Copied from Category/Home Page) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          {games.map((game) => (
+            <GameCard 
+              key={game.id} 
+              game={game}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
