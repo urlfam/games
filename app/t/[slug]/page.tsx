@@ -108,8 +108,8 @@ export default async function TagPage({ params }: TagPageProps) {
         {tag.name} Games
       </h1>
 
-      {/* Grid Layout - Same as HomePage/CategoryPage - Left Aligned with justify-items-start */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-5 justify-items-start">
+      {/* Grid Layout - Standard Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
         {games.map((game) => (
           <GameCard 
             key={game.id} 

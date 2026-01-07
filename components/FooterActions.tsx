@@ -1,9 +1,12 @@
 'use client';
 
 import { Shuffle, ArrowUp } from 'lucide-react';
-import Link from 'next/link';
+// import Link from 'next/link'; // We'll use useRouter for dynamic navigation to bust cache
+import { useRouter } from 'next/navigation';
 
 export default function FooterActions() {
+  const router = useRouter();
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -11,17 +14,21 @@ export default function FooterActions() {
     });
   };
 
+  const handleRandomGame = () => {
+    // Navigate with a timestamp to force a fresh request (bypass browser cache)
+    router.push(`/api/random-game?t=${Date.now()}`);
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 mb-12 px-4">
       {/* Random Game Button */}
-      <Link
-        href="/api/random-game"
-        prefetch={false} // Don't prefetch random route to keep it fresh
+      <button
+        onClick={handleRandomGame}
         className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-bold shadow-lg shadow-purple-900/20 transform hover:-translate-y-1 transition-all duration-200 group"
       >
         <Shuffle className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
         <span>Random Game</span>
-      </Link>
+      </button>
 
       {/* Back to Top Button */}
       <button
