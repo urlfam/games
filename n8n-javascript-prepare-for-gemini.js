@@ -50,5 +50,5 @@ return {
   page_url: pageUrl,
   iframe_url: iframeUrl,
   image_url: imageUrl,
-  prompt: geminiPrompt
+  prompt: geminiPrompt,
 };

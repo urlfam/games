@@ -11,25 +11,29 @@ Un `git pull` sur le serveur a écrasé `games.json` avec une version vide du re
 ### ✅ Solutions mises en place
 
 1. **games.json est maintenant dans .gitignore**
+
    - Le fichier ne sera plus tracké par Git
    - Les `git pull` ne l'écraseront plus
 
 2. **Script de backup automatique : `safe-pull.sh`**
+
    ```bash
    # Sur le serveur, utiliser ce script au lieu de git pull
    ./safe-pull.sh
    ```
+
    - Sauvegarde automatiquement `games.json` avant le pull
    - Garde les 10 derniers backups dans `/root/puzzio-backups/`
 
 3. **Restauration en cas de problème**
+
    ```bash
    # Trouver le dernier backup
    ls -lht /root/puzzio-backups/
-   
+
    # Restaurer
    cp /root/puzzio-backups/games_YYYYMMDD_HHMMSS.json /root/puzzio/data/games.json
-   
+
    # Redémarrer
    cd /root/puzzio && docker-compose restart web
    ```
@@ -57,6 +61,7 @@ ssh root@147.93.7.103 "ls -lh /root/puzzio/data/games.json"
 ### 📊 Monitoring
 
 Vérifier la taille de games.json régulièrement :
+
 ```bash
 ssh root@147.93.7.103 "wc -l /root/puzzio/data/games.json"
 # Devrait afficher plusieurs milliers de lignes

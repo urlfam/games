@@ -150,14 +150,12 @@ export default function GamePlayerWithSplash({
     } else if (error && error.code === 'PGRST116') {
       // No stats yet, initialize
       console.log('[loadGameStats] No stats found, initializing...');
-      await supabase
-        .from('game_stats')
-        .insert({
-          game_slug: gameSlug,
-          game_name: gameTitle,
-          likes: 0,
-          dislikes: 0,
-        });
+      await supabase.from('game_stats').insert({
+        game_slug: gameSlug,
+        game_name: gameTitle,
+        likes: 0,
+        dislikes: 0,
+      });
       setLikeCount(0);
       setDislikeCount(0);
     } else if (error) {
@@ -416,7 +414,11 @@ export default function GamePlayerWithSplash({
                 {/* Background blur */}
                 <div className="absolute inset-0 opacity-30 blur-2xl">
                   <Image
-                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                    loader={
+                      gameImage.includes('res.cloudinary.com')
+                        ? cloudinaryLoader
+                        : undefined
+                    }
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
@@ -435,12 +437,18 @@ export default function GamePlayerWithSplash({
                     </div>
                   )}
                   <Image
-                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                    loader={
+                      gameImage.includes('res.cloudinary.com')
+                        ? cloudinaryLoader
+                        : undefined
+                    }
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
                     fill
-                    className={`object-cover transition-opacity duration-300 ${!isImageLoaded ? 'opacity-0' : 'opacity-100'}`}
+                    className={`object-cover transition-opacity duration-300 ${
+                      !isImageLoaded ? 'opacity-0' : 'opacity-100'
+                    }`}
                     priority
                     onLoad={() => setIsImageLoaded(true)}
                   />
@@ -564,7 +572,11 @@ export default function GamePlayerWithSplash({
               {/* Game Image Background */}
               <div className="absolute inset-0 opacity-20">
                 <Image
-                  loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                  loader={
+                    gameImage.includes('res.cloudinary.com')
+                      ? cloudinaryLoader
+                      : undefined
+                  }
                   src={gameImage}
                   alt={imageAlt || gameTitle}
                   title={imageTitle || gameTitle}
@@ -585,12 +597,18 @@ export default function GamePlayerWithSplash({
                     </div>
                   )}
                   <Image
-                    loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                    loader={
+                      gameImage.includes('res.cloudinary.com')
+                        ? cloudinaryLoader
+                        : undefined
+                    }
                     src={gameImage}
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
                     fill
-                    className={`object-cover transition-opacity duration-300 ${!isImageLoaded ? 'opacity-0' : 'opacity-100'}`}
+                    className={`object-cover transition-opacity duration-300 ${
+                      !isImageLoaded ? 'opacity-0' : 'opacity-100'
+                    }`}
                     priority
                     onLoad={() => setIsImageLoaded(true)}
                   />
@@ -663,7 +681,11 @@ export default function GamePlayerWithSplash({
             {/* Game Thumbnail */}
             <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50 bg-slate-800">
               <Image
-                loader={gameImage.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                loader={
+                  gameImage.includes('res.cloudinary.com')
+                    ? cloudinaryLoader
+                    : undefined
+                }
                 src={gameImage}
                 alt={imageAlt || gameTitle}
                 title={imageTitle || gameTitle}

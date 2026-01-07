@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { stripHtml } from '@/lib/utils';
 import { Game } from '@/lib/games';
 import { Heart } from 'lucide-react';
-import GameCard from '@/components/GameCard';
 
 interface FavoritesClientProps {
   games: Game[];
@@ -48,7 +49,7 @@ export default function FavoritesClient({ games }: FavoritesClientProps) {
           play it later.
         </p>
         <Link
-          href="/"
+          href="/play"
           className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors"
         >
           Browse Games
@@ -58,9 +59,40 @@ export default function FavoritesClient({ games }: FavoritesClientProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0">
       {favoriteGames.map((game) => (
-        <GameCard key={game.id} game={game} />
+        <div
+          key={game.id}
+          className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
+        >
+          <div className="relative h-40 sm:h-60 overflow-hidden">
+            <Image
+              src={game.image_url}
+              alt={game.image_alt || game.title}
+              title={game.image_title || game.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+              loading="lazy"
+            />
+          </div>
+          <div className="p-3 sm:p-4">
+            <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
+              {game.category}
+            </span>
+            <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
+              {game.title}
+            </h3>
+            <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
+              {stripHtml(game.description)}
+            </p>
+            <Link href={`/play/${game.slug}`}>
+              <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                Play
+              </button>
+            </Link>
+          </div>
+        </div>
       ))}
     </div>
   );

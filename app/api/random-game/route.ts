@@ -22,7 +22,14 @@ export async function GET(request: Request) {
     const randomGame = games[randomIndex];
     
     // Redirect to the random game
-    return NextResponse.redirect(`${baseUrl}/game/${randomGame.slug}`);
+    return NextResponse.redirect(`${baseUrl}/game/${randomGame.slug}`, {
+      status: 307,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
     
   } catch (error) {
     console.error('Error finding random game:', error);

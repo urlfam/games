@@ -151,9 +151,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Disclaimer
-              </h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Disclaimer</h2>
               <p>
                 The materials on Puzzio.io are provided on an 'as is' basis.
                 Puzzio.io makes no warranties, expressed or implied, and hereby

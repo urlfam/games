@@ -171,9 +171,9 @@ export default function AboutPage() {
                   <li className="flex gap-3">
                     <span className="text-purple-500 font-bold text-xl">✓</span>
                     <div>
-                      <strong className="text-white">Quality:</strong> We
-                      curate only the best games and provide insightful,
-                      accurate gaming news.
+                      <strong className="text-white">Quality:</strong> We curate
+                      only the best games and provide insightful, accurate
+                      gaming news.
                     </div>
                   </li>
                   <li className="flex gap-3">
@@ -195,14 +195,12 @@ export default function AboutPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Join Us
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-4">Join Us</h2>
                 <p>
-                  Whether you&apos;re a casual player looking for a quick gaming fix
-                  or a hardcore gamer seeking your next challenge, Puzzio.io has
-                  something for you. Browse our game collection, read our latest
-                  news, and become part of our growing community.
+                  Whether you&apos;re a casual player looking for a quick gaming
+                  fix or a hardcore gamer seeking your next challenge, Puzzio.io
+                  has something for you. Browse our game collection, read our
+                  latest news, and become part of our growing community.
                 </p>
                 <div className="flex gap-4 mt-6">
                   <Link

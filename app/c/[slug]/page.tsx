@@ -7,10 +7,13 @@ interface CategoryPageProps {
   searchParams?: { [key: string]: string | undefined };
 }
 
-export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   // Reuse the HomePage component but inject the category into searchParams
   // The HomePage component logic handles filtering by categoryParam
   const newSearchParams = { ...searchParams, category: params.slug };
-  
+
   return <HomePage searchParams={newSearchParams} />;
 }

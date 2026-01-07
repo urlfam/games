@@ -38,14 +38,14 @@ export async function generateMetadata({
       (game as any).image_description ||
       stripHtml(game.description).substring(0, 160),
     alternates: {
-      canonical: `https://puzzio.io/game/${params.slug}`,
+      canonical: `https://puzzio.io/play/${params.slug}`,
     },
     openGraph: {
       title: game.title,
       description:
         (game as any).image_description ||
         stripHtml(game.description).substring(0, 200),
-      url: `https://puzzio.io/game/${params.slug}`,
+      url: `https://puzzio.io/play/${params.slug}`,
       images: [
         {
           url: game.image_url,
@@ -114,7 +114,7 @@ export default async function GamePage({ params }: GamePageProps) {
     genre: game.category,
     playMode: 'SinglePlayer',
     applicationCategory: 'Game',
-    url: `https://puzzio.io/game/${params.slug}`,
+    url: `https://puzzio.io/play/${params.slug}`,
     ...(totalVotes > 0 && {
       aggregateRating: {
         '@type': 'AggregateRating',
@@ -144,7 +144,7 @@ export default async function GamePage({ params }: GamePageProps) {
 
   const recommendedGames = allGames
     .filter((g) => g.category === game.category && g.id !== game.id)
-    .slice(0, 40);
+    .slice(0, 12);
 
   // Construire l'URL pour le proxy Nginx
   // Note: Assurez-vous que votre variable d'environnement est définie.
@@ -261,12 +261,12 @@ export default async function GamePage({ params }: GamePageProps) {
                   Classification:
                 </span>
                 <div className="flex items-center gap-1 text-purple-400 font-bold">
-                  <Link href="/" className="hover:underline">
+                  <Link href="/play" className="hover:underline">
                     Games
                   </Link>
                   <span className="text-gray-600">»</span>
                   <Link
-                    href={`/c/${game.category.toLowerCase()}`}
+                    href={`/play?category=${game.category.toLowerCase()}`}
                     className="hover:underline"
                   >
                     {game.category}
@@ -279,7 +279,7 @@ export default async function GamePage({ params }: GamePageProps) {
                 <div className="flex flex-wrap gap-2">
                   {/* Category Tag */}
                   <Link
-                    href={`/c/${game.category.toLowerCase()}`}
+                    href={`/play?category=${game.category.toLowerCase()}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-900/50 text-purple-300 text-sm hover:bg-purple-800 transition-colors"
                   >
                     <Tag size={14} />
@@ -291,7 +291,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     game.tags.map((tag) => (
                       <Link
                         key={tag}
-                        href={`/t/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-700 text-gray-300 text-sm hover:bg-slate-600 transition-colors"
                       >
                         <Tag size={14} />
@@ -310,52 +310,11 @@ export default async function GamePage({ params }: GamePageProps) {
               className="game-description prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: game.description }}
             />
-            
-            {/* Gameplay Screenshot */}
-            {(game as any).gameplay_screenshot_url && (
-              <div className="mt-8">
-                <a 
-                  href={(game as any).gameplay_screenshot_url.includes('cloudinary.com') 
-                    ? (game as any).gameplay_screenshot_url.replace('/upload/', `/upload/fl_attachment:${(game as any).gameplay_filename || 'gameplay-screenshot'}/`)
-                    : (game as any).gameplay_screenshot_url}
-                  download={(game as any).gameplay_filename || `${game.slug}-gameplay`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block cursor-pointer hover:opacity-95 transition-opacity"
-                  title="Click to download"
-                >
-                  <img 
-                    src={(game as any).gameplay_screenshot_url} 
-                    alt={(game as any).gameplay_filename || `${game.title} Gameplay Screenshot`}
-                    className="w-full rounded-lg shadow-lg border border-slate-700"
-                    loading="lazy"
-                  />
-                </a>
-              </div>
-            )}
           </div>
 
           {/* FAQ Section */}
           {game.faq_schema && game.faq_schema.length > 0 && (
             <FAQAccordion items={game.faq_schema} />
-          )}
-
-          {/* YouTube Video Section */}
-          {game.youtube_video_url && (
-            <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-6">
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Gameplay Video
-              </h2>
-              <div className="relative w-full pt-[56.25%] rounded-lg overflow-hidden bg-black">
-                <iframe
-                  src={game.youtube_video_url}
-                  title={`${game.title} Gameplay Video`}
-                  className="absolute top-0 left-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
           )}
 
           {/* Comments Section */}

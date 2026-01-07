@@ -10,9 +10,12 @@
 // récupérer les données du jeu depuis le nœud "Code in JavaScript2"
 
 const geminiData = $input.item.json;
-const gameData = $("Code in JavaScript2").item.json;
+const gameData = $('Code in JavaScript2').item.json;
 
-console.log('🔍 Gemini Data:', JSON.stringify(geminiData, null, 2).substring(0, 300));
+console.log(
+  '🔍 Gemini Data:',
+  JSON.stringify(geminiData, null, 2).substring(0, 300),
+);
 console.log('🔍 Game Data from Code2:', JSON.stringify(gameData, null, 2));
 
 // ============================================================================
@@ -23,10 +26,18 @@ let generatedDescription = '';
 // Gemini retourne la structure: { content: { parts: [{ text: "..." }] } }
 if (geminiData && geminiData.content) {
   const content = geminiData.content;
-  
-  if (content.parts && Array.isArray(content.parts) && content.parts.length > 0) {
+
+  if (
+    content.parts &&
+    Array.isArray(content.parts) &&
+    content.parts.length > 0
+  ) {
     generatedDescription = content.parts[0].text || '';
-    console.log('✅ Description Gemini extraite:', generatedDescription.length, 'caractères');
+    console.log(
+      '✅ Description Gemini extraite:',
+      generatedDescription.length,
+      'caractères',
+    );
   }
 }
 
@@ -56,10 +67,10 @@ try {
   // Essayer avec require() standard (pas $require)
   const fs = require('fs');
   console.log('✅ Module fs chargé avec require()');
-  
+
   const gamesData = fs.readFileSync(gamesJsonPath, 'utf8');
   console.log('✅ Fichier lu, taille:', gamesData.length, 'caractères');
-  
+
   allGames = JSON.parse(gamesData);
   console.log('✅ JSON parsé ! Nombre de jeux:', allGames.length);
 } catch (error) {
@@ -79,17 +90,18 @@ function extractSlug(pageUrl) {
 
 // Fonction pour trouver des jeux similaires
 function findRelatedGames(currentGame, allGames, count = 2) {
-  const sameCategory = allGames.filter(game => 
-    game.category === currentGame.category && 
-    game.title !== currentGame.title
+  const sameCategory = allGames.filter(
+    (game) =>
+      game.category === currentGame.category &&
+      game.title !== currentGame.title,
   );
-  
+
   sameCategory.sort((a, b) => {
     const dateA = new Date(a.importedAt || 0);
     const dateB = new Date(b.importedAt || 0);
     return dateB - dateA;
   });
-  
+
   return sameCategory.slice(0, count);
 }
 
@@ -104,37 +116,46 @@ function createGameLink(game) {
 let finalDescription = String(generatedDescription || '');
 
 if (allGames && allGames.length > 0) {
-  console.log('🔍 Recherche de jeux similaires dans la catégorie:', currentCategory);
-  
+  console.log(
+    '🔍 Recherche de jeux similaires dans la catégorie:',
+    currentCategory,
+  );
+
   // Trouver 2 jeux similaires
   const relatedGames = findRelatedGames(
-    { 
-      category: currentCategory, 
-      title: currentTitle 
-    }, 
-    allGames, 
-    2
+    {
+      category: currentCategory,
+      title: currentTitle,
+    },
+    allGames,
+    2,
   );
-  
+
   console.log('🎯 Jeux similaires trouvés:', relatedGames.length);
-  
+
   // Remplacer RELATED_GAME_1
   if (relatedGames.length >= 1) {
     const link1 = createGameLink(relatedGames[0]);
     finalDescription = finalDescription.replace(/__RELATED_GAME_1__/g, link1);
     console.log('✅ RELATED_GAME_1 remplacé par:', relatedGames[0].title);
   } else {
-    finalDescription = finalDescription.replace(/__RELATED_GAME_1__/g, 'other exciting games');
+    finalDescription = finalDescription.replace(
+      /__RELATED_GAME_1__/g,
+      'other exciting games',
+    );
     console.log('⚠️  Aucun jeu similaire #1, fallback utilisé');
   }
-  
+
   // Remplacer RELATED_GAME_2
   if (relatedGames.length >= 2) {
     const link2 = createGameLink(relatedGames[1]);
     finalDescription = finalDescription.replace(/__RELATED_GAME_2__/g, link2);
     console.log('✅ RELATED_GAME_2 remplacé par:', relatedGames[1].title);
   } else {
-    finalDescription = finalDescription.replace(/__RELATED_GAME_2__/g, 'similar titles');
+    finalDescription = finalDescription.replace(
+      /__RELATED_GAME_2__/g,
+      'similar titles',
+    );
     console.log('⚠️  Aucun jeu similaire #2, fallback utilisé');
   }
 } else {
@@ -160,5 +181,5 @@ return {
   page_url: currentPageUrl,
   iframe_url: currentIframeUrl,
   image_url: currentImageUrl,
-  video_url: currentVideoUrl
+  video_url: currentVideoUrl,
 };

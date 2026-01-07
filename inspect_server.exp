@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 20
+spawn ssh root@147.93.7.103 "docker exec puzzio-web-container cat data/games.json"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

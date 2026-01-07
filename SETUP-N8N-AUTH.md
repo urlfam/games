@@ -18,6 +18,7 @@ openssl rand -hex 32
 ```
 
 **Exemple de résultat :**
+
 ```
 a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345
 ```
@@ -40,10 +41,10 @@ services:
   web:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
-      - N8N_SECRET_TOKEN=a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345  # ← TON TOKEN ICI
+      - N8N_SECRET_TOKEN=a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345 # ← TON TOKEN ICI
     volumes:
       - ./data:/app/data
 ```
@@ -89,10 +90,11 @@ Dans le nœud HTTP Request qui envoie le jeu à l'API :
 Clique sur **"Create New Credential"** ou sélectionne "Header Auth account"
 
 **Configuration du credential :**
+
 - **Credential Name** : `N8N API Auth Token`
 - **Name** : `Authorization`
 - **Value** : `Bearer a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345`
-  
+
   ⚠️ **Important** : Le format doit être `Bearer TON_TOKEN` (avec "Bearer" suivi d'un espace)
 
 #### d) Sauvegarde
@@ -116,16 +118,19 @@ Relance ton workflow n8n complet. Tu devrais maintenant voir :
 Si tu as encore une erreur "Unauthorized" :
 
 1. **Vérifie que le token est identique** dans :
+
    - `docker-compose.yml` (variable `N8N_SECRET_TOKEN`)
    - n8n (credential `Authorization: Bearer ...`)
 
 2. **Vérifie que le container a bien redémarré** :
+
    ```bash
    docker compose ps
    docker compose logs web | grep N8N_SECRET_TOKEN
    ```
 
 3. **Teste l'API manuellement** depuis le serveur :
+
    ```bash
    curl -X POST http://147.93.7.103:3000/api/import-games \
      -H "Authorization: Bearer TON_TOKEN" \

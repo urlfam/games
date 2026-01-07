@@ -19,18 +19,19 @@ const currentPageUrl = $json.page_url;
 // FONCTION: Trouver des jeux similaires
 function findRelatedGames(currentGame, allGames, count = 2) {
   // 1. Filtrer les jeux de la même catégorie (exclure le jeu actuel)
-  const sameCategory = allGames.filter(game => 
-    game.category === currentGame.category && 
-    game.page_url !== currentGame.page_url
+  const sameCategory = allGames.filter(
+    (game) =>
+      game.category === currentGame.category &&
+      game.page_url !== currentGame.page_url,
   );
-  
+
   // 2. Trier par date (les plus récents en premier)
   sameCategory.sort((a, b) => {
     const dateA = new Date(a.importedAt || 0);
     const dateB = new Date(b.importedAt || 0);
     return dateB - dateA;
   });
-  
+
   // 3. Prendre les N premiers
   return sameCategory.slice(0, count);
 }
@@ -58,29 +59,35 @@ let finalDescription = generatedDescription;
 if (allGames && allGames.length > 0) {
   // APPROCHE COMPLÈTE: Avec accès à tous les jeux
   const relatedGames = findRelatedGames(
-    { 
-      category: currentCategory, 
+    {
+      category: currentCategory,
       page_url: currentPageUrl,
-      title: currentTitle 
-    }, 
-    allGames, 
-    2
+      title: currentTitle,
+    },
+    allGames,
+    2,
   );
-  
+
   if (relatedGames.length >= 1) {
     const link1 = createGameLink(relatedGames[0]);
     finalDescription = finalDescription.replace('{{RELATED_GAME_1}}', link1);
   } else {
     // Fallback: enlever le placeholder
-    finalDescription = finalDescription.replace('{{RELATED_GAME_1}}', 'other exciting games');
+    finalDescription = finalDescription.replace(
+      '{{RELATED_GAME_1}}',
+      'other exciting games',
+    );
   }
-  
+
   if (relatedGames.length >= 2) {
     const link2 = createGameLink(relatedGames[1]);
     finalDescription = finalDescription.replace('{{RELATED_GAME_2}}', link2);
   } else {
     // Fallback: enlever le placeholder
-    finalDescription = finalDescription.replace('{{RELATED_GAME_2}}', 'similar titles');
+    finalDescription = finalDescription.replace(
+      '{{RELATED_GAME_2}}',
+      'similar titles',
+    );
   }
 } else {
   // APPROCHE SIMPLIFIÉE: Sans accès aux jeux
@@ -97,6 +104,6 @@ finalDescription = finalDescription.replace('{{CATEGORY_LINK}}', categoryLink);
 
 // Retourner toutes les données avec la description mise à jour
 return {
-  ...($json),
-  description: finalDescription
+  ...$json,
+  description: finalDescription,
 };

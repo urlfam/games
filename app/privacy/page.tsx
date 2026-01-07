@@ -22,9 +22,7 @@ export default function PrivacyPage() {
 
         {/* Content */}
         <article className="mt-8 prose prose-lg prose-invert max-w-none">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Privacy Policy
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-4">Privacy Policy</h1>
           <p className="text-gray-400 mb-8">Last updated: November 6, 2025</p>
 
           <div className="space-y-8 text-gray-300">
@@ -33,11 +31,11 @@ export default function PrivacyPage() {
                 Introduction
               </h2>
               <p>
-                Welcome to Puzzio.io (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to
-                protecting your privacy and ensuring you have a positive
-                experience on our website. This Privacy Policy explains how we
-                collect, use, disclose, and safeguard your information when you
-                visit our website.
+                Welcome to Puzzio.io (&quot;we,&quot; &quot;our,&quot; or
+                &quot;us&quot;). We are committed to protecting your privacy and
+                ensuring you have a positive experience on our website. This
+                Privacy Policy explains how we collect, use, disclose, and
+                safeguard your information when you visit our website.
               </p>
             </section>
 
@@ -188,9 +186,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Contact Us
-              </h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Contact Us</h2>
               <p>
                 If you have any questions about this Privacy Policy, please
                 contact us:

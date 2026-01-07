@@ -34,9 +34,11 @@ Dans la fenêtre qui s'ouvre :
 - **Value** : `Bearer changeMe_a1b2c3d4e5f6_make_this_secret_and_long`
 
 ⚠️ **IMPORTANT** : Le format EXACT est :
+
 ```
 Bearer changeMe_a1b2c3d4e5f6_make_this_secret_and_long
 ```
+
 (Avec "Bearer" suivi d'un espace, puis le token)
 
 ### 5. Sauvegarde
@@ -51,6 +53,7 @@ Bearer changeMe_a1b2c3d4e5f6_make_this_secret_and_long
 Relance ton workflow, ça devrait fonctionner maintenant ! 🚀
 
 Le nœud HTTP Request POST enverra automatiquement le header :
+
 ```
 Authorization: Bearer changeMe_a1b2c3d4e5f6_make_this_secret_and_long
 ```

@@ -13,7 +13,11 @@ interface GameCardProps {
   className?: string;
 }
 
-export default function GameCard({ game, priority = false, className = '' }: GameCardProps) {
+export default function GameCard({
+  game,
+  priority = false,
+  className = '',
+}: GameCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -33,7 +37,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
   };
 
   return (
-    <Link 
+    <Link
       href={`/game/${game.slug}`}
       className={`block group/card relative bg-slate-800 rounded-xl overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all shadow-lg ${className}`}
       onMouseEnter={handleMouseEnter}
@@ -49,7 +53,11 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
 
         {/* Static Image (Always present, z-index 10 to stay on top) */}
         <Image
-          loader={game.image_url.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+          loader={
+            game.image_url.includes('res.cloudinary.com')
+              ? cloudinaryLoader
+              : undefined
+          }
           src={game.image_url}
           alt={game.image_alt || game.title}
           fill
@@ -57,14 +65,14 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
             isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'
           }`}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-          loading={priority ? "eager" : "lazy"}
+          loading={priority ? 'eager' : 'lazy'}
           priority={priority}
           onLoad={() => setIsImageLoaded(true)}
         />
 
         {/* Video Preview (Only rendered when hovered and src is set) */}
         {game.video_url && videoSrc && (
-           <video
+          <video
             src={videoSrc}
             poster={game.image_url}
             autoPlay
@@ -83,7 +91,7 @@ export default function GameCard({ game, priority = false, className = '' }: Gam
             }}
           />
         )}
-        
+
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none transition-opacity duration-300 opacity-0 group-hover/card:opacity-100">
           <h3 className="text-xs sm:text-sm font-bold text-white truncate drop-shadow-md">

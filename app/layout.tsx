@@ -7,10 +7,10 @@ import { SidebarProvider } from '@/components/SidebarContext';
 import CategorySidebarServer from '@/components/CategorySidebarServer';
 import PlayMainContent from '@/components/PlayMainContent';
 
-const nunito = Nunito({ 
-  subsets: ['latin'], 
+const nunito = Nunito({
+  subsets: ['latin'],
   display: 'swap',
-  weight: ['400', '600', '700', '800', '900']
+  weight: ['400', '600', '700', '800', '900'],
 });
 
 export const metadata: Metadata = {
@@ -70,14 +70,14 @@ export default function RootLayout({
       height: 60,
     },
     sameAs: [
-      "https://twitter.com/puzzio",
-      "https://facebook.com/puzzio",
-      "https://instagram.com/puzzio",
-      "https://youtube.com/puzzio",
-      "https://discord.gg/puzzio",
-      "https://pinterest.com/puzzio",
-      "https://reddit.com/r/puzzio",
-      "https://tiktok.com/@puzzio"
+      'https://twitter.com/puzzio',
+      'https://facebook.com/puzzio',
+      'https://instagram.com/puzzio',
+      'https://youtube.com/puzzio',
+      'https://discord.gg/puzzio',
+      'https://pinterest.com/puzzio',
+      'https://reddit.com/r/puzzio',
+      'https://tiktok.com/@puzzio',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
@@ -96,7 +96,7 @@ export default function RootLayout({
         {/* Preconnect to CrazyGames for faster game loading */}
         <link rel="preconnect" href="https://imgs.crazygames.com" />
         <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
-        
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}

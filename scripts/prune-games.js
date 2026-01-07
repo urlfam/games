@@ -14,7 +14,7 @@ try {
 
   // Calculate how many to remove (half)
   const removeCount = Math.floor(games.length / 2);
-  
+
   console.log(`Removing ${removeCount} oldest games...`);
 
   // Keep only the second half (newest)
@@ -24,7 +24,6 @@ try {
 
   fs.writeFileSync(GAMES_FILE, JSON.stringify(keptGames, null, 2));
   console.log('Successfully updated games.json');
-
 } catch (error) {
   console.error('Error pruning games:', error);
 }

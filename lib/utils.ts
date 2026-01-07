@@ -5,10 +5,10 @@
  */
 export function stripHtml(html: string): string {
   if (!html) return '';
-  
+
   // Remove HTML tags
   let text = html.replace(/<[^>]*>/g, '');
-  
+
   // Decode common HTML entities
   text = text
     .replace(/&nbsp;/g, ' ')
@@ -18,10 +18,10 @@ export function stripHtml(html: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&apos;/g, "'");
-  
+
   // Remove extra whitespace
   text = text.replace(/\s+/g, ' ').trim();
-  
+
   return text;
 }
 
@@ -42,7 +42,10 @@ export function truncateText(text: string, maxLength: number = 150): string {
  * @param maxLength - Maximum length of resulting text
  * @returns Plain text, truncated if necessary
  */
-export function getPlainTextPreview(html: string, maxLength: number = 150): string {
+export function getPlainTextPreview(
+  html: string,
+  maxLength: number = 150,
+): string {
   const plainText = stripHtml(html);
   return truncateText(plainText, maxLength);
 }

@@ -5,9 +5,11 @@ Ce fichier documente comment remplacer `http://147.93.7.103` par `https://puzzio
 ## 📋 Fichiers à modifier
 
 ### 1. nginx.conf (proxy)
+
 **Emplacement**: `/root/puzzio/nginx.conf`
 
 **Remplacements à faire** (rechercher/remplacer):
+
 ```bash
 # ANCIEN
 http://147.93.7.103
@@ -17,13 +19,16 @@ https://puzzio.io
 ```
 
 **Lignes concernées** (~25 occurrences):
+
 - Ligne ~155-170: SEO Hijacking (canonical, og:url, twitter:url)
 - Ligne ~145-150: API rewrites
 
 ### 2. injector.js (script anti-pub)
+
 **Emplacement**: `/root/puzzio/injector.js`
 
 **Remplacements à faire**:
+
 ```javascript
 // ANCIEN (ligne ~300)
 var domains = {
@@ -41,18 +46,23 @@ var domains = {
 **Note**: Retirer le port `:9999` car nginx sera sur le port 80/443 standard avec le domaine.
 
 ### 3. app/play/[slug]/page.tsx (Next.js)
+
 **Emplacement**: `/app/play/[slug]/page.tsx`
 
 **Remplacements à faire** (ligne ~53):
+
 ```typescript
 // ANCIEN
-const proxyBaseUrl = process.env.NEXT_PUBLIC_PROXY_URL || 'http://147.93.7.103:9999';
+const proxyBaseUrl =
+  process.env.NEXT_PUBLIC_PROXY_URL || 'http://147.93.7.103:9999';
 
 // NOUVEAU
-const proxyBaseUrl = process.env.NEXT_PUBLIC_PROXY_URL || 'https://puzzio.io/proxy';
+const proxyBaseUrl =
+  process.env.NEXT_PUBLIC_PROXY_URL || 'https://puzzio.io/proxy';
 ```
 
 **Ou mieux** - Utiliser une variable d'environnement:
+
 ```bash
 # .env.production
 NEXT_PUBLIC_PROXY_URL=https://puzzio.io/proxy
@@ -73,12 +83,14 @@ docker-compose up -d --build
 ## ✅ Vérifications SEO après migration
 
 1. **Canonical URL**:
+
    ```bash
    curl -s https://puzzio.io/play/entropy | grep "canonical"
    # Doit afficher: <link rel="canonical" href="https://puzzio.io/...">
    ```
 
 2. **Open Graph URL**:
+
    ```bash
    curl -s https://puzzio.io/play/entropy | grep "og:url"
    # Doit afficher: <meta property="og:url" content="https://puzzio.io/...">
@@ -107,16 +119,18 @@ server {
 server {
     listen 443 ssl http2;
     server_name puzzio.io www.puzzio.io;
-    
+
     ssl_certificate /etc/letsencrypt/live/puzzio.io/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/puzzio.io/privkey.pem;
-    
+
     # ... reste de la config
 }
 ```
 
 ## 📞 Contact
+
 En cas de problème lors de la migration, vérifier :
+
 1. DNS pointe bien vers 147.93.7.103
 2. Certificat SSL est valide
 3. Ports 80 et 443 sont ouverts

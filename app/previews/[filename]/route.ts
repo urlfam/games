@@ -4,7 +4,7 @@ import path from 'path';
 
 export async function GET(
   request: Request,
-  { params }: { params: { filename: string } }
+  { params }: { params: { filename: string } },
 ) {
   const filename = params.filename;
   const filePath = path.join(process.cwd(), 'public', 'previews', filename);
@@ -26,7 +26,7 @@ export async function GET(
       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
       const chunksize = end - start + 1;
       const file = fs.createReadStream(filePath, { start, end });
-      
+
       // @ts-ignore
       return new NextResponse(file, {
         status: 206,
@@ -39,7 +39,7 @@ export async function GET(
       });
     } else {
       const file = fs.createReadStream(filePath);
-      
+
       // @ts-ignore
       return new NextResponse(file, {
         status: 200,
