@@ -113,9 +113,7 @@ export default async function TagPage({ params }: TagPageProps) {
         {games.map((game) => (
           <GameCard 
             key={game.id} 
-            title={game.title} 
-            image={game.image_url} 
-            slug={game.slug} 
+            game={game}
           />
         ))}
       </div>
