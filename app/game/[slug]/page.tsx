@@ -310,6 +310,18 @@ export default async function GamePage({ params }: GamePageProps) {
               className="game-description prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: game.description }}
             />
+            
+            {/* Gameplay Screenshot */}
+            {(game as any).gameplay_screenshot_url && (
+              <div className="mt-8">
+                <img 
+                  src={(game as any).gameplay_screenshot_url} 
+                  alt={(game as any).gameplay_filename || `${game.title} Gameplay Screenshot`}
+                  className="w-full rounded-lg shadow-lg border border-slate-700"
+                  loading="lazy"
+                />
+              </div>
+            )}
           </div>
 
           {/* FAQ Section */}
