@@ -208,6 +208,9 @@ export default async function HomePage({
             <FooterActions />
           </>
         ) : (
+          /* Standard Grid for Search/Category Pages */
+          <section>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
               {searchQuery
                 ? `Search: ${searchQuery}`
                 : categoryParam === 'all'

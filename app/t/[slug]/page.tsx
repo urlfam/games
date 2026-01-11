@@ -136,6 +136,5 @@ export default async function TagPage({ params }: TagPageProps) {
         )}
       </section>
     </div>
-  );</div>
   );
 }
