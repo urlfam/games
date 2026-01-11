@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getGamesByCategory, getAllGames } from '@/lib/games';
+import { getAllGames, getNewGames, getTrendingGames, Game } from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
@@ -41,7 +41,7 @@ export default async function HomePage({
   } else {
     // Filter by real category
     const allGames = await getAllGames();
-    filteredGames = allGames.filter((game) => {
+    filteredGames = allGames.filter((game: Game) => {
       const gameCategory = game.category.toLowerCase().replace(/\s+/g, '-');
       return gameCategory === categoryParam;
     });
@@ -58,7 +58,7 @@ export default async function HomePage({
 
   // Apply search filter if search query exists
   if (searchQuery) {
-    filteredGames = filteredGames.filter((game) => {
+    filteredGames = filteredGames.filter((game: Game) => {
       const titleMatch = game.title?.toLowerCase().includes(searchQuery) ?? false;
       const descriptionMatch = game.description?.toLowerCase().includes(searchQuery) ?? false;
       const categoryMatch = game.category?.toLowerCase().includes(searchQuery) ?? false;
@@ -93,14 +93,14 @@ export default async function HomePage({
   // Exclude games already in trending to avoid duplicates on homepage
   const trendingIds = new Set(trendingGames.map((g: any) => g.id));
   const newGames = filteredGames
-    .filter((g) => !trendingIds.has(g.id))
+    .filter((g: Game) => !trendingIds.has(g.id))
     .slice(0, 12);
 
   // 3. Tag Sections
   let tagSections: { tag: string; games: any[] }[] = [];
   if (isHomePage) {
     const tagGroups: Record<string, any[]> = {};
-    filteredGames.forEach((game) => {
+    filteredGames.forEach((game: Game) => {
       // We can include trending games in tags, or exclude them. Let's include them.
       game.tags?.forEach((tag: string) => {
         // --- FIX: Filter out malformed tags (e.g. starting with " or [") ---
@@ -132,7 +132,7 @@ export default async function HomePage({
     '@type': 'ItemList',
     name: 'Games List',
     description: 'List of available games on Puzzio.io',
-    itemListElement: filteredGames.map((game, index) => ({
+    itemListElement: filteredGames.map((game: Game, index: number) => ({
       '@type': 'ListItem',
       position: index + 1,
       item: {
@@ -224,7 +224,7 @@ export default async function HomePage({
             )}
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-              {filteredGames.map((game) => (
+              {filteredGames.map((game: Game) => (
                 <GameCard key={game.id} game={game} />
               ))}
             </div>
