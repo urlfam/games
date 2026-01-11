@@ -1,17 +1,13 @@
-import Link from 'next/link';
-import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { getGamesByCategory, getAllGames } from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
 import FooterActions from '@/components/FooterActions';
-import {
-  getAllGames,
-  getNewGames,
-  getTrendingGames,
-  sortGamesByPlays,
-} from '@/lib/games'; // Import our new function
+import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
 import { getSeoData } from '@/lib/seo';
+import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
 // ISR: Regenerate this page every 60 seconds in the background
 // This keeps the site blazing fast while showing fresh content
@@ -210,19 +206,21 @@ export default async function HomePage({
         ) : (
           /* Standard Grid for Search/Category Pages */
           <section>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
+            <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
               {searchQuery
                 ? `Search: ${searchQuery}`
                 : categoryParam === 'all'
                 ? 'All Games'
                 : categoryParam}
-            </h2>
+            </h1>
             
             {/* SEO Header Description */}
             {seoData?.header_desc && (
-              <p className="text-gray-300 mt-2 mb-6 px-1 max-w-4xl text-lg">
-                {seoData.header_desc}
-              </p>
+              <ExpandableText 
+                content={seoData.header_desc} 
+                className="text-gray-300 mb-6 px-1 text-lg w-full"
+                limit={300}
+              />
             )}
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">

@@ -6,6 +6,7 @@ import { getGamesByTag, getAllTags, getTrendingGames } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
+import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -106,15 +107,17 @@ export default async function TagPage({ params }: TagPageProps) {
       
       {/* Header - Styled like Category Page */}
       <section>
-        <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1 flex items-center gap-2">
+        <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1 flex items-center gap-2">
           {tag.name} Games
         </h1>
 
         {/* SEO Header Description */}
         {seoData?.header_desc && (
-          <p className="text-gray-300 mt-[-1rem] mb-6 px-1 max-w-4xl text-lg">
-            {seoData.header_desc}
-          </p>
+           <ExpandableText 
+             content={seoData.header_desc} 
+             className="text-gray-300 mb-6 px-1 text-lg w-full"
+             limit={300}
+           />
         )}
 
         {/* Grid Layout - Standard Grid (Copied from Category/Home Page) */}
