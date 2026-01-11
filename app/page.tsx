@@ -38,9 +38,9 @@ export default async function HomePage({
         new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime(),
     );
   } else if (categoryParam === 'new') {
-    filteredGames = await getNewGames(50);
+    filteredGames = await getNewGames(1000);
   } else if (categoryParam === 'trending' || categoryParam === 'popular') {
-    filteredGames = await getTrendingGames(50);
+    filteredGames = await getTrendingGames(1000);
   } else {
     // Filter by real category
     const allGames = await getAllGames();
