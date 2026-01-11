@@ -83,18 +83,14 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const games = allGames.slice(startIndex, endIndex);
-    itemListElement: games.map((game, index) => ({
-      '@type': 'ListItem',
-      position: startIndex + index + 1,
-      item: {
-        '@type': 'VideoGame',
+  const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${tag.name} Games List`,
     description: `List of available ${tag.name} games on Puzzio.io`,
     itemListElement: games.map((game, index) => ({
       '@type': 'ListItem',
-      position: index + 1,
+      position: startIndex + index + 1,
       item: {
         '@type': 'VideoGame',
         name: game.title,

@@ -135,15 +135,14 @@ export default async function HomePage({
       .slice(0, 7)
       .map(([tag, games]) => ({ tag, games: games.slice(0, 6) }));
   }
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Games List',
+    description: 'List of available games on Puzzio.io',
     itemListElement: paginatedGames.map((game: Game, index: number) => ({
       '@type': 'ListItem',
       position: startIndex + index + 1,
-      item: {
-        '@type': 'VideoGame',
-    description: 'List of available games on Puzzio.io',
-    itemListElement: filteredGames.map((game: Game, index: number) => ({
-      '@type': 'ListItem',
-      position: index + 1,
       item: {
         '@type': 'VideoGame',
         name: game.title,
