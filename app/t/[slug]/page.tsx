@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { getGamesByTag, getAllTags, getTrendingGames } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
+import { getSeoData } from '@/lib/seo';
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -70,6 +71,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
   const games = await getGamesByTag(tagSlug);
   const trendingGames = await getTrendingGames(6);
+  const seoData = await getSeoData(tagSlug, 'Tag');
 
   const itemListSchema = {
     '@context': 'https://schema.org',
@@ -105,9 +107,15 @@ export default async function TagPage({ params }: TagPageProps) {
       {/* Header - Styled like Category Page */}
       <section>
         <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1 flex items-center gap-2">
-          <span className="text-purple-400">#</span>
           {tag.name} Games
         </h1>
+
+        {/* SEO Header Description */}
+        {seoData?.header_desc && (
+          <p className="text-gray-300 mt-[-1rem] mb-6 px-1 max-w-4xl text-lg">
+            {seoData.header_desc}
+          </p>
+        )}
 
         {/* Grid Layout - Standard Grid (Copied from Category/Home Page) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
@@ -118,7 +126,16 @@ export default async function TagPage({ params }: TagPageProps) {
             />
           ))}
         </div>
+
+        {/* SEO Main Content */}
+        {seoData?.main_content && (
+          <div
+            className="mt-12 text-gray-300 space-y-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-white [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-white [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>li]:mb-2 [&>a]:text-purple-400 [&>a]:hover:text-purple-300"
+            dangerouslySetInnerHTML={{ __html: seoData.main_content }}
+          />
+        )}
       </section>
     </div>
+  );</div>
   );
 }

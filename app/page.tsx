@@ -11,6 +11,7 @@ import {
   sortGamesByPlays,
 } from '@/lib/games'; // Import our new function
 import { stripHtml } from '@/lib/utils';
+import { getSeoData } from '@/lib/seo';
 
 // ISR: Regenerate this page every 60 seconds in the background
 // This keeps the site blazing fast while showing fresh content
@@ -71,6 +72,9 @@ export default async function HomePage({
   }
 
   const isHomePage = categoryParam === 'all' && !searchQuery;
+
+  // SEO Data Retrieval
+  const seoData = !isHomePage ? await getSeoData(categoryParam, 'Category') : null;
 
   // --- Logic for Homepage Sections ---
 
@@ -204,18 +208,34 @@ export default async function HomePage({
             <FooterActions />
           </>
         ) : (
-          /* Standard Grid for Search/Category Pages */
-          <section>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
               {searchQuery
                 ? `Search: ${searchQuery}`
                 : categoryParam === 'all'
                 ? 'All Games'
                 : categoryParam}
             </h2>
+            
+            {/* SEO Header Description */}
+            {seoData?.header_desc && (
+              <p className="text-gray-300 mt-2 mb-6 px-1 max-w-4xl text-lg">
+                {seoData.header_desc}
+              </p>
+            )}
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
               {filteredGames.map((game) => (
                 <GameCard key={game.id} game={game} />
+              ))}
+            </div>
+
+            {/* SEO Main Content */}
+            {seoData?.main_content && (
+              <div
+                className="mt-12 text-gray-300 space-y-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-white [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-white [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>li]:mb-2 [&>a]:text-purple-400 [&>a]:hover:text-purple-300"
+                dangerouslySetInnerHTML={{ __html: seoData.main_content }}
+              />
+            )}
+          </section>eCard key={game.id} game={game} />
               ))}
             </div>
           </section>
