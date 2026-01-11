@@ -11,22 +11,26 @@ interface ExpandableTextProps {
 
 export default function ExpandableText({ 
   content, 
-  limit = 280, 
+  limit = 28, 
   className = "text-gray-300 text-lg leading-relaxed" 
 }: ExpandableTextProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!content) return null;
 
-  // If content is short enough, just show it all without buttons
-  if (content.length <= limit) {
+  const words = content.split(/\s+/);
+  
+  // If word count is less than or equal to limit, show all without buttons
+  if (words.length <= limit) {
     return <p className={className}>{content}</p>;
   }
+
+  const truncatedContent = words.slice(0, limit).join(' ') + '...';
 
   return (
     <div className="mb-6">
       <p className={className}>
-        {isExpanded ? content : `${content.substring(0, limit)}...`}
+        {isExpanded ? content : truncatedContent}
       </p>
       <button
         onClick={() => setIsExpanded(!isExpanded)}

@@ -7,6 +7,7 @@ import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
+import Pagination from '@/components/Pagination'; // Import Pagination
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -14,6 +15,9 @@ export const revalidate = 60;
 interface TagPageProps {
   params: {
     slug: string;
+  };
+  searchParams?: {
+    page?: string;
   };
 }
 
@@ -61,8 +65,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function TagPage({ params }: TagPageProps) {
+export default async function TagPage({ params, searchParams }: TagPageProps) {
   const tagSlug = params.slug;
+  const currentPage = Number(searchParams?.page) || 1;
+  const itemsPerPage = 60;
+
   const tags = await getAllTags();
   const tag = tags.find((t) => t.slug === tagSlug);
 
@@ -70,11 +77,17 @@ export default async function TagPage({ params }: TagPageProps) {
     notFound();
   }
 
-  const games = await getGamesByTag(tagSlug);
-  const trendingGames = await getTrendingGames(6);
-  const seoData = await getSeoData(tagSlug, 'Tag');
-
-  const itemListSchema = {
+  const allGames = await getGamesByTag(tagSlug);
+  const totalGames = allGames.length;
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const games = allGames.slice(startIndex, endIndex);
+    itemListElement: games.map((game, index) => ({
+      '@type': 'ListItem',
+      position: startIndex + index + 1,
+      item: {
+        '@type': 'VideoGame',
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${tag.name} Games List`,
@@ -129,6 +142,13 @@ export default async function TagPage({ params }: TagPageProps) {
             />
           ))}
         </div>
+
+        {/* Pagination Component */}
+        <Pagination 
+          totalItems={totalGames} 
+          itemsPerPage={itemsPerPage} 
+          currentPage={currentPage} 
+        />
 
         {/* SEO Main Content */}
         {seoData?.main_content && (

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
 import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
+import Pagination from '@/components/Pagination'; // Import Pagination
 
 // ISR: Regenerate this page every 60 seconds in the background
 // This keeps the site blazing fast while showing fresh content
@@ -21,6 +22,8 @@ export default async function HomePage({
 }) {
   const categoryParam = searchParams?.category?.toLowerCase() || 'all';
   const searchQuery = searchParams?.search?.toLowerCase() || '';
+  const currentPage = Number(searchParams?.page) || 1;
+  const itemsPerPage = 60;
 
   // Handle special categories
   let filteredGames;
@@ -67,10 +70,16 @@ export default async function HomePage({
     });
   }
 
-  const isHomePage = categoryParam === 'all' && !searchQuery;
+  const isHomePage = categoryParam === 'all' && !searchQuery && currentPage === 1;
 
   // SEO Data Retrieval
   const seoData = !isHomePage ? await getSeoData(categoryParam, 'Category') : null;
+
+  // Calculate pagination
+  const totalGames = filteredGames.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGames = filteredGames.slice(startIndex, endIndex);
 
   // --- Logic for Homepage Sections ---
 
@@ -126,11 +135,11 @@ export default async function HomePage({
       .slice(0, 7)
       .map(([tag, games]) => ({ tag, games: games.slice(0, 6) }));
   }
-
-  const itemListSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Games List',
+    itemListElement: paginatedGames.map((game: Game, index: number) => ({
+      '@type': 'ListItem',
+      position: startIndex + index + 1,
+      item: {
+        '@type': 'VideoGame',
     description: 'List of available games on Puzzio.io',
     itemListElement: filteredGames.map((game: Game, index: number) => ({
       '@type': 'ListItem',
@@ -224,10 +233,17 @@ export default async function HomePage({
             )}
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-              {filteredGames.map((game: Game) => (
+              {paginatedGames.map((game: Game) => (
                 <GameCard key={game.id} game={game} />
               ))}
             </div>
+
+            {/* Pagination Component */}
+            <Pagination 
+              totalItems={totalGames} 
+              itemsPerPage={itemsPerPage} 
+              currentPage={currentPage} 
+            />
 
             {/* SEO Main Content */}
             {seoData?.main_content && (
