@@ -238,9 +238,6 @@ export default async function HomePage({
                 dangerouslySetInnerHTML={{ __html: seoData.main_content }}
               />
             )}
-          </section>eCard key={game.id} game={game} />
-              ))}
-            </div>
           </section>
         )}
       </div>
