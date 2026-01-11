@@ -83,6 +83,10 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const games = allGames.slice(startIndex, endIndex);
+
+  const trendingGames = await getTrendingGames(6);
+  const seoData = await getSeoData(tagSlug, 'Tag');
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
