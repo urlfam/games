@@ -37,6 +37,15 @@
 }
 
 /* Game description styling - optimized for SEO and readability */
+.game-description h2 {
+  color: #ffffff;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.3;
+}
+
 .game-description h3 {
   color: #a78bfa;
   font-size: 1.5rem;

@@ -233,10 +233,12 @@ export default async function HomePage({
 
             {/* SEO Main Content */}
             {seoData?.main_content && (
-              <div
-                className="mt-12 text-gray-300 space-y-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-white [&>h2]:mt-8 [&>h2]:mb-4 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-white [&>h3]:mt-6 [&>h3]:mb-3 [&>p]:mb-4 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>li]:mb-2 [&>a]:text-purple-400 [&>a]:hover:text-purple-300"
-                dangerouslySetInnerHTML={{ __html: seoData.main_content }}
-              />
+              <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-12">
+                <div
+                  className="game-description"
+                  dangerouslySetInnerHTML={{ __html: seoData.main_content }}
+                />
+              </div>
             )}
           </section>
         )}
