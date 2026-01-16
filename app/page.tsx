@@ -216,33 +216,64 @@ export default async function HomePage({
       <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
         {isHomePage ? (
           <>
-            {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
-            <TrendingSection games={trendingGames} />
+            {/* --- DESKTOP LAYOUT (Hidden on Mobile) --- */}
+            <div className="hidden md:block"> 
+                {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
+                <TrendingSection games={trendingGames} />
 
-            {/* New Games Section - Horizontal Scroll */}
-            <HorizontalGameSection
-              title="New Games"
-              games={newGames}
-              viewMoreLink="/c/new"
-              badgeText="All New Games"
-            />
+                {/* New Games Section - Horizontal Scroll */}
+                <HorizontalGameSection
+                  title="New Games"
+                  games={newGames}
+                  viewMoreLink="/c/new"
+                  badgeText="All New Games"
+                />
 
-            {/* Dynamic Custom Sections - Horizontal Scroll */}
-            {homeSections.map((section) => (
-              <HorizontalGameSection
-                key={section.title}
-                title={section.title}
-                games={section.games}
-                viewMoreLink={
-                   section.type === 'category' 
-                    ? `/c/${section.slug}` 
-                    : `/t/${section.slug}`
-                }
-                badgeText={`All ${section.title}`}
-              />
-            ))}
+                {/* Dynamic Custom Sections - Horizontal Scroll */}
+                {homeSections.map((section) => (
+                  <HorizontalGameSection
+                    key={section.title}
+                    title={section.title}
+                    games={section.games}
+                    viewMoreLink={
+                       section.type === 'category' 
+                        ? `/c/${section.slug}` 
+                        : `/t/${section.slug}`
+                    }
+                    badgeText={`All ${section.title}`}
+                  />
+                ))}
+            </div>
 
-            {/* Footer Actions (Random Game & Back to Top) */}
+            {/* --- MOBILE LAYOUT (Hidden on Desktop) --- */}
+             <div className="md:hidden">
+                {/* Mobile Trending Section (1 Large + 6 Small Grid) */}
+                <MobileTrendingSection games={trendingGames.slice(0, 7)} />
+
+                {/* Mobile New Games (Vertical Cards 2x3) */}
+                <MobileScrollSection 
+                    title="New Games"
+                    games={newGames}
+                    viewMoreLink="/c/new"
+                    useVerticalCards={true}
+                />
+
+                {/* Mobile Custom Sections (Square Cards 1x1) */}
+                {homeSections.map((section) => (
+                  <MobileScrollSection
+                    key={section.title}
+                    title={section.title}
+                    games={section.games}
+                    viewMoreLink={
+                       section.type === 'category' 
+                        ? `/c/${section.slug}` 
+                        : `/t/${section.slug}`
+                    }
+                  />
+                ))}
+            </div>
+
+            {/* Footer Actions (Random Game & Back to Top) - Visible on both but styled inside component */}
             <FooterActions />
           </>
         ) : (
