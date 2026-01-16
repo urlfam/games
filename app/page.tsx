@@ -9,6 +9,8 @@ import { stripHtml } from '@/lib/utils';
 import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 import Pagination from '@/components/Pagination'; // Import Pagination
+import MobileTrendingSection from '@/components/MobileTrendingSection'; // Import MobileTrendingSection
+import MobileScrollSection from '@/components/MobileScrollSection'; // Import MobileScrollSection
 
 // ISR: Regenerate this page every 60 seconds in the background
 // This keeps the site blazing fast while showing fresh content

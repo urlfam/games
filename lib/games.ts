@@ -35,6 +35,10 @@ export interface Game {
 
   // YouTube Video URL (scraped from the game page)
   youtube_video_url?: string;
+
+  // Mobile optimized images (optional - added later)
+  mobile_image_url?: string; // 2x3 aspect ratio (vertical)
+  mobile_1x1_url?: string; // 1x1 aspect ratio (square)
 }
 
 /**
