@@ -197,14 +197,18 @@ export default async function HomePage({
               badgeText="All New Games"
             />
 
-            {/* Dynamic Tag Sections - Horizontal Scroll */}
-            {tagSections.map(({ tag, games }) => (
+            {/* Dynamic Custom Sections - Horizontal Scroll */}
+            {homeSections.map((section) => (
               <HorizontalGameSection
-                key={tag}
-                title={tag}
-                games={games}
-                viewMoreLink={`/t/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-                badgeText={`All ${tag}`}
+                key={section.title}
+                title={section.title}
+                games={section.games}
+                viewMoreLink={
+                   section.type === 'category' 
+                    ? `/c/${section.slug}` 
+                    : `/t/${section.slug}`
+                }
+                badgeText={`All ${section.title}`}
               />
             ))}
 
