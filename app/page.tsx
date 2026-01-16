@@ -105,35 +105,63 @@ export default async function HomePage({
     .filter((g: Game) => !trendingIds.has(g.id))
     .slice(0, 12);
 
-  // 3. Tag Sections
-  let tagSections: { tag: string; games: any[] }[] = [];
+  // 3. Custom Sections (Tags & Categories) for Homepage
+  // Order: Brain, Battle, Relaxing, Simulation, Puzzle, Action, Casual, Clicker, Driving, Sports, 3D, Mouse
+  interface HomeSection {
+    title: string;
+    games: any[];
+    type: 'tag' | 'category';
+    slug: string;
+  }
+
+  const sectionsConfig = [
+    { name: 'Brain', type: 'tag' as const },
+    { name: 'Battle', type: 'tag' as const },
+    { name: 'Relaxing', type: 'tag' as const },
+    { name: 'Simulation', type: 'tag' as const },
+    { name: 'Puzzle', type: 'category' as const },
+    { name: 'Action', type: 'category' as const },
+    { name: 'Casual', type: 'category' as const },
+    { name: 'Clicker', type: 'category' as const },
+    { name: 'Driving', type: 'category' as const },
+    { name: 'Sports', type: 'category' as const },
+    { name: '3D', type: 'tag' as const },
+    { name: 'Mouse', type: 'tag' as const },
+  ];
+
+  let homeSections: HomeSection[] = [];
+
   if (isHomePage) {
-    const tagGroups: Record<string, any[]> = {};
-    filteredGames.forEach((game: Game) => {
-      // We can include trending games in tags, or exclude them. Let's include them.
-      game.tags?.forEach((tag: string) => {
-        // --- FIX: Filter out malformed tags (e.g. starting with " or [") ---
-        if (
-          !tag ||
-          tag.startsWith('[') ||
-          tag.startsWith('"') ||
-          tag.endsWith(']') ||
-          tag.endsWith('"') ||
-          tag.length < 2
-        ) {
-          return;
-        }
+    // Helper to normalize strings for comparison
+    const normalize = (str: string) => str.toLowerCase().replace(/\s+/g, '-');
 
-        if (!tagGroups[tag]) tagGroups[tag] = [];
-        tagGroups[tag].push(game);
-      });
-    });
+    for (const config of sectionsConfig) {
+      let sectionGames: any[] = [];
 
-    tagSections = Object.entries(tagGroups)
-      .filter(([_, games]) => games.length > 0)
-      .sort((a, b) => b[1].length - a[1].length) // Sort by popularity (count)
-      .slice(0, 7)
-      .map(([tag, games]) => ({ tag, games: games.slice(0, 6) }));
+      if (config.type === 'tag') {
+        // Filter games that have this tag (case-insensitive check)
+        sectionGames = filteredGames.filter((g: Game) => 
+          g.tags?.some(tagName => 
+            normalize(tagName) === normalize(config.name)
+          )
+        );
+      } else {
+        // Filter games that belong to this category
+        sectionGames = filteredGames.filter((g: Game) => 
+          normalize(g.category) === normalize(config.name)
+        );
+      }
+
+      // Only add section if it has at least 6 games
+      if (sectionGames.length >= 6) {
+        homeSections.push({
+          title: `${config.name} Games`,
+          games: sectionGames.slice(0, 12), // Limit to 12 games per scroll
+          type: config.type,
+          slug: config.name.toLowerCase().replace(/\s+/g, '-')
+        });
+      }
+    }
   }
   const itemListSchema = {
     '@context': 'https://schema.org',
