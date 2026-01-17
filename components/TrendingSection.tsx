@@ -22,7 +22,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
     sizes,
     isMain = false,
   }: {
-    game: Game;
+    game: Game | MinimalGame;
     className?: string;
     priority?: boolean;
     sizes: string;
