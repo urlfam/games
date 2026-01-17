@@ -108,8 +108,17 @@ export default function GamePlayerWithSplash({
   useEffect(() => {
     loadGameStats();
     loadLocalPreferences();
+    incrementPlayCount(); // Added: Increment play count on client side
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSlug]);
+
+  const incrementPlayCount = async () => {
+    try {
+      await supabase.rpc('increment_play_count', { p_game_slug: gameSlug });
+    } catch (e) {
+      console.error('Failed to increment play count', e);
+    }
+  };
 
   // Load user preferences from localStorage
   const loadLocalPreferences = () => {
