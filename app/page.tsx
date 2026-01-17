@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image'; // Add Image
+import cloudinaryLoader from '@/lib/cloudinaryLoader'; // Add cloudinaryLoader
 import { getAllGames, getNewGames, getTrendingGames, Game } from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
@@ -248,7 +250,7 @@ export default async function HomePage({
             {/* --- MOBILE LAYOUT (Hidden on Desktop) --- */}
              <div className="md:hidden">
                 {/* Mobile Trending Section (1 Large + 6 Small Grid) */}
-                <MobileTrendingSection games={trendingGames.slice(0, 7)} />
+                <MobileTrendingSection games={trendingGames.slice(0, 21)} />
 
                 {/* Mobile New Games (Vertical Cards 2x3) */}
                 <MobileScrollSection 
@@ -296,10 +298,80 @@ export default async function HomePage({
               />
             )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+            {/* Desktop View */}
+            <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
               {paginatedGames.map((game: Game) => (
                 <GameCard key={game.id} game={game} />
               ))}
+            </div>
+
+            {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
+            <div className="md:hidden space-y-6">
+               {/* First 6 games as Hero Units */}
+               <div className="space-y-6">
+                 {paginatedGames.slice(0, 6).map((game) => (
+                    <div key={game.id} className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group">
+                        <Link href={`/game/${game.slug}`} className="block w-full h-full relative">
+                          <Image
+                            loader={game.image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                            src={game.image_url}
+                            alt={game.title}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
+                          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white/20 shadow-md flex-shrink-0 relative bg-slate-800">
+                                  <Image
+                                      loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                                      src={game.mobile_1x1_url || game.image_url} 
+                                      alt={`${game.title} Icon`}
+                                      fill
+                                      className="object-cover"
+                                  />
+                              </div>
+                              <div className="flex flex-col">
+                                <h3 className="text-white font-bold text-lg leading-tight line-clamp-1 shadow-black drop-shadow-md">
+                                  {game.title}
+                                </h3>
+                                <span className="text-gray-300 text-sm">
+                                  {game.category}
+                                </span>
+                              </div>
+                            </div>
+                            <button className="bg-purple-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg shadow-purple-900/50 flex items-center gap-1 pointer-events-auto">
+                              Play
+                            </button>
+                          </div>
+                        </Link>
+                    </div>
+                 ))}
+               </div>
+
+               {/* Remaining games as 1x1 Grid */}
+               <div className="grid grid-cols-3 gap-3">
+                  {paginatedGames.slice(6).map((game) => (
+                    <Link 
+                      key={game.id} 
+                      href={`/game/${game.slug}`}
+                      className="flex flex-col gap-2 group"
+                    >
+                      <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
+                        <Image
+                          loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                          src={game.mobile_1x1_url || game.image_url} 
+                          alt={game.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="text-gray-200 text-xs font-medium text-center line-clamp-1">
+                        {game.title}
+                      </span>
+                    </Link>
+                  ))}
+               </div>
             </div>
 
             {/* Pagination Component */}

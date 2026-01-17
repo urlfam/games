@@ -23,7 +23,7 @@ export default function MobileScrollSection({
   if (!games || games.length === 0) return null;
 
   return (
-    <section className="mb-8 md:hidden">
+    <section className="mb-4 md:hidden">
       <div className="flex justify-between items-center mb-4 px-1">
         <h2 className="text-xl font-black text-white flex items-center gap-2">
             {/* Adding sparkle icon logic only if title is "New games" to match screenshot */}
@@ -38,7 +38,7 @@ export default function MobileScrollSection({
         </Link>
       </div>
 
-      <div className="flex overflow-x-auto gap-3 pb-4 -mx-2 px-2 scrollbar-hide snap-x">
+      <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 scrollbar-hide snap-x">
         {games.map((game) => (
           <Link 
             key={game.id} 
