@@ -55,6 +55,8 @@ export type MinimalGame = Pick<
   | 'video_url'
   | 'category'
   | 'image_alt'
+  | 'mobile_image_url'
+  | 'mobile_1x1_url'
 >;
 
 export function minimizeGame(game: Game): MinimalGame {
@@ -66,6 +68,8 @@ export function minimizeGame(game: Game): MinimalGame {
     video_url: game.video_url,
     category: game.category,
     image_alt: game.image_alt, // Optional
+    mobile_image_url: game.mobile_image_url,
+    mobile_1x1_url: game.mobile_1x1_url,
   };
 }
 
