@@ -301,7 +301,8 @@ export default async function HomePage({
 
             {/* Desktop View */}
             <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {paginated
+              {paginatedGames.map((game: Game) => (
+                <GameCard key={game.id} game={game} />
               ))}
             </div>
 
