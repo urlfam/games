@@ -148,7 +148,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
   if (games.length < 5) return null;
 
   // Chunk games into groups of 5, max 6 groups (30 games)
-  const chunks: Game[][] = [];
+  const chunks: (Game | MinimalGame)[][] = [];
   for (let i = 0; i < Math.min(games.length, 30); i += 5) {
     if (i + 5 <= games.length) {
       chunks.push(games.slice(i, i + 5));
