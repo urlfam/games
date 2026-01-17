@@ -15,6 +15,7 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,8 +61,12 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
     <div ref={containerRef} className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group bg-slate-900">
       <Link href={`/game/${game.slug}`} className="block w-full h-full relative">
         
-        {/* Helper for loading state / background */}
-        <div className="absolute inset-0 bg-slate-800 animate-pulse z-0" />
+        {/* Loading Spinner / Background */}
+        <div className="absolute inset-0 bg-slate-800 z-0 flex items-center justify-center">
+          {!isImageLoaded && (
+            <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
+          )}
+        </div>
 
         {/* Video Layer - Only mounts if video_url exists */}
         {game.video_url && (
@@ -82,7 +87,9 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
             src={game.image_url}
             alt={game.title}
             fill
-            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : 'opacity-100'}`}
+            sizes="(max-width: 768px) 100vw, 100vw"
+            onLoad={() => setIsImageLoaded(true)}
+            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : (isImageLoaded ? 'opacity-100' : 'opacity-0')}`}
             priority
         />
 
@@ -98,6 +105,7 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
                     src={game.mobile_1x1_url || game.image_url} 
                     alt={`${game.title} Icon`}
                     fill
+                    sizes="48px"
                     className="object-cover"
                 />
             </div>

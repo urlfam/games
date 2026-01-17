@@ -12,6 +12,38 @@ interface MobileTrendingSectionProps {
   games: Game[];
 }
 
+function MobileGridItem({ game }: { game: Game }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <Link 
+      href={`/game/${game.slug}`}
+      className="flex flex-col gap-2 group"
+    >
+      <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
+        {/* Spinner */}
+        {!isLoaded && (
+             <div className="absolute inset-0 flex items-center justify-center">
+                 <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
+             </div>
+        )}
+        <Image
+          loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+          src={game.mobile_1x1_url || game.image_url}
+          alt={game.title}
+          fill
+          sizes="(max-width: 768px) 33vw, 120px"
+          onLoad={() => setIsLoaded(true)}
+          className={`object-cover transition-all duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
+        />
+      </div>
+      <span className="text-gray-200 text-xs font-medium text-center line-clamp-1">
+        {game.title}
+      </span>
+    </Link>
+  );
+}
+
 export default function MobileTrendingSection({ games }: MobileTrendingSectionProps) {
   // Need at least 1 main game and some secondary games
   if (!games || games.length === 0) return null;
@@ -47,24 +79,7 @@ export default function MobileTrendingSection({ games }: MobileTrendingSectionPr
               {secondaryGames.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 px-1">
                   {secondaryGames.map((game) => (
-                    <Link 
-                      key={game.id} 
-                      href={`/game/${game.slug}`}
-                      className="flex flex-col gap-2 group"
-                    >
-                      <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
-                        <Image
-                          loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
-                          src={game.mobile_1x1_url || game.image_url} // Fallback logic handled in rendering
-                          alt={game.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                      </div>
-                      <span className="text-gray-200 text-xs font-medium text-center line-clamp-1">
-                        {game.title}
-                      </span>
-                    </Link>
+                    <MobileGridItem key={game.id} game={game} />
                   ))}
                 </div>
               )}
