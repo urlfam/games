@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getAllGames, getGameBySlug } from '@/lib/games';
 import RecommendedGamesSidebar from '@/components/RecommendedGamesSidebar';
+import MobileRecommendedGames from '@/components/MobileRecommendedGames'; // Import Mobile Component
 import GameCommentsSimple from '@/components/GameCommentsSimple';
 import GamePlayerWithSplash from '@/components/GamePlayerWithSplash';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -181,6 +182,9 @@ export default async function GamePage({ params }: GamePageProps) {
               imageTitle={(game as any).image_title}
             />
           </div>
+
+          {/* Mobile Recommended Games Section (Hidden on Desktop) */}
+          <MobileRecommendedGames games={recommendedGames} />
 
           {/* Game Info Header */}
           <div className="bg-slate-800 rounded-lg p-6 mb-6">
