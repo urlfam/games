@@ -157,7 +157,7 @@ export default async function GamePage({ params }: GamePageProps) {
   // Note: Assurez-vous que votre variable d'environnement est définie.
   const proxyBaseUrl =
     process.env.NEXT_PUBLIC_PROXY_URL || `http://147.93.7.103:9999`;
-  const gameProxyUrl = `${proxyBaseUrl}/game/${game.slug}`;
+  const gameProxyUrl = `${proxyBaseUrl}/source-game/${game.slug}`;
 
   return (
     <div className="p-4 lg:p-6">
