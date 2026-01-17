@@ -28,11 +28,24 @@ services:
     image: nginx:latest
     container_name: puzzio-proxy-container
     ports:
+      - '80:80'
+      - '443:443'
       - '9999:9999'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./injector.js:/usr/share/nginx/html/injector.js:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    container_name: puzzio-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   validator:
     image: puzzio-validator:latest
