@@ -76,13 +76,13 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
              />
         )}
 
-        {/* Static Image Layer - Visible when not playing */}
+        {/* Static Image Layer - Visible when not playing or if no video */}
         <Image
             loader={game.image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
             src={game.image_url}
             alt={game.title}
             fill
-            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying ? 'opacity-0' : 'opacity-100'}`}
+            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : 'opacity-100'}`}
             priority
         />
 
