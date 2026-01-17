@@ -1,4 +1,16 @@
 import HomePage from '@/app/page';
+import { getCategories } from '@/lib/games';
+
+// ISR: Regenerate this page every 60 seconds
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const categories = await getCategories();
+  return categories.map((cat) => ({
+    slug: cat.slug,
+  }));
+}
 
 interface CategoryPageProps {
   params: {

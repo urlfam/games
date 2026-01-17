@@ -17,6 +17,14 @@ import { headers } from 'next/headers';
 // Keeps pages fast while showing updated content
 export const revalidate = 60;
 
+// Enable SSG
+export async function generateStaticParams() {
+  const games = await getAllGames();
+  return games.map((game) => ({
+    slug: game.slug || '',
+  })).filter(p => p.slug);
+}
+
 interface GamePageProps {
   params: { slug: string };
 }
@@ -64,8 +72,6 @@ export async function generateMetadata({
     },
   };
 }
-
-// We are keeping the page dynamic (SSR) by removing generateStaticParams
 
 export default async function GamePage({ params }: GamePageProps) {
   const game = await getGameBySlug(params.slug);

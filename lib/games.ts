@@ -6,6 +6,11 @@ import { createClient } from '@supabase/supabase-js';
 const DATA_DIR = path.join(process.cwd(), 'data');
 const GAMES_DB_PATH = path.join(DATA_DIR, 'games.json');
 
+// Cache configuration
+let cachedGames: Game[] | null = null;
+let lastCacheTime = 0;
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
 export interface Game {
   id: number;
   importedAt: string;
@@ -46,15 +51,26 @@ export interface Game {
  * @returns {Promise<Game[]>} A promise that resolves to an array of games.
  */
 export async function getAllGames(): Promise<Game[]> {
+  // Check in-memory cache first
+  if (cachedGames && Date.now() - lastCacheTime < CACHE_TTL) {
+    return cachedGames;
+  }
+
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     const games: Game[] = JSON.parse(data);
 
     // Add a 'slug' to each game based on its page_url for easier linking
-    return games.map((game) => ({
+    const processedGames = games.map((game) => ({
       ...game,
       slug: game.slug || game.page_url.substring(game.page_url.lastIndexOf('/') + 1),
     }));
+
+    // Update cache
+    cachedGames = processedGames;
+    lastCacheTime = Date.now();
+
+    return processedGames;
   } catch (error) {
     // If the file doesn't exist or is empty, return an empty array
     console.error('Could not read games.json:', error);
