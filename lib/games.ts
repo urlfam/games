@@ -197,19 +197,66 @@ export async function sortGamesByPlays(games: Game[]): Promise<Game[]> {
 /**
  * Gets trending/popular games.
  * Fetches play counts from Supabase and sorts by popularity.
+ * Optimized to fetch top stats first instead of sending all IDs.
  * @param {number} limit - Maximum number of games to return.
  * @returns {Promise<Game[]>} Array of trending games.
  */
 export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
-  const games = await getAllGames();
-  const sorted = await sortGamesByPlays(games);
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
 
-  // If we have results, return them
-  if (sorted.length > 0) {
-    return sorted.slice(0, limit);
+    // Efficiently fetch only the top played games from DB
+    // Fetch a bit more than limit to account for potential sync issues (games in DB but not in JSON)
+    const fetchLimit = limit < 50 ? 50 : limit;
+    
+    const { data: stats } = await supabase
+      .from('game_stats')
+      .select('game_slug, plays')
+      .order('plays', { ascending: false })
+      .limit(fetchLimit);
+
+    const allGames = await getAllGames();
+
+    if (stats && stats.length > 0) {
+      const playsMap = new Map(stats.map((s) => [s.game_slug, s.plays]));
+      const trendingSlugs = new Set(stats.map((s) => s.game_slug));
+
+      // Filter games that are in the top stats
+      const trendingGames = allGames.filter(g => g.slug && trendingSlugs.has(g.slug));
+
+      // Sort them by plays
+      trendingGames.sort((a, b) => {
+        const playsA = playsMap.get(a.slug!) || 0;
+        const playsB = playsMap.get(b.slug!) || 0;
+        return playsB - playsA;
+      });
+
+      // If we have enough, return
+      if (trendingGames.length >= limit) {
+        return trendingGames.slice(0, limit);
+      }
+      
+      // If not enough (e.g. database empty), append other games? 
+      // User probably wants mixed if DB is sparse, but usually trending means "has plays".
+      // Let's fallback to filling with new games if we have remarkably few trending games
+      if (trendingGames.length < limit) {
+         const remaining = limit - trendingGames.length;
+         const usedSlugs = new Set(trendingGames.map(g => g.slug));
+         const fillers = allGames.filter(g => !usedSlugs.has(g.slug)).slice(0, remaining);
+         return [...trendingGames, ...fillers];
+      }
+      
+      return trendingGames;
+    }
+  } catch (error) {
+    console.error("Error fetching trending games:", error);
   }
 
-  // Fallback: Shuffle array and take limit
+  // Fallback: Shuffle array and take limit (existing logic)
+  const games = await getAllGames();
   const shuffled = [...games].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, limit);
 }
