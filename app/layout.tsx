@@ -109,7 +109,7 @@ export default function RootLayout({
         <link 
           rel="preload"
           as="image"
-          href="https://res.cloudinary.com/dlygtl5qb/image/upload/w_640,f_auto,q_auto/v1766934008/throne-tactics-free-online-pvp-deck-building-game.png"
+          href="https://res.cloudinary.com/dlygtl5qb/image/upload/w_640/f_auto,q_auto/v1766934008/throne-tactics-free-online-pvp-deck-building-game.png"
           // @ts-ignore
           fetchpriority="high"
           imageSizes="(max-width: 640px) 100vw, 640px"
