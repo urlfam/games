@@ -1,5 +1,6 @@
 import { getCategories } from '@/lib/games';
 import CategorySidebarClient from '@/components/CategorySidebarClient';
+import { Suspense } from 'react';
 
 export default async function CategorySidebar() {
   // Get real categories from games
@@ -21,5 +22,9 @@ export default async function CategorySidebar() {
     })),
   ];
 
-  return <CategorySidebarClient categories={allCategories} />;
+  return (
+    <Suspense fallback={<div className="w-16 md:w-64 bg-slate-900 border-r border-white/10 hidden md:block" />}>
+      <CategorySidebarClient categories={allCategories} />
+    </Suspense>
+  );
 }

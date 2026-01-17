@@ -15,6 +15,7 @@ import MobileTrendingSection from '@/components/MobileTrendingSection'; // Impor
 import MobileScrollSection from '@/components/MobileScrollSection'; // Import MobileScrollSection
 import MobileHeroCard from '@/components/MobileHeroCard';
 import MobileGridItem from '@/components/MobileGridItem';
+import { Suspense } from 'react';
 
 // ISR: Regenerate this page every 60 seconds in the background
 // This keeps the site blazing fast while showing fresh content
@@ -334,11 +335,13 @@ export default async function HomePage({
             </div>
 
             {/* Pagination Component */}
-            <Pagination 
-              totalItems={totalGames} 
-              itemsPerPage={itemsPerPage} 
-              currentPage={currentPage} 
-            />
+            <Suspense fallback={null}>
+              <Pagination 
+                totalItems={totalGames} 
+                itemsPerPage={itemsPerPage} 
+                currentPage={currentPage} 
+              />
+            </Suspense>
 
             {/* SEO Main Content */}
             {seoData?.main_content && (
