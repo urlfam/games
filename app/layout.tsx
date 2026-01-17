@@ -105,6 +105,16 @@ export default function RootLayout({
         <link rel="preconnect" href="https://imgs.crazygames.com" />
         <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
 
+        {/* Preload Hero Image (Throne Tactics) for LCP optimization */}
+        <link 
+          rel="preload"
+          as="image"
+          href="https://res.cloudinary.com/dlygtl5qb/image/upload/w_640,f_auto,q_auto/v1766934008/throne-tactics-free-online-pvp-deck-building-game.png"
+          // @ts-ignore
+          fetchpriority="high"
+          imageSizes="(max-width: 640px) 100vw, 640px"
+        />
+
         {/* Dynamic Preconnect to Supabase */}
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>

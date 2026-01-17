@@ -42,7 +42,7 @@ export default function MobileTrendingSection({ games }: MobileTrendingSectionPr
           return (
             <div key={index} className="space-y-4">
               {/* Main Hero Card */}
-              <MobileHeroCard game={mainGame} />
+              <MobileHeroCard game={mainGame} priority={index === 0} />
 
               {/* Grid of Small Cards */}
               {secondaryGames.length > 0 && (
