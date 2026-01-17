@@ -11,6 +11,10 @@ let cachedGames: Game[] | null = null;
 let lastCacheTime = 0;
 const CACHE_TTL = 60 * 1000; // 60 seconds
 
+// Cache for trending games to minimize DB calls
+let cachedTrendingGames: { data: Game[]; timestamp: number } | null = null;
+const TRENDING_CACHE_TTL = 60 * 1000; // 60 seconds
+
 export interface Game {
   id: number;
   importedAt: string;
@@ -202,6 +206,15 @@ export async function sortGamesByPlays(games: Game[]): Promise<Game[]> {
  * @returns {Promise<Game[]>} Array of trending games.
  */
 export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
+  // Check memory cache
+  if (
+    cachedTrendingGames &&
+    Date.now() - cachedTrendingGames.timestamp < TRENDING_CACHE_TTL &&
+    cachedTrendingGames.data.length >= limit
+  ) {
+    return cachedTrendingGames.data.slice(0, limit);
+  }
+
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -209,7 +222,7 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
     );
 
     // Efficiently fetch only the top played games from DB
-    // Fetch a bit more than limit to account for potential sync issues (games in DB but not in JSON)
+    // Fetch a bit more than limit to account for potential sync issues
     const fetchLimit = limit < 50 ? 50 : limit;
     
     const { data: stats } = await supabase
@@ -219,13 +232,14 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
       .limit(fetchLimit);
 
     const allGames = await getAllGames();
+    let resultGames: Game[] = [];
 
     if (stats && stats.length > 0) {
       const playsMap = new Map(stats.map((s) => [s.game_slug, s.plays]));
       const trendingSlugs = new Set(stats.map((s) => s.game_slug));
 
       // Filter games that are in the top stats
-      const trendingGames = allGames.filter(g => g.slug && trendingSlugs.has(g.slug));
+      const trendingGames = allGames.filter((g) => g.slug && trendingSlugs.has(g.slug));
 
       // Sort them by plays
       trendingGames.sort((a, b) => {
@@ -234,31 +248,35 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
         return playsB - playsA;
       });
 
-      // If we have enough, return
-      if (trendingGames.length >= limit) {
-        return trendingGames.slice(0, limit);
-      }
-      
-      // If not enough (e.g. database empty), append other games? 
-      // User probably wants mixed if DB is sparse, but usually trending means "has plays".
-      // Let's fallback to filling with new games if we have remarkably few trending games
-      if (trendingGames.length < limit) {
-         const remaining = limit - trendingGames.length;
-         const usedSlugs = new Set(trendingGames.map(g => g.slug));
-         const fillers = allGames.filter(g => !usedSlugs.has(g.slug)).slice(0, remaining);
-         return [...trendingGames, ...fillers];
-      }
-      
-      return trendingGames;
+      resultGames = trendingGames;
     }
+
+    // Fill with random/new if not enough
+    if (resultGames.length < limit) {
+      const usedSlugs = new Set(resultGames.map(g => g.slug));
+      const remainingGames = allGames.filter(g => !usedSlugs.has(g.slug));
+      // Shuffle remaining
+      const shuffled = [...remainingGames].sort(() => Math.random() - 0.5);
+      resultGames = [...resultGames, ...shuffled.slice(0, limit - resultGames.length)];
+    }
+    
+    // Update cache
+    cachedTrendingGames = {
+      data: resultGames,
+      timestamp: Date.now(),
+    };
+
+    return resultGames.slice(0, limit);
+
   } catch (error) {
     console.error("Error fetching trending games:", error);
+    // Return cached if available
+    if (cachedTrendingGames) return cachedTrendingGames.data.slice(0, limit);
+    
+    // Fallback if everything fails
+    const games = await getAllGames();
+    return games.slice(0, limit);
   }
-
-  // Fallback: Shuffle array and take limit (existing logic)
-  const games = await getAllGames();
-  const shuffled = [...games].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, limit);
 }
 
 /**
