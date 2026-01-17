@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import MobileHeroCard from './MobileHeroCard';
 import MobileGridItem from './MobileGridItem';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
@@ -10,7 +10,7 @@ import { Play } from 'lucide-react';
 import { useState } from 'react';
 
 interface MobileTrendingSectionProps {
-  games: Game[];
+  games: (Game | MinimalGame)[];
 }
 
 export default function MobileTrendingSection({ games }: MobileTrendingSectionProps) {

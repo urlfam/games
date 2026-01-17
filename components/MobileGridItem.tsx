@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface MobileGridItemProps {
-  game: Game;
+  game: Game | MinimalGame;
   className?: string;
   imgClassName?: string;
 }

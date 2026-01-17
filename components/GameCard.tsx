@@ -4,12 +4,12 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // Import useRouter
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface GameCardProps {
-  game: Game;
+  game: Game | MinimalGame;
   priority?: boolean;
   className?: string;
 }

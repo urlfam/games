@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
 import { notFound } from 'next/navigation';
-import { getGamesByTag, getAllTags, getTrendingGames } from '@/lib/games';
+import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
@@ -90,6 +90,8 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   const trendingGames = await getTrendingGames(6);
   const seoData = await getSeoData(tagSlug, 'Tag');
 
+  const minimizedGames = games.map(minimizeGame);
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -140,7 +142,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         
         {/* Desktop View (Standard Grid) */}
         <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {games.map((game) => (
+          {minimizedGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
@@ -149,14 +151,14 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         <div className="md:hidden space-y-6">
             {/* First 6 games as Hero Units */}
             <div className="space-y-6">
-                {games.slice(0, 6).map((game) => (
+                {minimizedGames.slice(0, 6).map((game) => (
                   <MobileHeroCard key={game.id} game={game} />
                 ))}
             </div>
 
             {/* Remaining games as 1x1 Grid */}
             <div className="grid grid-cols-3 gap-3">
-                {games.slice(6).map((game) => (
+                {minimizedGames.slice(6).map((game) => (
                     <MobileGridItem key={game.id} game={game} />
                 ))}
             </div>

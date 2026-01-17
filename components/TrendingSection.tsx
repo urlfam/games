@@ -3,11 +3,11 @@
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface TrendingSectionProps {
-  games: Game[];
+  games: (Game | MinimalGame)[];
 }
 
 export default function TrendingSection({ games }: TrendingSectionProps) {

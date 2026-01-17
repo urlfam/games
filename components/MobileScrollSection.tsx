@@ -3,18 +3,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 import { ChevronRight } from 'lucide-react';
 
 interface MobileScrollSectionProps {
   title: string;
-  games: Game[];
+  games: (Game | MinimalGame)[];
   viewMoreLink: string;
   useVerticalCards?: boolean;
 }
 
-function MobileScrollItem({ game, useVerticalCards }: { game: Game, useVerticalCards: boolean }) {
+function MobileScrollItem({ game, useVerticalCards }: { game: Game | MinimalGame, useVerticalCards: boolean }) {
     const [isLoaded, setIsLoaded] = useState(false);
     return (
         <Link 

@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface MobileHeroCardProps {
-  game: Game;
+  game: Game | MinimalGame;
 }
 
 export default function MobileHeroCard({ game }: MobileHeroCardProps) {
@@ -72,7 +72,8 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
         {game.video_url && (
              <video
                 ref={videoRef}
-                src={`/previews/${game.slug}.mp4`}
+                src={hasStarted ? `/previews/${game.slug}.mp4` : undefined}
+                preload="none"
                 poster={game.image_url}
                 muted
                 loop

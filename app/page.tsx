@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image'; // Add Image
 import cloudinaryLoader from '@/lib/cloudinaryLoader'; // Add cloudinaryLoader
-import { getAllGames, getNewGames, getTrendingGames, Game } from '@/lib/games';
+import { getAllGames, getNewGames, getTrendingGames, Game, minimizeGame } from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
@@ -193,6 +193,15 @@ export default async function HomePage({
     })),
   };
 
+  // Optimization: Minimize data passed to client components
+  const minimizedPaginatedGames = paginatedGames.map(minimizeGame);
+  const minimizedTrendingGames = trendingGames.map(minimizeGame);
+  const minimizedNewGames = newGames.map(minimizeGame);
+  const minimizedHomeSections = homeSections.map((section) => ({
+    ...section,
+    games: section.games.map(minimizeGame),
+  }));
+
   if (filteredGames.length === 0 && searchQuery) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
@@ -223,18 +232,18 @@ export default async function HomePage({
             {/* --- DESKTOP LAYOUT (Hidden on Mobile) --- */}
             <div className="hidden md:block"> 
                 {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
-                <TrendingSection games={trendingGames} />
+                <TrendingSection games={minimizedTrendingGames} />
 
                 {/* New Games Section - Horizontal Scroll */}
                 <HorizontalGameSection
                   title="New Games"
-                  games={newGames}
+                  games={minimizedNewGames}
                   viewMoreLink="/c/new"
                   badgeText="All New Games"
                 />
 
                 {/* Dynamic Custom Sections - Horizontal Scroll */}
-                {homeSections.map((section) => (
+                {minimizedHomeSections.map((section) => (
                   <HorizontalGameSection
                     key={section.title}
                     title={section.title}
@@ -252,18 +261,18 @@ export default async function HomePage({
             {/* --- MOBILE LAYOUT (Hidden on Desktop) --- */}
              <div className="md:hidden">
                 {/* Mobile Trending Section (1 Large + 6 Small Grid) */}
-                <MobileTrendingSection games={trendingGames.slice(0, 21)} />
+                <MobileTrendingSection games={minimizedTrendingGames.slice(0, 21)} />
 
                 {/* Mobile New Games (Vertical Cards 2x3) */}
                 <MobileScrollSection 
                     title="New Games"
-                    games={newGames}
+                    games={minimizedNewGames}
                     viewMoreLink="/c/new"
                     useVerticalCards={true}
                 />
 
                 {/* Mobile Custom Sections (Square Cards 1x1) */}
-                {homeSections.map((section) => (
+                {minimizedHomeSections.map((section) => (
                   <MobileScrollSection
                     key={section.title}
                     title={section.title}
@@ -302,7 +311,7 @@ export default async function HomePage({
 
             {/* Desktop View */}
             <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
-              {paginatedGames.map((game: Game) => (
+              {minimizedPaginatedGames.map((game: any) => (
                 <GameCard key={game.id} game={game} />
               ))}
             </div>
@@ -311,14 +320,14 @@ export default async function HomePage({
             <div className="md:hidden space-y-6">
                {/* First 6 games as Hero Units */}
                <div className="space-y-6">
-                 {paginatedGames.slice(0, 6).map((game) => (
+                 {minimizedPaginatedGames.slice(0, 6).map((game: any) => (
                     <MobileHeroCard key={game.id} game={game} />
                  ))}
                </div>
 
                {/* Remaining games as 1x1 Grid */}
                <div className="grid grid-cols-3 gap-3">
-                  {paginatedGames.slice(6).map((game) => (
+                  {minimizedPaginatedGames.slice(6).map((game: any) => (
                     <MobileGridItem key={game.id} game={game} />
                   ))}
                </div>

@@ -46,6 +46,29 @@ export interface Game {
   mobile_1x1_url?: string; // 1x1 aspect ratio (square)
 }
 
+export type MinimalGame = Pick<
+  Game,
+  | 'id'
+  | 'title'
+  | 'slug'
+  | 'image_url'
+  | 'video_url'
+  | 'category'
+  | 'image_alt'
+>;
+
+export function minimizeGame(game: Game): MinimalGame {
+  return {
+    id: game.id,
+    title: game.title,
+    slug: game.slug!, // valid games always have a slug after getAllGames
+    image_url: game.image_url,
+    video_url: game.video_url,
+    category: game.category,
+    image_alt: game.image_alt, // Optional
+  };
+}
+
 /**
  * Reads the games.json file and returns all games.
  * @returns {Promise<Game[]>} A promise that resolves to an array of games.

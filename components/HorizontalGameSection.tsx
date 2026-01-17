@@ -3,11 +3,11 @@
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import GameCard from './GameCard';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 
 interface HorizontalGameSectionProps {
   title: string;
-  games: Game[];
+  games: (Game | MinimalGame)[];
   viewMoreLink?: string;
   viewMoreText?: string;
   badgeText?: string;
