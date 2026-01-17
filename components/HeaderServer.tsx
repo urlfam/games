@@ -1,5 +1,6 @@
 import { getCategories } from '@/lib/games';
 import HeaderClient from '@/components/HeaderClient';
+import { Suspense } from 'react';
 
 export default async function Header() {
   // Get real categories from games
@@ -21,5 +22,9 @@ export default async function Header() {
     })),
   ];
 
-  return <HeaderClient categories={allCategories} />;
+  return (
+    <Suspense fallback={<div className="h-16 w-full bg-[#1a1b26] border-b border-white/10" />}>
+      <HeaderClient categories={allCategories} />
+    </Suspense>
+  );
 }
