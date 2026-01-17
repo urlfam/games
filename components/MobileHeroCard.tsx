@@ -87,10 +87,12 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
             src={game.image_url}
             alt={game.title}
             fill
-            sizes="(max-width: 768px) 100vw, 100vw"
+            sizes="100vw"
+            priority={true}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
             onLoad={() => setIsImageLoaded(true)}
-            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : (isImageLoaded ? 'opacity-100' : 'opacity-0')}`}
-            priority
+            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : 'opacity-100'}`}
         />
 
         {/* Overlay Gradients - Visible only when playing */}

@@ -28,11 +28,14 @@ export default function MobileGridItem({ game, className = '', imgClassName = ''
              </div>
         )}
         <Image
-          loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+          loader={(game.mobile_1x1_url || game.image_url)?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
           src={game.mobile_1x1_url || game.image_url}
           alt={game.title}
           fill
-          sizes="(max-width: 768px) 33vw, 150px"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+          sizes="(max-width: 480px) 33vw, 150px"
           onLoad={() => setIsLoaded(true)}
           className={`object-cover transition-transform duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'} ${imgClassName}`}
         />

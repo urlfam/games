@@ -1,6 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  compress: true, // Enable Gzip (Brotli handled by Proxy/CDN)
+  async headers() {
+    return [
+      {
+        source: '/:all*(svg|jpg|jpeg|png|gif|ico|webp|js|css|woff|woff2)',
+        locale: false,
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:path*', // All pages
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, stale-while-revalidate=60',
+          },
+        ],
+      },
+    ];
+  },
   images: {
     // Limit max width to 1920px to avoid generating 3840px (4K) images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

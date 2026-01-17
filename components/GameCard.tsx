@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { Game } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
@@ -18,6 +19,7 @@ export default function GameCard({
   priority = false,
   className = '',
 }: GameCardProps) {
+  const router = useRouter(); // Initialize router
   const [isHovered, setIsHovered] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -25,6 +27,9 @@ export default function GameCard({
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+    // Prefetch page on hover for faster navigation
+    router.prefetch(`/game/${game.slug}`);
+    
     if (game.video_url) {
       setVideoSrc(`/previews/${game.slug}.mp4`);
     }
@@ -64,9 +69,11 @@ export default function GameCard({
           className={`object-cover transition-opacity duration-300 z-10 ${
             isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'
           }`}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           loading={priority ? 'eager' : 'lazy'}
           priority={priority}
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
           onLoad={() => setIsImageLoaded(true)}
         />
 
