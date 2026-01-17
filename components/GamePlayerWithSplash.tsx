@@ -20,6 +20,7 @@ interface GamePlayerWithSplashProps {
   gameImage: string;
   gameSlug: string;
   gameCategory?: string;
+  gameMobile1x1?: string;
   imageAlt?: string;
   imageTitle?: string;
 }
@@ -30,6 +31,7 @@ export default function GamePlayerWithSplash({
   gameImage,
   gameSlug,
   gameCategory = 'Casual',
+  gameMobile1x1,
   imageAlt,
   imageTitle,
 }: GamePlayerWithSplashProps) {
@@ -682,11 +684,11 @@ export default function GamePlayerWithSplash({
             <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50 bg-slate-800">
               <Image
                 loader={
-                  gameImage.includes('res.cloudinary.com')
+                  (gameMobile1x1 || gameImage).includes('res.cloudinary.com')
                     ? cloudinaryLoader
                     : undefined
                 }
-                src={gameImage}
+                src={gameMobile1x1 || gameImage}
                 alt={imageAlt || gameTitle}
                 title={imageTitle || gameTitle}
                 fill

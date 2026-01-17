@@ -178,6 +178,7 @@ export default async function GamePage({ params }: GamePageProps) {
               gameImage={game.image_url}
               gameSlug={game.slug || params.slug}
               gameCategory={game.category}
+              gameMobile1x1={game.mobile_1x1_url}
               imageAlt={(game as any).image_alt}
               imageTitle={(game as any).image_title}
             />
