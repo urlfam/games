@@ -23,9 +23,10 @@ export default function cloudinaryLoader({
   // We add 'c_limit' to be safe, or just 'w_'. Cloudinary default crop is 'scale'.
   const params = [`w_${width}`];
 
-  // Only add quality if not already present in the URL to avoid duplication (e.g. q_auto)
-  // If a specific quality is requested by Next.js, we add it.
-  if (quality) {
+  // Optimization: Use q_auto (Cloudinary AI) by default instead of static quality
+  // formatting. Next.js defaults to 75, so we override it with q_auto unless a
+  // custom quality (not 75) is provided.
+  if (quality && quality !== 75) {
     params.push(`q_${quality}`);
   } else if (!rest.includes('q_auto')) {
     params.push('q_auto');

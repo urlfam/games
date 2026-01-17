@@ -32,8 +32,8 @@ export default function TermsPage() {
                 Agreement to Terms
               </h2>
               <p>
-                By accessing and using Puzzio.io ("Website," "Service"), you
-                agree to be bound by these Terms of Service ("Terms"). If you
+                By accessing and using Puzzio.io (&quot;Website,&quot; &quot;Service&quot;), you
+                agree to be bound by these Terms of Service (&quot;Terms&quot;). If you
                 disagree with any part of these terms, you may not access the
                 Service.
               </p>
@@ -58,7 +58,7 @@ export default function TermsPage() {
                 </li>
                 <li>Remove any copyright or proprietary notations</li>
                 <li>
-                  Transfer the materials to another person or "mirror" the
+                  Transfer the materials to another person or &quot;mirror&quot; the
                   materials on any other server
                 </li>
               </ul>
@@ -153,7 +153,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">Disclaimer</h2>
               <p>
-                The materials on Puzzio.io are provided on an 'as is' basis.
+                The materials on Puzzio.io are provided on an &apos;as is&apos; basis.
                 Puzzio.io makes no warranties, expressed or implied, and hereby
                 disclaims and negates all other warranties including, without
                 limitation, implied warranties or conditions of merchantability,

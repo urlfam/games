@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Send, User as UserIcon } from 'lucide-react';
 
@@ -35,12 +35,7 @@ export default function GameCommentsSimple({
     }
   }, []);
 
-  // Fetch comments
-  useEffect(() => {
-    fetchComments();
-  }, [gameSlug]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('game_comments_simple')
@@ -60,7 +55,12 @@ export default function GameCommentsSimple({
     } finally {
       setLoading(false);
     }
-  };
+  }, [gameSlug, supabase]);
+
+  // Fetch comments
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();

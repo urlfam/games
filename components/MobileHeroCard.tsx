@@ -90,8 +90,9 @@ export default function MobileHeroCard({ game, priority = false }: MobileHeroCar
             src={game.image_url}
             alt={game.title}
             fill
-            sizes="100vw"
+            sizes="(max-width: 640px) 100vw, 640px"
             priority={priority}
+            {...(priority ? { fetchPriority: 'high' } : {})}
             placeholder="blur"
             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
             onLoad={() => setIsImageLoaded(true)}
