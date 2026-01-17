@@ -100,9 +100,18 @@ export default function RootLayout({
         {/* Preconnect to Cloudinary CDN for faster image loading */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        
         {/* Preconnect to CrazyGames for faster game loading */}
         <link rel="preconnect" href="https://imgs.crazygames.com" />
         <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
+
+        {/* Dynamic Preconnect to Supabase */}
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
 
         <script
           type="application/ld+json"
