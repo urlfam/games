@@ -15,7 +15,7 @@ export default function RecommendedGamesSidebar({
   }
 
   return (
-    <aside className="block w-full lg:w-[340px] flex-shrink-0">
+    <aside className="hidden lg:block w-full lg:w-[340px] flex-shrink-0">
       {/* Container */}
       <div className="space-y-3">
         {/* Header */}

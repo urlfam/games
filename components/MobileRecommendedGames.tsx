@@ -24,12 +24,11 @@ export default function MobileRecommendedGames({ games }: MobileRecommendedGames
   };
 
   return (
-    <div className="mt-6 lg:hidden">
-      <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-        <span className="text-purple-500">🎮</span>
-        Recommended Games
-      </h3>
-      
+    <div className="mt-8 mb-8 lg:hidden">
+      <div className="flex justify-center mb-6 animate-bounce">
+        <ChevronDown className="w-8 h-8 text-gray-400" />
+      </div>
+
       <div className="grid grid-cols-3 gap-2">
         {visibleGames.map((game) => (
           <Link 
