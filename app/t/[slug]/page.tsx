@@ -151,8 +151,8 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         <div className="md:hidden space-y-6">
             {/* First 6 games as Hero Units */}
             <div className="space-y-6">
-                {minimizedGames.slice(0, 6).map((game) => (
-                  <MobileHeroCard key={game.id} game={game} />
+                {minimizedGames.slice(0, 6).map((game, index) => (
+                  <MobileHeroCard key={game.id} game={game} priority={index === 0} />
                 ))}
             </div>
 

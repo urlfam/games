@@ -8,9 +8,10 @@ import cloudinaryLoader from '@/lib/cloudinaryLoader';
 
 interface MobileHeroCardProps {
   game: Game | MinimalGame;
+  priority?: boolean;
 }
 
-export default function MobileHeroCard({ game }: MobileHeroCardProps) {
+export default function MobileHeroCard({ game, priority = false }: MobileHeroCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -46,13 +47,14 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
       }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    const element = containerRef.current;
+    if (element) {
+      observer.observe(element);
     }
 
     return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
+      if (element) {
+        observer.unobserve(element);
       }
     };
   }, [hasStarted]);
@@ -89,7 +91,7 @@ export default function MobileHeroCard({ game }: MobileHeroCardProps) {
             alt={game.title}
             fill
             sizes="100vw"
-            priority={true}
+            priority={priority}
             placeholder="blur"
             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
             onLoad={() => setIsImageLoaded(true)}

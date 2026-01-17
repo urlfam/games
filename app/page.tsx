@@ -320,8 +320,8 @@ export default async function HomePage({
             <div className="md:hidden space-y-6">
                {/* First 6 games as Hero Units */}
                <div className="space-y-6">
-                 {minimizedPaginatedGames.slice(0, 6).map((game: any) => (
-                    <MobileHeroCard key={game.id} game={game} />
+                 {minimizedPaginatedGames.slice(0, 6).map((game: any, index: number) => (
+                    <MobileHeroCard key={game.id} game={game} priority={index === 0} />
                  ))}
                </div>
 
