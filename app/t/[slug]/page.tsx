@@ -10,6 +10,7 @@ import ExpandableText from '@/components/ExpandableText'; // Import ExpandableTe
 import Pagination from '@/components/Pagination'; // Import Pagination
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 import MobileHeroCard from '@/components/MobileHeroCard';
+import MobileGridItem from '@/components/MobileGridItem';
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -156,24 +157,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             {/* Remaining games as 1x1 Grid */}
             <div className="grid grid-cols-3 gap-3">
                 {games.slice(6).map((game) => (
-                <Link 
-                    key={game.id} 
-                    href={`/game/${game.slug}`}
-                    className="flex flex-col gap-2 group"
-                >
-                    <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
-                    <Image
-                        loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
-                        src={game.mobile_1x1_url || game.image_url} 
-                        alt={game.title}
-                        fill
-                        className="object-cover"
-                    />
-                    </div>
-                    <span className="text-gray-200 text-xs font-medium text-center line-clamp-1">
-                    {game.title}
-                    </span>
-                </Link>
+                    <MobileGridItem key={game.id} game={game} />
                 ))}
             </div>
         </div>

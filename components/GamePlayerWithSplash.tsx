@@ -425,6 +425,7 @@ export default function GamePlayerWithSplash({
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
                     fill
+                    sizes="20vw"
                     className="object-cover scale-110"
                     priority
                   />
@@ -448,6 +449,7 @@ export default function GamePlayerWithSplash({
                     alt={imageAlt || gameTitle}
                     title={imageTitle || gameTitle}
                     fill
+                    sizes="(max-width: 768px) 90vw, 300px"
                     className={`object-cover transition-opacity duration-300 ${
                       !isImageLoaded ? 'opacity-0' : 'opacity-100'
                     }`}

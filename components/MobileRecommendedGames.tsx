@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Game } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
 import { ChevronDown } from 'lucide-react';
+import MobileGridItem from './MobileGridItem';
 
 interface MobileRecommendedGamesProps {
   games: Game[];
@@ -31,25 +32,7 @@ export default function MobileRecommendedGames({ games }: MobileRecommendedGames
 
       <div className="grid grid-cols-3 gap-2">
         {visibleGames.map((game) => (
-          <Link 
-            key={game.id} 
-            href={`/game/${game.slug}`}
-            className="flex flex-col gap-1 group"
-          >
-            <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
-              <Image
-                loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
-                src={game.mobile_1x1_url || game.image_url} 
-                alt={game.title}
-                fill
-                className="object-cover"
-                sizes="33vw"
-              />
-            </div>
-            <span className="text-gray-300 text-[10px] leading-tight font-medium text-center line-clamp-2 px-1">
-              {game.title}
-            </span>
-          </Link>
+          <MobileGridItem key={game.id} game={game} />
         ))}
       </div>
 

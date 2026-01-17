@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Game } from '@/lib/games';
@@ -10,15 +11,73 @@ interface MobileScrollSectionProps {
   title: string;
   games: Game[];
   viewMoreLink: string;
-  useVerticalCards?: boolean; // If true, uses 2x3 aspect ratio (New Games). Else uses 1x1.
+  useVerticalCards?: boolean;
+}
+
+function MobileScrollItem({ game, useVerticalCards }: { game: Game, useVerticalCards: boolean }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+    return (
+        <Link 
+            href={`/game/${game.slug}`}
+            className={`flex-shrink-0 snap-start relative group rounded-xl overflow-hidden bg-slate-800 shadow-md ${
+                useVerticalCards ? 'w-[140px] aspect-[2/3]' : 'w-[100px] flex flex-col gap-2 bg-transparent shadow-none !overflow-visible'
+            }`}
+        >
+            {useVerticalCards ? (
+                // Vertical Card (New Games Style)
+                <>
+                    {/* Spinner */}
+                    {!isLoaded && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-0">
+                            <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
+                        </div>
+                    )}
+                    <Image
+                        loader={game.mobile_image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                        src={game.mobile_image_url || game.image_url} 
+                        alt={game.title}
+                        fill
+                        sizes="160px"
+                        onLoad={() => setIsLoaded(true)}
+                        className={`object-cover transition-transform duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
+                    />
+                    {/* Dark gradient overlay at bottom for legibility if we were to put text, but screenshot shows full image card often having text embedded or clean */}
+                </>
+            ) : (
+                // Square 1x1 Card (Other Sections Style)
+                <>
+                    <div className="aspect-square relative rounded-xl overflow-hidden w-full bg-slate-800 shadow-md">
+                        {/* Spinner */}
+                        {!isLoaded && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-0">
+                                <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
+                            </div>
+                        )}
+                        <Image
+                            loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                            src={game.mobile_1x1_url || game.image_url} 
+                            alt={game.title}
+                            fill
+                            sizes="120px"
+                            onLoad={() => setIsLoaded(true)}
+                            className={`object-cover transition-transform duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
+                        />
+                    </div>
+                    <span className="text-gray-200 text-xs font-medium text-center line-clamp-1 w-full block">
+                        {game.title}
+                    </span>
+                </>
+            )}
+        </Link>
+    );
 }
 
 export default function MobileScrollSection({ 
-  title, 
-  games, 
-  viewMoreLink,
-  useVerticalCards = false
-}: MobileScrollSectionProps) {
+    title, 
+    games, 
+    viewMoreLink,
+    useVerticalCards = false
+  }: MobileScrollSectionProps) {
   
   if (!games || games.length === 0) return null;
 
@@ -40,43 +99,7 @@ export default function MobileScrollSection({
 
       <div className="flex overflow-x-auto gap-3 pb-2 -mx-2 px-2 scrollbar-hide snap-x">
         {games.map((game) => (
-          <Link 
-            key={game.id} 
-            href={`/game/${game.slug}`}
-            className={`flex-shrink-0 snap-start relative group rounded-xl overflow-hidden bg-slate-800 shadow-md ${
-                useVerticalCards ? 'w-[140px] aspect-[2/3]' : 'w-[100px] flex flex-col gap-2 bg-transparent shadow-none !overflow-visible'
-            }`}
-          >
-            {useVerticalCards ? (
-                // Vertical Card (New Games Style)
-                <>
-                    <Image
-                        loader={game.mobile_image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
-                        src={game.mobile_image_url || game.image_url} // Fallback to main image (might be cropped if not 2x3)
-                        alt={game.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {/* Dark gradient overlay at bottom for legibility if we were to put text, but screenshot shows full image card often having text embedded or clean */}
-                </>
-            ) : (
-                // Square 1x1 Card (Other Sections Style)
-                <>
-                    <div className="aspect-square relative rounded-xl overflow-hidden w-full bg-slate-800 shadow-md">
-                        <Image
-                            loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
-                            src={game.mobile_1x1_url || game.image_url} 
-                            alt={game.title}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                    </div>
-                    <span className="text-gray-200 text-xs font-medium text-center line-clamp-1 w-full block">
-                        {game.title}
-                    </span>
-                </>
-            )}
-          </Link>
+            <MobileScrollItem key={game.id} game={game} useVerticalCards={!!useVerticalCards} />
         ))}
         
         {/* "View More" Card at the end of scroll */}
