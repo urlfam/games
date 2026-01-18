@@ -295,7 +295,7 @@ export default async function GamePage({ params }: GamePageProps) {
             <h2 className="text-2xl font-bold text-white mb-4">Description</h2>
             <div
               className="game-description prose prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: game.description }}
+              dangerouslySetInnerHTML={{ __html: game.description || '' }}
             />
             
             {/* Gameplay Screenshot */}
