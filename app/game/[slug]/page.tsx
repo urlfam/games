@@ -131,10 +131,9 @@ export default async function GamePage({ params }: GamePageProps) {
     .slice(0, 40);
 
   // Construire l'URL pour le proxy Nginx
-  // Note: Assurez-vous que votre variable d'environnement est définie.
-  const proxyBaseUrl =
-    process.env.NEXT_PUBLIC_PROXY_URL || `http://147.93.7.103:9999`;
-  const gameProxyUrl = `${proxyBaseUrl}/source-game/${game.slug}`;
+  // Utiliser un chemin relatif pour éviter les problèmes de Mixed Content (HTTP vs HTTPS)
+  // Le Nginx interne gère la route /source-game/
+  const gameProxyUrl = `/source-game/${game.slug}`;
 
   return (
     <div className="p-4 lg:p-6">
