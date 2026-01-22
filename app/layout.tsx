@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { Nunito } from 'next/font/google';
 import './globals.css';
 import HeaderServer from '@/components/HeaderServer';
@@ -6,7 +7,7 @@ import ConditionalFooter from '@/components/ConditionalFooter';
 import { SidebarProvider } from '@/components/SidebarContext';
 import CategorySidebarServer from '@/components/CategorySidebarServer';
 import PlayMainContent from '@/components/PlayMainContent';
-// import NextTopLoader from 'nextjs-toploader'; 
+import NextTopLoader from 'nextjs-toploader';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -39,7 +40,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = headers();
+  // We use a header set in middleware to detect the route without client-side hooks
+  // This helps us isolate the Admin panel visually from the public site layout
+  const pathname = headersList.get('x-pathname') || '';
+  const isAdmin = pathname.startsWith('/admin');
+
+  // Schema definitions...
   const websiteSchema = {
+    // ... same schema as before
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Puzzio.io',
@@ -95,19 +104,30 @@ export default function RootLayout({
     },
   };
 
+  if (isAdmin) {
+    return (
+      <html lang="en" className={nunito.className}>
+        <body>
+          <NextTopLoader color="#9333ea" showSpinner={false} />
+          {children}
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en" className={nunito.className}>
       <head>
         {/* Preconnect to Cloudinary CDN for faster image loading */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        
+
         {/* Preconnect to CrazyGames for faster game loading */}
         <link rel="preconnect" href="https://imgs.crazygames.com" />
         <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
 
         {/* Preload Hero Image (Throne Tactics) for LCP optimization */}
-        <link 
+        <link
           rel="preload"
           as="image"
           href="https://res.cloudinary.com/dlygtl5qb/image/upload/w_640/f_auto,q_auto/v1766934008/throne-tactics-free-online-pvp-deck-building-game.png"
@@ -119,8 +139,14 @@ export default function RootLayout({
         {/* Dynamic Preconnect to Supabase */}
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+            <link
+              rel="preconnect"
+              href={process.env.NEXT_PUBLIC_SUPABASE_URL}
+            />
+            <link
+              rel="dns-prefetch"
+              href={process.env.NEXT_PUBLIC_SUPABASE_URL}
+            />
           </>
         )}
 
@@ -136,6 +162,17 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <NextTopLoader
+          color="#9333ea"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #9333ea,0 0 5px #9333ea"
+        />
         <SidebarProvider>
           <HeaderServer />
           <CategorySidebarServer />

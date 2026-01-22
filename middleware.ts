@@ -7,9 +7,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Pass the pathname to the layout via headers to visually separate Admin from Public
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', request.nextUrl.pathname);
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   });
 

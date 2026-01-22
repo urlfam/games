@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
-set timeout 20
-spawn ssh root@147.93.7.103 "docker exec puzzio-web-container cat data/games.json"
+set timeout 30
+spawn ssh root@147.93.7.103 "echo '=== DOCKER PS ===' && docker ps && echo '=== PROXY LOGS ===' && docker logs --tail 20 puzzio-proxy-container && echo '=== WEB LOGS ===' && docker logs --tail 20 puzzio-web-container"
 expect {
   "yes/no" { send "yes\r"; exp_continue }
   "password:" { send "Aissayoub21\r" }

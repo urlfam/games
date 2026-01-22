@@ -20,12 +20,33 @@ let isWriting = false;
  * @param {Request} req - The incoming request object.
  */
 export async function POST(req: Request) {
+  console.error('[ImportAuth] Request received');
+  
   // 1. --- Security Check ---
-  const authToken = req.headers.get('Authorization')?.split(' ')[1];
-  const N8N_SECRET_TOKEN = process.env.N8N_SECRET_TOKEN;
+  const authHeader = req.headers.get('Authorization') || '';
+  
+  // Normalize client token (remove Bearer prefix and whitespace)
+  const clientToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+  
+  // Normalize server token
+  let serverToken = process.env.N8N_SECRET_TOKEN || '';
+  
+  // Aggressive cleanup: remove surrounding quotes, trim whitespace/newlines
+  serverToken = serverToken.trim();
+  if ((serverToken.startsWith('"') && serverToken.endsWith('"')) || 
+      (serverToken.startsWith("'") && serverToken.endsWith("'"))) {
+    serverToken = serverToken.slice(1, -1);
+  }
+  
+  // Helper to handle potential double-escaping in some environments
+  serverToken = serverToken.replace(/\\"/g, '"');
 
-  if (!N8N_SECRET_TOKEN || authToken !== N8N_SECRET_TOKEN) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  if (!serverToken || clientToken !== serverToken) {
+    console.error(`[ImportAuth] FAILED: Tokens do not match. Client len=${clientToken.length}, Server len=${serverToken.length}`);
+    return NextResponse.json({ 
+      message: 'Unauthorized', 
+      debug_info: 'Check container logs for details'
+    }, { status: 401 });
   }
 
   // Prevent multiple writes at the same time

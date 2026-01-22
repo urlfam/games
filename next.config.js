@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Fix for "Missing origin header from a forwarded Server Actions request"
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['puzzio.io', 'www.puzzio.io', 'localhost:3000'],
+    },
+  },
   compress: true, // Enable Gzip (Brotli handled by Proxy/CDN)
   async headers() {
     return [

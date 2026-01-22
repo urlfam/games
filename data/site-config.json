@@ -1,0 +1,97 @@
+{
+  "siteName": "Puzzio",
+  "siteDescription": "Play the best online puzzle games.",
+  "navigation": {
+    "header": [
+      {
+        "label": "New",
+        "href": "/c/new"
+      },
+      {
+        "label": "Trending",
+        "href": "/c/trending"
+      },
+      {
+        "label": "Action",
+        "href": "/c/action"
+      },
+      {
+        "label": "Puzzle",
+        "href": "/c/puzzle"
+      }
+    ],
+    "footer": [
+      {
+        "title": "Company",
+        "links": [
+          {
+            "label": "About Us",
+            "href": "/about-us"
+          },
+          {
+            "label": "Contact",
+            "href": "/contact"
+          }
+        ]
+      },
+      {
+        "title": "Legal",
+        "links": [
+          {
+            "label": "Privacy Policy",
+            "href": "/privacy"
+          },
+          {
+            "label": "Terms of Service",
+            "href": "/terms"
+          }
+        ]
+      },
+      {
+        "title": "Games",
+        "links": [
+          {
+            "label": "New Games",
+            "href": "/c/new"
+          },
+          {
+            "label": "Trending",
+            "href": "/c/trending"
+          }
+        ]
+      }
+    ]
+  },
+  "homepageSections": [
+    {
+      "id": "trending",
+      "type": "trending",
+      "title": "Trending Now",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "new",
+      "type": "new",
+      "title": "New Games",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "puzzle",
+      "type": "category",
+      "title": "Puzzle Games",
+      "slug": "puzzle",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "action",
+      "type": "category",
+      "title": "Action Games",
+      "slug": "action",
+      "order": 4,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+#!/usr/bin/expect
+
+set timeout 300
+set host "147.93.7.103"
+set user "root"
+set password "Aissayoub21"
+set remote_dir "/root/puzzio"
+
+# Step 1: Upload nginx.conf and deploy-proxy.sh
+spawn scp -o StrictHostKeyChecking=no nginx.conf deploy-proxy.sh $user@$host:$remote_dir/
+expect {
+    "password:" { send "$password\r" }
+}
+expect eof
+
+# Step 2: Restart the proxy container
+spawn ssh -o StrictHostKeyChecking=no $user@$host "cd $remote_dir && chmod +x deploy-proxy.sh && ./deploy-proxy.sh"
+expect {
+    "password:" { send "$password\r" }
+}
+
+# Allow some time for the script to run and potentially ask for password again if scp was separate (it is)
+# We need to handle the output of the remote command.
+# deploy-proxy.sh might not ask for anything, just run.
+expect {
+    "password:" { send "$password\r" }
+    eof
+}
+catch wait result
+exit [lindex $result 3]

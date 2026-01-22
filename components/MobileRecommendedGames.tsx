@@ -24,13 +24,23 @@ export default function MobileRecommendedGames({ games }: MobileRecommendedGames
     setVisibleCount(prev => Math.min(prev + 12, games.length));
   };
 
+  const scrollToGames = () => {
+    const gridElement = document.getElementById('mobile-games-grid');
+    if (gridElement) {
+      gridElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="mt-8 mb-8 lg:hidden">
-      <div className="flex justify-center mb-6 animate-bounce">
+      <div 
+        onClick={scrollToGames}
+        className="flex justify-center mb-6 cursor-pointer hover:bg-slate-800/50 rounded-full py-2 transition-colors"
+      >
         <ChevronDown className="w-8 h-8 text-gray-400" />
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div id="mobile-games-grid" className="grid grid-cols-3 gap-2">
         {visibleGames.map((game) => (
           <MobileGridItem key={game.id} game={game} />
         ))}

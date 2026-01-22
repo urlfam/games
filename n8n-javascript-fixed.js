@@ -179,7 +179,9 @@ if (allGames && allGames.length > 0) {
 }
 
 // Remplacer le lien catégorie
-const categorySlug = (currentCategory || 'action').toLowerCase().replace(/\s+/g, '-');
+const categorySlug = (currentCategory || 'action')
+  .toLowerCase()
+  .replace(/\s+/g, '-');
 const categoryLink =
   '<a href="/c/' +
   categorySlug +

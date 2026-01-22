@@ -27,10 +27,10 @@ fi
 
 echo "✓ Tous les fichiers sont présents"
 
-# 2. Build de l'image Docker
+# 2. Build de l'image Docker (No Cache pour s'assurer que injector.js est pris en compte)
 echo ""
-echo "🔨 Construction de l'image Docker..."
-docker build -f Dockerfile.proxy -t puzzio-proxy:latest .
+echo "🔨 Construction de l'image Docker (No Cache)..."
+docker build --no-cache -f Dockerfile.proxy -t puzzio-proxy:latest .
 
 if [ $? -ne 0 ]; then
     echo "❌ Erreur lors du build Docker"
@@ -52,6 +52,8 @@ echo "🚀 Démarrage du nouveau conteneur..."
 docker run -d \
     --name puzzio-proxy-container \
     --restart unless-stopped \
+    --network puzzio_default \
+    -p 127.0.0.1:8090:80 \
     -p 9999:9999 \
     puzzio-proxy:latest
 

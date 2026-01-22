@@ -187,7 +187,88 @@
   console.log('[Puzzio.io] ✅ Fake CrazyGames SDK installé');
 
   // ============================================
-  // 4. MOCK GOOGLE IMA (ANTI-PUB VIDÉO)
+  // 3b. HACK POUR LE NOUVEAU LOADER (Crazygames.load)
+  // ============================================
+  // Certains jeux (Unity) utilisent Crazygames.load() via gameframe.js
+  // On ne peut pas facilement mocker Crazygames.load car il est requis pour charger le jeu.
+  // PAR CONTRE, on peut intercepter le réseau pour que ses requêtes de pubs échouent VITE.
+
+  // ============================================
+  // 4. RÉSEAU : INTERCEPTION FETCH & XHR (KILL SWITCH)
+  // ============================================
+  // Empêche le navigateur de bloquer (Mixed Content) ou d'attendre (Timeout)
+
+  const BLOCKED_DOMAINS = [
+    'gum.criteo.com',
+    'idx.liadm.com',
+    'id.hadron.ad.gt',
+    'api.intentia.com',
+    'pubmatic.com',
+    'rubiconproject.com',
+    'openx.net',
+    'doubleclick.net',
+    'googlesyndication.com',
+    'imasdk.googleapis.com',
+    'adnxs.com',
+  ];
+
+  function isBlocked(url) {
+    if (!url) return false;
+    return BLOCKED_DOMAINS.some((domain) => url.includes(domain));
+  }
+
+  // Intercepter Fetch
+  const originalFetch = window.fetch;
+  window.fetch = function (input, init) {
+    let url = input;
+    if (typeof input === 'object' && input.url) url = input.url;
+
+    if (isBlocked(url)) {
+      console.log('[Puzzio.io] 🚫 Fetch bloqué: ' + url);
+      // Retourner une réponse vide "Succès" pour ne pas casser le JS qui attend du JSON
+      return Promise.resolve(
+        new Response('{}', {
+          status: 200,
+          statusText: 'OK',
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+    }
+    return originalFetch.apply(this, arguments);
+  };
+
+  // Intercepter XHR
+  const originalXHR = window.XMLHttpRequest;
+  window.XMLHttpRequest = function () {
+    const xhr = new originalXHR();
+    const originalOpen = xhr.open;
+
+    xhr.open = function (method, url) {
+      if (isBlocked(url)) {
+        console.log('[Puzzio.io] 🚫 XHR bloqué: ' + url);
+        // On détourne vers une URL data locale inoffensive
+        // ou on surcharge send() pour ne rien faire
+        Object.defineProperty(xhr, 'readyState', { value: 4, writable: true });
+        Object.defineProperty(xhr, 'status', { value: 200, writable: true });
+        Object.defineProperty(xhr, 'responseText', {
+          value: '{}',
+          writable: true,
+        });
+
+        xhr.send = function () {
+          console.log('[Puzzio.io] ⚡ XHR Fake Response envoyée');
+          if (xhr.onreadystatechange) xhr.onreadystatechange();
+          if (xhr.onload) xhr.onload();
+        };
+        return;
+      }
+      return originalOpen.apply(this, arguments);
+    };
+    return xhr;
+  };
+
+  // ============================================
+  // 5. MOCK GOOGLE IMA (ANTI-PUB VIDÉO)
   // ============================================
   window.google = window.google || {};
   window.google.ima = {

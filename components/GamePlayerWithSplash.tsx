@@ -50,6 +50,11 @@ export default function GamePlayerWithSplash({
 
   const supabase = createClient();
 
+  // Force scroll to top on mount to ensure user sees the game first
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   // Calculate rating based on likes and dislikes
   const calculateRating = () => {
     const total = likeCount + dislikeCount;

@@ -8,7 +8,7 @@ import FAQAccordion from '@/components/FAQAccordion';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
-// import { createClient } from '@/lib/supabase/server'; // Removed for speed
+import { createClient } from '@/lib/supabase/server'; 
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 import { headers } from 'next/headers';
@@ -42,16 +42,22 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${game.title} - Play on Puzzio.io`,
+    title: (game as any).seo_title || `${game.title} - Play on Puzzio.io`,
     description:
+      (game as any).seo_description ||
       (game as any).image_description ||
       stripHtml(game.description).substring(0, 160),
+    keywords: [
+      ...((game as any).image_keywords || []),
+      ...(game.tags || [])
+    ],
     alternates: {
       canonical: `https://puzzio.io/game/${params.slug}`,
     },
     openGraph: {
-      title: game.title,
+      title: (game as any).seo_title || game.title,
       description:
+        (game as any).seo_description ||
         (game as any).image_description ||
         stripHtml(game.description).substring(0, 200),
       url: `https://puzzio.io/game/${params.slug}`,
@@ -60,15 +66,24 @@ export async function generateMetadata({
           url: game.image_url,
           alt: (game as any).image_alt || game.title,
         },
-      ],
+        (game as any).mobile_image_url && {
+          url: (game as any).mobile_image_url,
+          alt: `${game.title} - Mobile Cover`,
+        },
+        (game as any).mobile_1x1_url && {
+          url: (game as any).mobile_1x1_url,
+          alt: `${game.title} - Icon`,
+        },
+      ].filter(Boolean),
     },
     twitter: {
       card: 'summary_large_image',
-      title: game.title,
+      title: (game as any).seo_title || game.title,
       description:
+        (game as any).seo_description ||
         (game as any).image_description ||
         stripHtml(game.description).substring(0, 200),
-      images: [game.image_url],
+      images: [game.image_url, (game as any).mobile_image_url].filter(Boolean),
     },
   };
 }
@@ -81,34 +96,102 @@ export default async function GamePage({ params }: GamePageProps) {
     notFound();
   }
 
-  // NOTE: Moving Supabase calls to client side for instant navigation speed.
-  // We use defaults for initial SSR render.
+  // --- ISR DATA FETCHING ---
+  // We use revalidate = 60 to fetch this data only once per minute server-side.
+  // This keeps the site instant for users while showing real data.
+  const supabase = await createClient();
   
-  // Default stats for SSR (will be hydrated by client component if needed, 
-  // or updated in future background revalidations)
-  const likes = 0;
-  const dislikes = 0;
-  const plays = 0; // Will show "0" or hidden initially, fine for instant feel
-  const totalVotes = 0;
+  let likes = 0;
+  let dislikes = 0;
+  let plays = 0;
+  let totalVotes = 0;
+  
+  // Visual Rating (0-10)
+  let ratingValueVisual = 10.0;
+  // Schema Rating (0-5)
+  let ratingValueSchema = 5.0;
 
-  // Defaults for Schema
-  const ratingValueSchema = 5.0; // Moderate default
-  const ratingValueVisual = 10.0; // Visual default
+  try {
+    const { data: stats } = await supabase
+      .from('game_stats')
+      .select('likes, dislikes, plays') // removed game_slug to match grep results simpler
+      .eq('game_slug', params.slug) // Check exact column name from grep: 'game_slug' seems used in SQL. 
+      // Wait, standard supabase query uses column names. 
+      // Grep showed: `WHERE game_slug = p_game_slug` in SQL function.
+      // Let's assume the column in table is 'game_slug' or 'slug'.
+      // Let's check check_supabase.js to be sure.
+      // Actually, safest is to check 'slug' or 'game_slug'. 
+      // The grep for check_supabase.js line 12 might help.
+      // Let's assume 'slug' based on typical pattern, but grep says 'game_slug' in SQL.
+      // Let's stick to what was likely there or what works.
+      // SQL line 7: INSERT INTO game_stats (game_slug, ...)
+      // So column is definitely `game_slug`.
+      .eq('game_slug', params.slug)
+      .single();
+      
+    if (stats) {
+      likes = stats.likes || 0;
+      dislikes = stats.dislikes || 0;
+      plays = stats.plays || 0;
+      totalVotes = likes + dislikes;
 
-  const jsonLd = {
+      if (totalVotes > 0) {
+        // Calculate weighted rating or simple average? 
+        // Simple average as requested "same logic as before".
+        // Rating 0-10
+        ratingValueVisual = (likes / totalVotes) * 10;
+        // Rating 0-5
+        ratingValueSchema = (likes / totalVotes) * 5;
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching game stats (non-blocking):', e);
+    // Silent fail -> use defaults (10/10 visual, 5/5 schema, 0 plays)
+  }
+
+  const videoUrl = (game as any).video_url || (game as any).youtube_video_url;
+  
+  const jsonLd: any = {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
-    name: game.title,
-    description: stripHtml(game.description),
-    image: game.image_url,
+    name: (game as any).seo_title || game.title,
+    description: (game as any).seo_description || stripHtml(game.description),
+    image: [
+      game.image_url,
+      (game as any).mobile_image_url,
+      (game as any).mobile_1x1_url
+    ].filter(Boolean),
+    keywords: [
+      ...((game as any).image_keywords || []),
+      ...(game.tags || [])
+    ].join(', '),
     genre: game.category,
     playMode: 'SinglePlayer',
     applicationCategory: 'Game',
     url: `https://puzzio.io/game/${params.slug}`,
-    // Exclude aggregateRating from initial static HTML if no data,
-    // to avoid blocking DB call. Google will see it when it visits if we use ISR properly,
-    // but for user speed, we skip the DB wait.
   };
+
+  if (totalVotes > 0) {
+    jsonLd.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: ratingValueSchema.toFixed(1),
+      ratingCount: totalVotes,
+      bestRating: '5',
+      worstRating: '1',
+    };
+  }
+
+  if (videoUrl) {
+    jsonLd.subjectOf = {
+      '@type': 'VideoObject',
+      name: `Gameplay Video - ${game.title}`,
+      description: `Watch gameplay video of ${game.title} on Puzzio`,
+      thumbnailUrl: game.image_url,
+      uploadDate: new Date().toISOString(), // Required field, using generation date as fallback
+      contentUrl: (game as any).video_url, // Prefer direct MP4 if available
+      embedUrl: (game as any).youtube_video_url, // YouTube embed
+    };
+  }
 
   let faqJsonLd = null;
   if (game.faq_schema && game.faq_schema.length > 0) {
@@ -185,7 +268,7 @@ export default async function GamePage({ params }: GamePageProps) {
                     {ratingValueVisual.toFixed(1)}
                   </span>
                   <span className="text-gray-500 text-sm">
-                    (Standard)
+                    {totalVotes > 0 ? `(${totalVotes} votes)` : '(No votes yet)'}
                   </span>
                 </div>
               </div>
@@ -194,7 +277,7 @@ export default async function GamePage({ params }: GamePageProps) {
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Played:</span>
                 <span className="text-white font-semibold">
-                  New
+                  {plays > 0 ? plays.toLocaleString() : 'New'}
                 </span>
               </div>
 

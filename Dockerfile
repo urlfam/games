@@ -44,7 +44,8 @@ COPY --from=builder /app/next.config.js ./next.config.js
 # Create a dedicated, writable directory for our dynamic data
 RUN mkdir -p /app/data
 RUN mkdir -p /app/public/previews
-RUN chown -R node:node /app/data /app/public/previews
+# FIX: Ensure .next is writable by the node user for ISR (Incremental Static Regeneration)
+RUN chown -R node:node /app/.next /app/data /app/public/previews
 
 # Switch to a non-root user for security
 USER node

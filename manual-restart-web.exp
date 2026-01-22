@@ -1,0 +1,10 @@
+#!/usr/bin/expect
+
+set timeout 600
+
+spawn ssh -o StrictHostKeyChecking=no root@147.93.7.103 "cd /root/puzzio && docker rm -f puzzio-web-container && docker run -d --name puzzio-web-container --network puzzio_default -p 3000:3000 --env-file .env.local -e NODE_ENV=production -v /root/puzzio/data:/app/data -v /root/puzzio/public/previews:/app/public/previews --restart unless-stopped puzzio_web:latest"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

@@ -1,0 +1,19 @@
+#!/usr/bin/expect
+
+set timeout 600
+
+# 1. Upload next.config.js
+spawn scp -o StrictHostKeyChecking=no next.config.js root@147.93.7.103:/root/puzzio/
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof
+
+# 2. Rebuild and Restart Web Container
+spawn ssh -o StrictHostKeyChecking=no root@147.93.7.103 "cd /root/puzzio && docker-compose build web && docker-compose up -d web"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

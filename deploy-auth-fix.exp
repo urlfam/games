@@ -1,0 +1,20 @@
+#!/usr/bin/expect
+
+set timeout 300
+set host "147.93.7.103"
+set user "root"
+set password "Aissayoub21"
+
+# Upload updated route handler
+spawn scp -o StrictHostKeyChecking=no app/api/import-games/route.ts $user@$host:/root/puzzio/app/api/import-games/
+expect {
+    "password:" { send "$password\r" }
+}
+expect eof
+
+# Rebuild web container to apply changes
+spawn ssh -o StrictHostKeyChecking=no $user@$host "cd /root/puzzio && docker build -t puzzio_web:latest . && docker restart puzzio-web-container"
+expect {
+    "password:" { send "$password\r" }
+}
+expect eof
