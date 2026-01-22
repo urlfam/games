@@ -163,12 +163,8 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
 
   return (
     <section>
-      <div className="flex items-center gap-3 mb-2 px-1">
-        <h2 className="text-lg sm:text-xl font-bold text-white">
-          Trending Now
-        </h2>
-      </div>
-
+      {/* Title removed: Handled by parent component for flexibility */}
+      
       <div className="relative group -mx-1 px-1">
         <div
           ref={scrollContainerRef}

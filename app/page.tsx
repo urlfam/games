@@ -232,14 +232,15 @@ export default async function HomePage({
           <>
             {/* --- DESKTOP LAYOUT (Hidden on Mobile) --- */}
             <div className="hidden md:block"> 
-                {/* Trending Section - Layout CrazyGames (1 grande + 4 petites) */}
+                {/* UP-8 Top Picks for You (formerly Trending) */}
+                <h2 className="text-xl font-bold text-white mb-4 px-1">Top Picks for You</h2>
                 <TrendingSection games={minimizedTrendingGames} />
 
                 {/* New Games Section - Horizontal Scroll */}
                 <HorizontalGameSection
                   title="New Games"
                   games={minimizedNewGames}
-                  viewMoreLink="/c/new"
+                  viewMoreLink="/new-games"
                   badgeText="All New Games"
                 />
 
@@ -268,7 +269,7 @@ export default async function HomePage({
                 <MobileScrollSection 
                     title="New Games"
                     games={minimizedNewGames}
-                    viewMoreLink="/c/new"
+                    viewMoreLink="/new-games"
                     useVerticalCards={true}
                 />
 
