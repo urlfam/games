@@ -19,7 +19,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --no-cache -t puzzio_web:latest .
+          docker build --no-cache \
+            --build-arg NEXT_PUBLIC_SUPABASE_URL="https://vpwvcgqbepomocrnfurz.supabase.co" \
+            --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwd3ZjZ3FiZXBvbW9jcm5mdXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NzczMTEsImV4cCI6MjA3ODI1MzMxMX0.nHHWj75CekP0HnQmEBLQGAqFPQE6RWRAifuL2rgQhVE" \
+            -t puzzio_web:latest .
 
       - name: Save Docker image
         run: |
