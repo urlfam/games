@@ -47,26 +47,31 @@ I=0
 
 while [ $I -lt $MAX ]; do
     I=$((I + 1))
-    JSON=$(curl -s "https://api.github.com/repos/urlfam/games/actions/runs?per_page=1")
-    STATUS=$(echo "$JSON" | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
-    CONCL=$(echo "$JSON" | grep -o '"conclusion":"[^"]*"' | head -1 | cut -d'"' -f4)
+    
+    # Fetch status with cleaner parsing
+    RESPONSE=$(curl -s "https://api.github.com/repos/urlfam/games/actions/runs?per_page=1")
+    STATUS=$(echo "$RESPONSE" | grep -o "\"status\": *\"[^\"]*\"" | head -1 | sed 's/.*: *"//;s/"//')
+    CONCLUSION=$(echo "$RESPONSE" | grep -o "\"conclusion\": *\"[^\"]*\"" | head -1 | sed 's/.*: *"//;s/"//')
 
-    if [ "$STATUS" = "in_progress" ] || [ "$STATUS" = "queued" ]; then
-        echo "[$I/$MAX] In progress: $STATUS"
+    if [ "$STATUS" = "in_progress" ] || [ "$STATUS" = "queued" ] || [ "$STATUS" = "waiting" ]; then
+        echo "[$I/$MAX] 🔄 In progress: $STATUS"
     elif [ "$STATUS" = "completed" ]; then
-        if [ "$CONCL" = "success" ]; then
-            echo "${GREEN}SUCCESS! Deployed.${NC}"
+        echo ""
+        if [ "$CONCLUSION" = "success" ]; then
+            echo "${GREEN}✅ SUCCESS! Deployed.${NC}"
+            echo "${GREEN}🌐 https://puzzio.io${NC}"
             exit 0
         else
-            echo "${RED}FAILED! Check logs.${NC}"
+            echo "${RED}❌ FAILED! Check logs.${NC}"
+            echo "${RED}📋 https://github.com/urlfam/games/actions${NC}"
             exit 1
         fi
         break
     else
-        echo "[$I/$MAX] Unknown status: $STATUS"
+        echo "[$I/$MAX] ⚠️  Unknown status: $STATUS"
     fi
     sleep 15
 done
 
-echo "${YELLOW}Timeout.${NC}"
+echo "${YELLOW}⏱️  Timeout.${NC}"
 exit 1
