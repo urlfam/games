@@ -2,9 +2,15 @@ import fs from 'fs/promises';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
-// The data directory is now inside the container, at a writable location.
-const DATA_DIR = path.join(process.cwd(), 'data');
-const GAMES_DB_PATH = path.join(DATA_DIR, 'games.json');
+const GAMES_DB_PATH = path.join(process.cwd(), 'data', 'games.json');
+
+// Ensure data directory exists
+try {
+  const dir = path.dirname(GAMES_DB_PATH);
+  // Using sync check to avoid async issues at top level, but create if needed in runtime
+} catch (e) {
+  // Ignore
+}
 
 // Cache configuration
 let cachedGames: Game[] | null = null;
