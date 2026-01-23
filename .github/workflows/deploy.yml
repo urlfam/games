@@ -19,7 +19,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t puzzio_web:latest .
+          docker build --no-cache -t puzzio_web:latest .
 
       - name: Save Docker image
         run: |
