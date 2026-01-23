@@ -35,6 +35,9 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+// Force dynamic rendering because we use headers() to detect admin routes
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {
