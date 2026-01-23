@@ -42,9 +42,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./next.config.js
 
 # Create a dedicated, writable directory for our dynamic data
-RUN mkdir -p /app/data
-RUN mkdir -p /app/public/previews
-RUN chown -R node:node /app/data /app/public/previews
+RUN mkdir -p /app/data /app/public/previews /app/.next/cache
+RUN chown -R node:node /app/data /app/public/previews /app/.next
 
 # Switch to a non-root user for security
 USER node
