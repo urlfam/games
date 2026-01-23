@@ -12,7 +12,8 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'New Games - Play the Latest Free Online Games on Puzzio',
-  description: 'Discover the newest free online games on Puzzio. Play the latest puzzle, action, and strategy games. Updated daily with the best new web games.',
+  description:
+    'Discover the newest free online games on Puzzio. Play the latest puzzle, action, and strategy games. Updated daily with the best new web games.',
   alternates: {
     canonical: 'https://puzzio.io/new-games',
   },
@@ -50,14 +51,15 @@ export default async function NewGamesPage({
 
         {/* SEO Header Description */}
         {seoData?.header_desc ? (
-          <ExpandableText 
-            content={seoData.header_desc} 
+          <ExpandableText
+            content={seoData.header_desc}
             className="text-gray-300 mb-6 px-1 text-lg w-full"
             limit={300}
           />
         ) : (
           <p className="text-gray-300 mb-6 px-1 text-lg w-full">
-            Check out the latest additions to Puzzio! We update our collection daily with the best new games from around the web.
+            Check out the latest additions to Puzzio! We update our collection
+            daily with the best new games from around the web.
           </p>
         )}
 
@@ -70,26 +72,32 @@ export default async function NewGamesPage({
 
         {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
         <div className="md:hidden space-y-6">
-           {/* First 6 games as Hero Units */}
-           <div className="space-y-6">
-             {minimizedPaginatedGames.slice(0, 6).map((game: any, index: number) => (
-                <MobileHeroCard key={game.id} game={game} priority={index === 0} />
-             ))}
-           </div>
-
-           {/* Remaining games as 1x1 Grid */}
-           <div className="grid grid-cols-3 gap-3">
-              {minimizedPaginatedGames.slice(6).map((game: any) => (
-                <MobileGridItem key={game.id} game={game} />
+          {/* First 6 games as Hero Units */}
+          <div className="space-y-6">
+            {minimizedPaginatedGames
+              .slice(0, 6)
+              .map((game: any, index: number) => (
+                <MobileHeroCard
+                  key={game.id}
+                  game={game}
+                  priority={index === 0}
+                />
               ))}
-           </div>
+          </div>
+
+          {/* Remaining games as 1x1 Grid */}
+          <div className="grid grid-cols-3 gap-3">
+            {minimizedPaginatedGames.slice(6).map((game: any) => (
+              <MobileGridItem key={game.id} game={game} />
+            ))}
+          </div>
         </div>
 
         {/* Pagination Component */}
         <Suspense fallback={null}>
-          <Pagination 
-            totalItems={totalGames} 
-            itemsPerPage={itemsPerPage} 
+          <Pagination
+            totalItems={totalGames}
+            itemsPerPage={itemsPerPage}
             currentPage={currentPage}
           />
         </Suspense>

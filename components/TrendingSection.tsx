@@ -164,7 +164,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
   return (
     <section>
       {/* Title removed: Handled by parent component for flexibility */}
-      
+
       <div className="relative group -mx-1 px-1">
         <div
           ref={scrollContainerRef}

@@ -6,26 +6,27 @@ HOST="root@147.93.7.103"
 REMOTE_DIR="/root/puzzio"
 
 # 1. Upload files
-echo "Step 1: Uploading CMS Upgrade..."
+echo "Step 1: Uploading code changes..."
 
 echo "  - Uploading App Pages..."
 sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no "app/page.tsx" "$HOST:$REMOTE_DIR/app/page.tsx"
-sshpass -p "$PASSWORD" scp -r -o StrictHostKeyChecking=no "app/[slug]" "$HOST:$REMOTE_DIR/app/"
+sshpass -p "$PASSWORD" scp -r -o StrictHostKeyChecking=no "app/contact" "$HOST:$REMOTE_DIR/app/"
+sshpass -p "$PASSWORD" scp -r -o StrictHostKeyChecking=no "app/game" "$HOST:$REMOTE_DIR/app/"
 
 echo "  - Uploading Admin Panel..."
 sshpass -p "$PASSWORD" scp -r -o StrictHostKeyChecking=no "app/admin" "$HOST:$REMOTE_DIR/app/"
 
 echo "  - Uploading Libs..."
-sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no "lib/cms.ts" "$HOST:$REMOTE_DIR/lib/cms.ts"
 sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no "lib/games.ts" "$HOST:$REMOTE_DIR/lib/games.ts"
+sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no "lib/seo.ts" "$HOST:$REMOTE_DIR/lib/seo.ts"
 sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no "lib/cloudinaryLoader.ts" "$HOST:$REMOTE_DIR/lib/cloudinaryLoader.ts"
 
 # 2. Remote execution
-echo "Step 2: Building and Redeploying..."
+echo "Step 2: Restarting with existing image..."
 sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $HOST "
     cd $REMOTE_DIR
     
-    # Ensure upload directory exists on host
+    # Ensure directories exist
     mkdir -p public/uploads
     mkdir -p data
 
@@ -35,12 +36,10 @@ sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $HOST "
         NETWORK=\"puzzio_default\"
     fi
 
-    echo \"Building image...\"
-    docker build -t puzzio_web:latest .
-
-    echo \"Restarting container...\"
+    echo \"Stopping container...\"
     docker rm -f puzzio-web-container || true
 
+    echo \"Starting with updated code (using existing image)...\"
     docker run -d \\
         --name puzzio-web-container \\
         --restart unless-stopped \\
@@ -51,7 +50,14 @@ sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $HOST "
         -v $REMOTE_DIR/data:/app/data \\
         -v $REMOTE_DIR/public/previews:/app/public/previews \\
         -v $REMOTE_DIR/public/uploads:/app/public/uploads \\
+        -v $REMOTE_DIR/app:/app/app \\
+        -v $REMOTE_DIR/lib:/app/lib \\
+        -v $REMOTE_DIR/.next:/app/.next \\
         puzzio_web:latest
 
-    echo \"Deployment complete.\"
+    echo \"Clearing Next.js cache and restarting...\"
+    docker exec puzzio-web-container sh -c 'rm -rf .next/cache/* || true'
+    docker restart puzzio-web-container
+
+    echo \"Deployment complete!\"
 "

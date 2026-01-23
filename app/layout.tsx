@@ -23,8 +23,44 @@ export const metadata: Metadata = {
   },
   description:
     'Discover and play thousands of free online games. Puzzio.io offers a wide variety of puzzles, action, strategy, and arcade games to play in your browser.',
+  keywords: [
+    'free games',
+    'online games',
+    'browser games',
+    'puzzle games',
+    'action games',
+    'html5 games',
+    'play in browser',
+  ],
   alternates: {
     canonical: '/',
+  },
+  verification: {
+    google: 'VOTRE_CODE_DE_VALIDATION_ICI', // ⚠️ Remplacez ceci par le code donné par Google Search Console
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://puzzio.io',
+    siteName: 'Puzzio.io',
+    title: 'Puzzio.io - Free Online Games',
+    description:
+      'Discover and play thousands of free online games directly in your browser.',
+    images: [
+      {
+        url: 'https://puzzio.io/puzzio.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Puzzio.io - Free Online Games',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Puzzio.io - Free Online Games',
+    description:
+      'Play thousands of free online games instantly. No downloads required.',
+    images: ['https://puzzio.io/puzzio.webp'],
   },
 };
 
@@ -34,9 +70,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 };
-
-// Force dynamic rendering because we use headers() to detect admin routes
-export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,

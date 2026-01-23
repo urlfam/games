@@ -240,8 +240,8 @@ export default function Header({ categories }: HeaderProps) {
                       isActive
                         ? 'bg-purple-600 text-white'
                         : isWhiteHeader
-                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
+                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'
                     }`}
                   >
                     <Icon size={18} />
