@@ -100,14 +100,16 @@ export async function getAllGames(): Promise<Game[]> {
     // Add a 'slug' to each game based on its page_url for easier linking
     let processedGames = games.map((game) => ({
       ...game,
-      slug: game.slug || game.page_url.substring(game.page_url.lastIndexOf('/') + 1),
+      slug:
+        game.slug ||
+        game.page_url.substring(game.page_url.lastIndexOf('/') + 1),
     }));
 
     // Fetch overrides from Supabase
     try {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       );
       const { data: overrides, error } = await supabase
         .from('game_overrides')
@@ -256,7 +258,7 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
     // Efficiently fetch only the top played games from DB
     // Fetch a bit more than limit to account for potential sync issues
     const fetchLimit = limit < 50 ? 50 : limit;
-    
+
     const { data: stats } = await supabase
       .from('game_stats')
       .select('game_slug, plays')
@@ -271,7 +273,9 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
       const trendingSlugs = new Set(stats.map((s) => s.game_slug));
 
       // Filter games that are in the top stats
-      const trendingGames = allGames.filter((g) => g.slug && trendingSlugs.has(g.slug));
+      const trendingGames = allGames.filter(
+        (g) => g.slug && trendingSlugs.has(g.slug),
+      );
 
       // Sort them by plays
       trendingGames.sort((a, b) => {
@@ -285,13 +289,16 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
 
     // Fill with random/new if not enough
     if (resultGames.length < limit) {
-      const usedSlugs = new Set(resultGames.map(g => g.slug));
-      const remainingGames = allGames.filter(g => !usedSlugs.has(g.slug));
+      const usedSlugs = new Set(resultGames.map((g) => g.slug));
+      const remainingGames = allGames.filter((g) => !usedSlugs.has(g.slug));
       // Shuffle remaining
       const shuffled = [...remainingGames].sort(() => Math.random() - 0.5);
-      resultGames = [...resultGames, ...shuffled.slice(0, limit - resultGames.length)];
+      resultGames = [
+        ...resultGames,
+        ...shuffled.slice(0, limit - resultGames.length),
+      ];
     }
-    
+
     // Update cache
     cachedTrendingGames = {
       data: resultGames,
@@ -299,12 +306,11 @@ export async function getTrendingGames(limit: number = 20): Promise<Game[]> {
     };
 
     return resultGames.slice(0, limit);
-
   } catch (error) {
-    console.error("Error fetching trending games:", error);
+    console.error('Error fetching trending games:', error);
     // Return cached if available
     if (cachedTrendingGames) return cachedTrendingGames.data.slice(0, limit);
-    
+
     // Fallback if everything fails
     const games = await getAllGames();
     return games.slice(0, limit);
@@ -351,4 +357,44 @@ export async function getGamesByTag(tagSlug: string): Promise<Game[]> {
       (tag) => tag.toLowerCase().replace(/\s+/g, '-') === tagSlug,
     );
   });
+}
+
+/**
+ * Saves a game object to the games.json file.
+ * @param {Game} updatedGame - The game object to save.
+ * @returns {Promise<void>} A promise that resolves when the game is saved.
+ */
+export async function saveGame(updatedGame: Game): Promise<void> {
+  try {
+    // 1. Read current file
+    const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
+    let games: Game[] = JSON.parse(data);
+
+    // 2. Find index
+    // Use slug if available, else id. Best to rely on id if stable, but slug is the key used in URLs.
+    // Let's rely on ID first, then Slug.
+    const index = games.findIndex((g) => g.id === updatedGame.id);
+
+    if (index !== -1) {
+      // Update
+      games[index] = { ...games[index], ...updatedGame };
+    } else {
+      // Create - Generate new ID if needed
+      if (!updatedGame.id) {
+        const maxId = games.reduce((max, g) => (g.id > max ? g.id : max), 0);
+        updatedGame.id = maxId + 1;
+      }
+      games.push(updatedGame);
+    }
+
+    // 3. Write back
+    await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+
+    // 4. Invalidate Cache
+    cachedGames = null;
+    lastCacheTime = 0;
+  } catch (error) {
+    console.error('Error saving game:', error);
+    throw new Error('Failed to save game to database');
+  }
 }
