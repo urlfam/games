@@ -150,6 +150,28 @@ export default async function GamePage({ params }: GamePageProps) {
         ratingValueSchema = (likes / totalVotes) * 5;
       }
     }
+
+    // --- FALLBACK LOGIC (RESTORED) ---
+    // If we have very few stats (new site), mix with seeded data 
+    // to provide a better UX, as requested.
+    if (totalVotes < 10) {
+      // Seed based on game ID to be consistent but "random"
+      const seed = game.id || 999;
+      const fakePlays = (seed * 37) % 2000 + 500;
+      
+      // Override plays if real plays are low
+      if (plays < fakePlays) {
+        plays = fakePlays + plays; 
+      }
+      
+      // If no votes, provide a default high rating
+      if (totalVotes === 0) {
+         ratingValueVisual = 9.0 + ((seed % 10) / 10); // 9.0 - 9.9
+         ratingValueSchema = 4.5 + ((seed % 5) / 10);  // 4.5 - 4.9
+         totalVotes = (seed % 20) + 5; // 5 - 24 fake votes
+         // We don't change likes/dislikes in DB, just display
+      }
+    }
   } catch (e) {
     console.error('Error fetching game stats (non-blocking):', e);
     // Silent fail -> use defaults (10/10 visual, 5/5 schema, 0 plays)

@@ -37,7 +37,7 @@ export default function CategorySidebarClient({
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-[100] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent hidden md:flex ${
+      className={`fixed top-0 left-0 h-full bg-[#1a1d29] flex flex-col py-4 transition-all duration-300 z-[9999] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent hidden md:flex ${
         isHovered ? 'w-56' : 'w-16'
       } pt-20`} // Added pt-20 to account for header height (16 * 4 = 64px + padding)
       onMouseEnter={() => setIsHovered(true)}
