@@ -12,8 +12,8 @@ import cloudinaryLoader from '@/lib/cloudinaryLoader';
 import MobileHeroCard from '@/components/MobileHeroCard';
 import MobileGridItem from '@/components/MobileGridItem';
 
-// ISR: Regenerate this page every 60 seconds
-export const revalidate = 60;
+// Force dynamic rendering to handle searchParams correctly
+export const dynamic = 'force-dynamic';
 
 interface TagPageProps {
   params: {

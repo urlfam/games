@@ -12,6 +12,10 @@ import { createClient } from '@supabase/supabase-js';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
+// Force dynamic rendering to ensure stability and avoid ISR/Permission issues
+export const dynamic = 'force-dynamic';
+
+/* 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
 export const revalidate = 60;
@@ -25,6 +29,7 @@ export async function generateStaticParams() {
     }))
     .filter((p) => p.slug);
 }
+*/
 
 interface GamePageProps {
   params: { slug: string };
