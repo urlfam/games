@@ -25,7 +25,10 @@ async function ensureSeoFile() {
   }
 }
 
-export async function getSeoData(slug: string, type: 'Category' | 'Tag'): Promise<SeoData | null> {
+export async function getSeoData(
+  slug: string,
+  type: 'Category' | 'Tag',
+): Promise<SeoData | null> {
   await ensureSeoFile();
   try {
     const data = await fs.readFile(SEO_DB_PATH, 'utf-8');
@@ -34,6 +37,48 @@ export async function getSeoData(slug: string, type: 'Category' | 'Tag'): Promis
   } catch (error) {
     console.error('Error reading SEO data:', error);
     return null;
+  }
+}
+
+export async function getAllSeoData(): Promise<
+  {
+    slug: string;
+    type: 'Category' | 'Tag';
+    hasHeader: boolean;
+    hasContent: boolean;
+  }[]
+> {
+  await ensureSeoFile();
+  try {
+    const data = await fs.readFile(SEO_DB_PATH, 'utf-8');
+    const store: SeoStore = JSON.parse(data);
+
+    const results: any[] = [];
+
+    // Process Categories
+    Object.entries(store.Category || {}).forEach(([slug, data]) => {
+      results.push({
+        slug,
+        type: 'Category',
+        hasHeader: !!data.header_desc,
+        hasContent: !!data.main_content,
+      });
+    });
+
+    // Process Tags
+    Object.entries(store.Tag || {}).forEach(([slug, data]) => {
+      results.push({
+        slug,
+        type: 'Tag',
+        hasHeader: !!data.header_desc,
+        hasContent: !!data.main_content,
+      });
+    });
+
+    return results;
+  } catch (error) {
+    console.error('Error reading all SEO data:', error);
+    return [];
   }
 }
 

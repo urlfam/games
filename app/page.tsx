@@ -1,7 +1,13 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image'; // Add Image
 import cloudinaryLoader from '@/lib/cloudinaryLoader'; // Add cloudinaryLoader
-import { getAllGames, getNewGames, getTrendingGames, Game, minimizeGame } from '@/lib/games';
+import {
+  getAllGames,
+  getNewGames,
+  getTrendingGames,
+  Game,
+  minimizeGame,
+} from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import HorizontalGameSection from '@/components/HorizontalGameSection';
 import TrendingSection from '@/components/TrendingSection';
@@ -69,18 +75,24 @@ export default async function HomePage({
   // Apply search filter if search query exists
   if (searchQuery) {
     filteredGames = filteredGames.filter((game: Game) => {
-      const titleMatch = game.title?.toLowerCase().includes(searchQuery) ?? false;
-      const descriptionMatch = game.description?.toLowerCase().includes(searchQuery) ?? false;
-      const categoryMatch = game.category?.toLowerCase().includes(searchQuery) ?? false;
-      
+      const titleMatch =
+        game.title?.toLowerCase().includes(searchQuery) ?? false;
+      const descriptionMatch =
+        game.description?.toLowerCase().includes(searchQuery) ?? false;
+      const categoryMatch =
+        game.category?.toLowerCase().includes(searchQuery) ?? false;
+
       return titleMatch || descriptionMatch || categoryMatch;
     });
   }
 
-  const isHomePage = categoryParam === 'all' && !searchQuery && currentPage === 1;
+  const isHomePage =
+    categoryParam === 'all' && !searchQuery && currentPage === 1;
 
   // SEO Data Retrieval
-  const seoData = !isHomePage ? await getSeoData(categoryParam, 'Category') : null;
+  const seoData = !isHomePage
+    ? await getSeoData(categoryParam, 'Category')
+    : null;
 
   // Calculate pagination
   const totalGames = filteredGames.length;
@@ -94,10 +106,10 @@ export default async function HomePage({
   let trendingGames: any[] = [];
   if (isHomePage) {
     // Get more trending games for horizontal scroll
-    trendingGames = await getTrendingGames(20);
+    trendingGames = await getTrendingGames(21);
     // Fallback if not enough trending data
-    if (trendingGames.length < 20) {
-      trendingGames = filteredGames.slice(0, 20);
+    if (trendingGames.length < 21) {
+      trendingGames = filteredGames.slice(0, 21);
     }
   } else {
     // For category/search pages, we might use trendingGames differently or not at all
@@ -147,15 +159,15 @@ export default async function HomePage({
 
       if (config.type === 'tag') {
         // Filter games that have this tag (case-insensitive check)
-        sectionGames = filteredGames.filter((g: Game) => 
-          g.tags?.some(tagName => 
-            normalize(tagName) === normalize(config.name)
-          )
+        sectionGames = filteredGames.filter((g: Game) =>
+          g.tags?.some(
+            (tagName) => normalize(tagName) === normalize(config.name),
+          ),
         );
       } else {
         // Filter games that belong to this category
-        sectionGames = filteredGames.filter((g: Game) => 
-          normalize(g.category) === normalize(config.name)
+        sectionGames = filteredGames.filter(
+          (g: Game) => normalize(g.category) === normalize(config.name),
         );
       }
 
@@ -165,7 +177,7 @@ export default async function HomePage({
           title: `${config.name} Games`,
           games: sectionGames.slice(0, 12), // Limit to 12 games per scroll
           type: config.type,
-          slug: config.name.toLowerCase().replace(/\s+/g, '-')
+          slug: config.name.toLowerCase().replace(/\s+/g, '-'),
         });
       }
     }
@@ -231,61 +243,65 @@ export default async function HomePage({
         {isHomePage ? (
           <>
             {/* --- DESKTOP LAYOUT (Hidden on Mobile) --- */}
-            <div className="hidden md:block"> 
-                {/* UP-8 Top Picks for You (formerly Trending) */}
-                <h2 className="text-xl font-bold text-white mb-4 px-1">Top Picks for You</h2>
-                <TrendingSection games={minimizedTrendingGames} />
+            <div className="hidden md:block">
+              {/* UP-8 Top Picks for You (formerly Trending) */}
+              <h2 className="text-xl font-bold text-white mb-4 px-1">
+                Top Picks for You
+              </h2>
+              <TrendingSection games={minimizedTrendingGames} />
 
-                {/* New Games Section - Horizontal Scroll */}
+              {/* New Games Section - Horizontal Scroll */}
+              <HorizontalGameSection
+                title="New Games"
+                games={minimizedNewGames}
+                viewMoreLink="/new-games"
+                badgeText="All New Games"
+              />
+
+              {/* Dynamic Custom Sections - Horizontal Scroll */}
+              {minimizedHomeSections.map((section) => (
                 <HorizontalGameSection
-                  title="New Games"
-                  games={minimizedNewGames}
-                  viewMoreLink="/new-games"
-                  badgeText="All New Games"
+                  key={section.title}
+                  title={section.title}
+                  games={section.games}
+                  viewMoreLink={
+                    section.type === 'category'
+                      ? `/c/${section.slug}`
+                      : `/t/${section.slug}`
+                  }
+                  badgeText={`All ${section.title}`}
                 />
-
-                {/* Dynamic Custom Sections - Horizontal Scroll */}
-                {minimizedHomeSections.map((section) => (
-                  <HorizontalGameSection
-                    key={section.title}
-                    title={section.title}
-                    games={section.games}
-                    viewMoreLink={
-                       section.type === 'category' 
-                        ? `/c/${section.slug}` 
-                        : `/t/${section.slug}`
-                    }
-                    badgeText={`All ${section.title}`}
-                  />
-                ))}
+              ))}
             </div>
 
             {/* --- MOBILE LAYOUT (Hidden on Desktop) --- */}
-             <div className="md:hidden">
-                {/* Mobile Trending Section (1 Large + 6 Small Grid) */}
-                <MobileTrendingSection games={minimizedTrendingGames.slice(0, 21)} />
+            <div className="md:hidden">
+              {/* Mobile Trending Section (1 Large + 6 Small Grid) */}
+              <MobileTrendingSection
+                games={minimizedTrendingGames.slice(0, 21)}
+              />
 
-                {/* Mobile New Games (Vertical Cards 2x3) */}
-                <MobileScrollSection 
-                    title="New Games"
-                    games={minimizedNewGames}
-                    viewMoreLink="/new-games"
-                    useVerticalCards={true}
+              {/* Mobile New Games (Vertical Cards 2x3) */}
+              <MobileScrollSection
+                title="New Games"
+                games={minimizedNewGames}
+                viewMoreLink="/new-games"
+                useVerticalCards={true}
+              />
+
+              {/* Mobile Custom Sections (Square Cards 1x1) */}
+              {minimizedHomeSections.map((section) => (
+                <MobileScrollSection
+                  key={section.title}
+                  title={section.title}
+                  games={section.games}
+                  viewMoreLink={
+                    section.type === 'category'
+                      ? `/c/${section.slug}`
+                      : `/t/${section.slug}`
+                  }
                 />
-
-                {/* Mobile Custom Sections (Square Cards 1x1) */}
-                {minimizedHomeSections.map((section) => (
-                  <MobileScrollSection
-                    key={section.title}
-                    title={section.title}
-                    games={section.games}
-                    viewMoreLink={
-                       section.type === 'category' 
-                        ? `/c/${section.slug}` 
-                        : `/t/${section.slug}`
-                    }
-                  />
-                ))}
+              ))}
             </div>
 
             {/* Footer Actions (Random Game & Back to Top) - Visible on both but styled inside component */}
@@ -298,14 +314,14 @@ export default async function HomePage({
               {searchQuery
                 ? `Search: ${searchQuery}`
                 : categoryParam === 'all'
-                ? 'All Games'
-                : categoryParam}
+                  ? 'All Games'
+                  : categoryParam}
             </h1>
-            
+
             {/* SEO Header Description */}
             {seoData?.header_desc && (
-              <ExpandableText 
-                content={seoData.header_desc} 
+              <ExpandableText
+                content={seoData.header_desc}
                 className="text-gray-300 mb-6 px-1 text-lg w-full"
                 limit={300}
               />
@@ -320,27 +336,33 @@ export default async function HomePage({
 
             {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
             <div className="md:hidden space-y-6">
-               {/* First 6 games as Hero Units */}
-               <div className="space-y-6">
-                 {minimizedPaginatedGames.slice(0, 6).map((game: any, index: number) => (
-                    <MobileHeroCard key={game.id} game={game} priority={index === 0} />
-                 ))}
-               </div>
-
-               {/* Remaining games as 1x1 Grid */}
-               <div className="grid grid-cols-3 gap-3">
-                  {minimizedPaginatedGames.slice(6).map((game: any) => (
-                    <MobileGridItem key={game.id} game={game} />
+              {/* First 6 games as Hero Units */}
+              <div className="space-y-6">
+                {minimizedPaginatedGames
+                  .slice(0, 6)
+                  .map((game: any, index: number) => (
+                    <MobileHeroCard
+                      key={game.id}
+                      game={game}
+                      priority={index === 0}
+                    />
                   ))}
-               </div>
+              </div>
+
+              {/* Remaining games as 1x1 Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {minimizedPaginatedGames.slice(6).map((game: any) => (
+                  <MobileGridItem key={game.id} game={game} />
+                ))}
+              </div>
             </div>
 
             {/* Pagination Component */}
             <Suspense fallback={null}>
-              <Pagination 
-                totalItems={totalGames} 
-                itemsPerPage={itemsPerPage} 
-                currentPage={currentPage} 
+              <Pagination
+                totalItems={totalGames}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
               />
             </Suspense>
 

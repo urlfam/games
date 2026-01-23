@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next';
 import { ARTICLES_DATA } from '@/lib/articles';
-import { GAMES_DATA } from '@/lib/constants';
+import { getAllGames } from '@/lib/games';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://puzzio.io';
+  const games = await getAllGames();
 
   const staticPages = [
     {
@@ -69,9 +70,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const gamePages = GAMES_DATA.map((game) => ({
+  const gamePages = games.map((game) => ({
     url: `${baseUrl}/game/${game.slug}`,
-    lastModified: new Date(),
+    lastModified: new Date(game.importedAt || new Date()), // Use import date or now
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
