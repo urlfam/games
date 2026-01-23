@@ -8,10 +8,9 @@ import FAQAccordion from '@/components/FAQAccordion';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
-import { headers } from 'next/headers';
 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
@@ -98,7 +97,10 @@ export default async function GamePage({ params }: GamePageProps) {
   // --- ISR DATA FETCHING ---
   // We use revalidate = 60 to fetch this data only once per minute server-side.
   // This keeps the site instant for users while showing real data.
-  const supabase = await createClient();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   let likes = 0;
   let dislikes = 0;
