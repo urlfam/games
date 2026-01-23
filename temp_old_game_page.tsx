@@ -12,10 +12,6 @@ import { createClient } from '@supabase/supabase-js';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
-// Force dynamic rendering to ensure stability and avoid ISR/Permission issues
-export const dynamic = 'force-dynamic';
-
-/* 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
 export const revalidate = 60;
@@ -29,7 +25,6 @@ export async function generateStaticParams() {
     }))
     .filter((p) => p.slug);
 }
-*/
 
 interface GamePageProps {
   params: { slug: string };
@@ -153,7 +148,9 @@ export default async function GamePage({ params }: GamePageProps) {
   } catch (e) {
     console.error('Error fetching game stats (non-blocking):', e);
     // Silent fail -> use defaults (10/10 visual, 5/5 schema, 0 plays)
-  }  const videoUrl = (game as any).video_url || (game as any).youtube_video_url;
+  }
+
+  const videoUrl = (game as any).video_url || (game as any).youtube_video_url;
 
   const jsonLd: any = {
     '@context': 'https://schema.org',
