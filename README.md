@@ -92,3 +92,4 @@ Copy `.env.example` to `.env` and edit values as needed. The `.env` file is not 
 
 - If you want, I can add an `.nvmrc` to pin the Node version or a GitHub Actions workflow to run tests and lint on PRs.
 - If you later change your mind and want Docker again, I can re-add the Docker setup.
+# Build cache buster
