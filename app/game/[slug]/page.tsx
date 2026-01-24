@@ -8,7 +8,7 @@ import FAQAccordion from '@/components/FAQAccordion';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/server'; 
+import { createServerClientSimple } from '@/lib/supabase/server-simple'; 
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
@@ -97,8 +97,8 @@ export default async function GamePage({ params }: GamePageProps) {
 
   // --- ISR DATA FETCHING ---
   // We use revalidate = 60 to fetch this data only once per minute server-side.
-  // This keeps the site instant for users while showing real data.
-  const supabase = await createClient();
+  // Using simple client (no cookies) to keep ISR working properly.
+  const supabase = createServerClientSimple();
   
   let likes = 0;
   let dislikes = 0;

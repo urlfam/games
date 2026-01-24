@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+set timeout 30
+spawn ssh root@147.93.7.103
+expect {
+    "password:" {
+        send "Aissayoub21\r"
+        exp_continue
+    }
+    "# " {
+        send "docker logs puzzio-web-container --tail 100 2>&1 | tail -50\r"
+        expect "# "
+        send "exit\r"
+    }
+}
+expect eof
