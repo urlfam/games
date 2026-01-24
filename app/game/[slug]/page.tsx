@@ -92,9 +92,9 @@ export default async function GamePage({ params }: GamePageProps) {
     notFound();
   }
 
-  // --- SERVER-SIDE INCREMENT & FETCH ---
-  // Increment play count on the server (one call per page generation)
-  // Then fetch all stats for display
+  // --- ISR DATA FETCHING ---
+  // We use revalidate = 60 to fetch this data only once per minute server-side.
+  // Play count increment happens client-side to avoid ISR cache issues.
   const supabase = await createClient();
 
   let likes = 0;
@@ -108,10 +108,7 @@ export default async function GamePage({ params }: GamePageProps) {
   let ratingValueSchema = 5.0;
 
   try {
-    // First, increment the play count (server-side only)
-    await supabase.rpc('increment_play_count', { p_game_slug: params.slug });
-
-    // Then fetch the updated stats
+    // Fetch stats (increment happens client-side)
     const { data: stats } = await supabase
       .from('game_stats')
       .select('likes, dislikes, plays')

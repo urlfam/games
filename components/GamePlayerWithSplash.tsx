@@ -113,10 +113,28 @@ export default function GamePlayerWithSplash({
   useEffect(() => {
     loadGameStats();
     loadLocalPreferences();
-    // Note: Play count increment moved to server-side (page.tsx)
-    // This avoids double-counting and reduces API calls
+    incrementPlayCount(); // Increment on client-side (after page load)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSlug]);
+
+  const incrementPlayCount = async () => {
+    try {
+      // Use API route instead of direct RPC (better for ISR pages)
+      const response = await fetch('/api/increment-play', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameSlug }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      console.log('[incrementPlayCount] Success for:', gameSlug);
+    } catch (e) {
+      console.error('[incrementPlayCount] Failed:', e);
+    }
+  };
 
   // Load user preferences from localStorage
   const loadLocalPreferences = () => {
