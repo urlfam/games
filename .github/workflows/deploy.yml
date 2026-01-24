@@ -53,14 +53,15 @@ jobs:
             # Create network if needed
             docker network create puzzio_default || true
             
-            # Start new container
+            # Start new container with explicit environment variables
             docker run -d \
               --name puzzio-web-container \
               --restart unless-stopped \
               --network puzzio_default \
               -p 3000:3000 \
-              --env-file .env.local \
               -e NODE_ENV=production \
+              -e NEXT_PUBLIC_SUPABASE_URL="https://vpwvcgqbepomocrnfurz.supabase.co" \
+              -e NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwd3ZjZ3FiZXBvbW9jcm5mdXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NzczMTEsImV4cCI6MjA3ODI1MzMxMX0.nHHWj75CekP0HnQmEBLQGAqFPQE6RWRAifuL2rgQhVE" \
               -v /root/puzzio/data:/app/data \
               -v /root/puzzio/public/previews:/app/public/previews \
               -v /root/puzzio/public/uploads:/app/public/uploads \
