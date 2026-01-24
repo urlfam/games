@@ -113,26 +113,15 @@ export default function GamePlayerWithSplash({
   useEffect(() => {
     loadGameStats();
     loadLocalPreferences();
-    incrementPlayCount(); // Increment on client-side (after page load)
+    incrementPlayCount(); // Added: Increment play count on client side
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSlug]);
 
   const incrementPlayCount = async () => {
     try {
-      // Use API route instead of direct RPC (better for ISR pages)
-      const response = await fetch('/api/increment-play', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameSlug }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      console.log('[incrementPlayCount] Success for:', gameSlug);
+      await supabase.rpc('increment_play_count', { p_game_slug: gameSlug });
     } catch (e) {
-      console.error('[incrementPlayCount] Failed:', e);
+      console.error('Failed to increment play count', e);
     }
   };
 
