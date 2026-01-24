@@ -11,7 +11,6 @@ import { stripHtml } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server'; 
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
-import { headers } from 'next/headers';
 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
