@@ -11,6 +11,7 @@ import { stripHtml } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
+import PlayCountDisplay from '@/components/PlayCountDisplay';
 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
@@ -258,12 +259,10 @@ export default async function GamePage({ params }: GamePageProps) {
                 </div>
               </div>
 
-              {/* Played (Real data from DB) */}
+              {/* Played (Real-time from DB) */}
               <div className="flex items-center">
                 <span className="w-32 text-gray-500 font-medium">Played:</span>
-                <span className="text-white font-semibold">
-                  {plays > 0 ? plays.toLocaleString() : 'New'}
-                </span>
+                <PlayCountDisplay gameSlug={params.slug} initialPlays={plays} />
               </div>
 
               {/* Released */}
