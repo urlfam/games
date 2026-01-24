@@ -12,9 +12,9 @@ import { createClient } from '@/lib/supabase/server';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
-// ISR: Regenerate game pages every 0 seconds (Always fresh)
-// This ensures the "Played" count is accurate on refresh
-export const revalidate = 0;
+// ISR: Regenerate game pages every 60 seconds
+// Keeps pages fast while showing updated content
+export const revalidate = 60;
 
 // Enable SSG
 export async function generateStaticParams() {
@@ -92,9 +92,9 @@ export default async function GamePage({ params }: GamePageProps) {
     notFound();
   }
 
-  // --- ISR DATA FETCHING ---
-  // We use revalidate = 60 to fetch this data only once per minute server-side.
-  // This keeps the site instant for users while showing real data.
+  // --- SERVER-SIDE INCREMENT & FETCH ---
+  // Increment play count on the server (one call per page generation)
+  // Then fetch all stats for display
   const supabase = await createClient();
 
   let likes = 0;
@@ -108,20 +108,13 @@ export default async function GamePage({ params }: GamePageProps) {
   let ratingValueSchema = 5.0;
 
   try {
+    // First, increment the play count (server-side only)
+    await supabase.rpc('increment_play_count', { p_game_slug: params.slug });
+
+    // Then fetch the updated stats
     const { data: stats } = await supabase
       .from('game_stats')
-      .select('likes, dislikes, plays') // removed game_slug to match grep results simpler
-      .eq('game_slug', params.slug) // Check exact column name from grep: 'game_slug' seems used in SQL.
-      // Wait, standard supabase query uses column names.
-      // Grep showed: `WHERE game_slug = p_game_slug` in SQL function.
-      // Let's assume the column in table is 'game_slug' or 'slug'.
-      // Let's check check_supabase.js to be sure.
-      // Actually, safest is to check 'slug' or 'game_slug'.
-      // The grep for check_supabase.js line 12 might help.
-      // Let's assume 'slug' based on typical pattern, but grep says 'game_slug' in SQL.
-      // Let's stick to what was likely there or what works.
-      // SQL line 7: INSERT INTO game_stats (game_slug, ...)
-      // So column is definitely `game_slug`.
+      .select('likes, dislikes, plays')
       .eq('game_slug', params.slug)
       .single();
 
@@ -132,8 +125,6 @@ export default async function GamePage({ params }: GamePageProps) {
       totalVotes = likes + dislikes;
 
       if (totalVotes > 0) {
-        // Calculate weighted rating or simple average?
-        // Simple average as requested "same logic as before".
         // Rating 0-10
         ratingValueVisual = (likes / totalVotes) * 10;
         // Rating 0-5
