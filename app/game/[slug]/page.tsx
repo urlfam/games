@@ -12,9 +12,9 @@ import { createClient } from '@/lib/supabase/server';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
-// ISR: Regenerate game pages every 60 seconds
-// Keeps pages fast while showing updated content
-export const revalidate = 60;
+// ISR: Regenerate game pages every 0 seconds (Always fresh)
+// This ensures the "Played" count is accurate on refresh
+export const revalidate = 0;
 
 // Enable SSG
 export async function generateStaticParams() {
