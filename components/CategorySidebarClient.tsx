@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Info, FileText, Shield, Gamepad, Heart } from 'lucide-react';
 import { getCategoryIcon } from '@/lib/categoryIcons';
 import { useSidebar } from '@/components/SidebarContext';
@@ -17,12 +17,51 @@ interface CategorySidebarClientProps {
 }
 
 export default function CategorySidebarClient({
-  categories,
+  categories: initialCategories,
 }: CategorySidebarClientProps) {
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
   const [isHovered, setIsHovered] = useState(false);
   const { isSidebarOpen } = useSidebar();
+
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
+
+  // Client-side fallback: fetch categories if list is sparse (only default ones)
+  // This ensures static pages (which might miss build-time data) still load the full sidebar
+  useEffect(() => {
+    // There are 3 default categories (Home, New, Popular). If we have these or fewer, assume data missing.
+    const hasOnlyDefaults = categories.length <= 3;
+    
+    if (hasOnlyDefaults) {
+      fetch('/api/categories')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch');
+          return res.json();
+        })
+        .then((realCategories: any[]) => {
+          if (Array.isArray(realCategories) && realCategories.length > 0) {
+            const specialCategories = [
+              { name: 'Home', slug: 'all' },
+              { name: 'New', slug: 'new' },
+              { name: 'Popular Games', slug: 'trending' },
+            ];
+            
+            const merged = [
+              ...specialCategories,
+              ...realCategories.map((cat) => ({
+                name: cat.name,
+                slug: cat.slug,
+              })),
+            ];
+            setCategories(merged);
+          }
+        })
+        .catch((err) => console.error('Error fetching sidebar categories:', err));
+    }
+  }, [categories]);
 
   // If sidebar is closed via toggle, it shouldn't show at all or be collapsed?
   // User said "cachet ou pas" (hide or not).
