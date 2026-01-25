@@ -1,7 +1,6 @@
 import HomePage from '@/app/page';
 import { getCategories } from '@/lib/games';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -48,11 +47,6 @@ export default function CategoryPage({
   params,
   searchParams,
 }: CategoryPageProps) {
-  // Redirect /c/trending to /trending
-  if (params.slug === 'trending') {
-    redirect('/trending');
-  }
-
   // Reuse the HomePage component but inject the category into searchParams
   // The HomePage component logic handles filtering by categoryParam
   const newSearchParams = { ...searchParams, category: params.slug };

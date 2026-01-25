@@ -201,6 +201,8 @@ export default async function HomePage({
     let categoryUrl = `https://puzzio.io/c/${categoryParam}`;
     if (categoryParam === 'trending') {
        categoryUrl = 'https://puzzio.io/trending';
+    } else if (categoryParam === 'new') {
+       categoryUrl = 'https://puzzio.io/new';
     }
 
     breadcrumbJsonLd = {
@@ -301,7 +303,7 @@ export default async function HomePage({
               <HorizontalGameSection
                 title="New Games"
                 games={minimizedNewGames}
-                viewMoreLink="/new-games"
+                viewMoreLink="/new"
                 badgeText="All New Games"
               />
 
@@ -332,7 +334,7 @@ export default async function HomePage({
               <MobileScrollSection
                 title="New Games"
                 games={minimizedNewGames}
-                viewMoreLink="/new-games"
+                viewMoreLink="/new"
                 useVerticalCards={true}
               />
 
