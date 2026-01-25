@@ -189,9 +189,12 @@ async def run_validation():
             args=[
                 "--no-sandbox", 
                 "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--no-zygote",
+                "--use-gl=angle", # Meilleure compatibilité que swiftshader souvent
+                "--use-angle=gl-egl",
+                "--disable-gpu-sandbox",
+                "--window-size=1920,1080",
+                # Note: On a retiré --disable-dev-shm-usage pour profiter du shm_size: 2gb
+                # On a retiré --no-zygote qui cause des instabilités
             ]
         )
         
