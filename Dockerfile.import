@@ -1,0 +1,15 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install dependencies
+RUN pip install requests beautifulsoup4
+
+# Code will be mounted from volume or copied
+# We copy it here as default but the volume mount in n8n command /root/crazygames-import:/app might override it
+# which is fine if the host file is up to date (which deploy.exp ensures)
+COPY scraper_no_memory.py /app/script.py
+
+# Default command: run the script
+# n8n command `docker run ... crazygames-import` will use this CMD unless overridden
+CMD ["python", "script.py"]
