@@ -305,6 +305,9 @@ export default async function HomePage({
               ))}
             </div>
 
+            {/* SEO Article Section - Visible on Homepage */}
+            <HomepageSeoArticle />
+
             {/* Footer Actions (Random Game & Back to Top) - Visible on both but styled inside component */}
             <FooterActions />
           </>
@@ -376,9 +379,6 @@ export default async function HomePage({
                 />
               </div>
             )}
-
-            {/* SEO Article Section */}
-            <HomepageSeoArticle />
           </section>
         )}
       </div>
