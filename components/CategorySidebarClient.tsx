@@ -93,7 +93,15 @@ export default function CategorySidebarClient({
           return (
             <Link
               key={category.slug}
-              href={category.slug === 'all' ? '/' : `/c/${category.slug}`}
+              href={
+                category.slug === 'all'
+                  ? '/'
+                  : category.slug === 'new'
+                    ? '/new'
+                    : category.slug === 'trending'
+                      ? '/trending'
+                      : `/c/${category.slug}`
+              }
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                 isActive
                   ? 'bg-[#7c3aed] text-white'

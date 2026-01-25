@@ -249,7 +249,15 @@ export default function Header() {
                 return (
                   <Link
                     key={category.slug}
-                    href={category.slug === 'all' ? '/' : `/c/${category.slug}`}
+                    href={
+                      category.slug === 'all'
+                        ? '/'
+                        : category.slug === 'new'
+                          ? '/new'
+                          : category.slug === 'trending'
+                            ? '/trending'
+                            : `/c/${category.slug}`
+                    }
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all ${
                       isActive
