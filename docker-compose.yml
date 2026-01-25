@@ -37,6 +37,9 @@ services:
     command: '/bin/sh -c ''nginx -g "daemon off;"'''
 
   validator:
+    build:
+      context: .
+      dockerfile: Dockerfile.validator
     image: puzzio-validator:latest
     container_name: puzzio-validator
     network_mode: host
