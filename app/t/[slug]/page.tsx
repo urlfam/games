@@ -116,11 +116,40 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     })),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Tags',
+        item: 'https://puzzio.io/tags'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: `${tag.name} Games`,
+        item: `https://puzzio.io/t/${tagSlug}`
+      }
+    ]
+  };
+
   return (
     <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       
       {/* Header - Styled like Category Page */}

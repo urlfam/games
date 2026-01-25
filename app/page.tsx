@@ -21,6 +21,7 @@ import MobileTrendingSection from '@/components/MobileTrendingSection'; // Impor
 import MobileScrollSection from '@/components/MobileScrollSection'; // Import MobileScrollSection
 import MobileHeroCard from '@/components/MobileHeroCard';
 import MobileGridItem from '@/components/MobileGridItem';
+import HomepageSeoArticle from '@/components/HomepageSeoArticle'; // Import SEO Article
 import { Suspense } from 'react';
 
 // ISR: Regenerate this page every 60 seconds in the background
@@ -375,6 +376,9 @@ export default async function HomePage({
                 />
               </div>
             )}
+
+            {/* SEO Article Section */}
+            <HomepageSeoArticle />
           </section>
         )}
       </div>
