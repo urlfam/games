@@ -2,34 +2,9 @@ import { getCategories } from '@/lib/games';
 import CategorySidebarClient from '@/components/CategorySidebarClient';
 import { Suspense } from 'react';
 
-// Fallback categories in case Supabase fails
-const FALLBACK_CATEGORIES = [
-  { name: 'Action', slug: 'action' },
-  { name: 'Adventure', slug: 'adventure' },
-  { name: 'Puzzle', slug: 'puzzle' },
-  { name: 'Casual', slug: 'casual' },
-  { name: 'Clicker', slug: 'clicker' },
-  { name: 'Driving', slug: 'driving' },
-  { name: '.io', slug: 'io' },
-  { name: 'Shooting', slug: 'shooting' },
-  { name: 'Sports', slug: 'sports' },
-  { name: 'Beauty', slug: 'beauty' },
-];
-
 export default async function CategorySidebar() {
-  // Get real categories from games (with error handling)
-  let realCategories = [];
-  try {
-    realCategories = await getCategories();
-  } catch (error) {
-    console.error('Failed to load categories from Supabase, using fallback:', error);
-    realCategories = FALLBACK_CATEGORIES;
-  }
-
-  // If no categories returned, use fallback
-  if (!realCategories || realCategories.length === 0) {
-    realCategories = FALLBACK_CATEGORIES;
-  }
+  // Get real categories from games
+  const realCategories = await getCategories();
 
   // Define special categories (always shown at top)
   const specialCategories = [
@@ -42,7 +17,7 @@ export default async function CategorySidebar() {
   const allCategories = [
     ...specialCategories,
     ...realCategories.map((cat) => ({
-      name: cat.name || cat.slug,
+      name: cat.name,
       slug: cat.slug,
     })),
   ];
