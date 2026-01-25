@@ -187,13 +187,11 @@ async def run_validation():
         browser = await p.chromium.launch(
             headless=True,
             args=[
-                "--use-gl=swiftshader", 
                 "--no-sandbox", 
-                "--disable-gpu-sandbox",
-                "--disable-dev-shm-usage", # Essentiel pour Docker
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
                 "--disable-gpu",
-                "--single-process", # Réduit la mémoire mais moins stable parfois, à tester si ça plante encore
-                "--disable-extensions"
+                "--no-zygote",
             ]
         )
         
