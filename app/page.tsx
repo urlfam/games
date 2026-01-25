@@ -183,6 +183,46 @@ export default async function HomePage({
       }
     }
   }
+  let breadcrumbJsonLd = null;
+
+  // Generate Breadcrumb Schema for specific category pages
+  if (
+    categoryParam !== 'all' &&
+    // categoryParam !== 'new' && // 'new' is usually handled by /new-games/page.tsx but if it falls here we might want breadcrumbs
+    // categoryParam !== 'trending' && // Allow trending to have breadcrumbs
+    categoryParam !== 'popular' &&
+    !searchQuery
+  ) {
+    const categoryName = categoryParam
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    let categoryUrl = `https://puzzio.io/c/${categoryParam}`;
+    if (categoryParam === 'trending') {
+       categoryUrl = 'https://puzzio.io/trending';
+    }
+
+    breadcrumbJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://puzzio.io',
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: categoryName,
+          item: categoryUrl,
+        },
+      ],
+    };
+  }
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -239,6 +279,12 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+      )}
 
       <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
         {isHomePage ? (

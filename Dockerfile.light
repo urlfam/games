@@ -1,0 +1,65 @@
+# Lightweight Dockerfile for servers with limited RAM
+# Stage 1: Build the application
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy package files and install dependencies with memory optimizations
+COPY package.json package-lock.json* ./
+
+# Use npm ci with reduced memory footprint
+RUN npm ci --only=production --prefer-offline --no-audit --progress=false
+
+# Install devDependencies separately for build
+RUN npm install --only=development --prefer-offline --no-audit --progress=false
+
+# Copy the rest of the source code
+COPY . .
+
+# Build args for Next.js static generation
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Build with memory limit
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+RUN npm run build
+
+# Stage 2: Create the production image
+FROM node:18-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Re-declare build args and set as environment variables for runtime
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Install Chromium for Puppeteer and FFmpeg for video processing
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    ffmpeg
+
+# Tell Puppeteer to use the installed Chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+# Copy only necessary files from the builder stage
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/app ./app
+COPY --from=builder /app/components ./components
+COPY --from=builder /app/lib ./lib
+COPY --from=builder /app/data ./data
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./next.config.js
+
+EXPOSE 3000
+CMD ["npm", "start"]

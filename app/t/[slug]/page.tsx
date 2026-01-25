@@ -129,12 +129,6 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Tags',
-        item: 'https://puzzio.io/tags'
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
         name: `${tag.name} Games`,
         item: `https://puzzio.io/t/${tagSlug}`
       }
