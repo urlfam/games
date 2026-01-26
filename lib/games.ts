@@ -15,7 +15,8 @@ try {
 // Cache configuration
 let cachedGames: Game[] | null = null;
 let lastCacheTime = 0;
-const CACHE_TTL = 60 * 1000; // 60 seconds
+let lastFileMTime = 0; // Track file modification time
+const CACHE_TTL = 5 * 1000; // Reduce TTL to 5 seconds for faster updates
 
 // Cache for trending games to minimize DB calls
 let cachedTrendingGames: { data: Game[]; timestamp: number } | null = null;
@@ -94,57 +95,40 @@ export function minimizeGame(game: Game): MinimalGame {
  * @returns {Promise<Game[]>} A promise that resolves to an array of games.
  */
 export async function getAllGames(): Promise<Game[]> {
-  // Check in-memory cache first
+  // Check if file has changed
+  try {
+    const stats = await fs.stat(GAMES_DB_PATH);
+    const mtime = stats.mtimeMs;
+
+    // If file changed on disk, invalidate cache
+    if (mtime > lastFileMTime) {
+      cachedGames = null;
+      lastFileMTime = mtime;
+    }
+  } catch (e) {
+    // If we can't stat the file, assume we need to read it (or it doesn't exist)
+    cachedGames = null;
+  }
+
+  // If cache is valid and fresh enough, return it
   if (cachedGames && Date.now() - lastCacheTime < CACHE_TTL) {
     return cachedGames;
   }
 
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
-    const games: Game[] = JSON.parse(data);
-
-    // Add a 'slug' to each game based on its page_url for easier linking
-    let processedGames = games.map((game) => ({
-      ...game,
-      slug:
-        game.slug ||
-        game.page_url.substring(game.page_url.lastIndexOf('/') + 1),
-    }));
-
-    // Fetch overrides from Supabase
-    try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      );
-      const { data: overrides, error } = await supabase
-        .from('game_overrides')
-        .select('*');
-
-      if (!error && overrides && overrides.length > 0) {
-        const overridesMap = new Map(overrides.map((o) => [o.slug, o]));
-        processedGames = processedGames.map((game) => {
-          const override = overridesMap.get(game.slug!);
-          if (override) {
-            // Merge override data. Prioritize override fields.
-            return { ...game, ...override };
-          }
-          return game;
-        });
-      }
-    } catch (e) {
-      // Ignore errors (e.g. table doesn't exist yet) to not break the site
-      console.warn('Error fetching game overrides:', e);
-    }
-
-    // Update cache
-    cachedGames = processedGames;
+    cachedGames = JSON.parse(data);
     lastCacheTime = Date.now();
 
-    return processedGames;
+    // Update mtime if not set (first read)
+    if (lastFileMTime === 0) {
+      const stats = await fs.stat(GAMES_DB_PATH);
+      lastFileMTime = stats.mtimeMs;
+    }
+
+    return cachedGames!;
   } catch (error) {
-    // If the file doesn't exist or is empty, return an empty array
-    console.error('Could not read games.json:', error);
+    console.error('Error reading games database:', error);
     return [];
   }
 }
@@ -436,7 +420,7 @@ export async function deleteAllGames(): Promise<void> {
   try {
     // Write empty array to file
     await fs.writeFile(GAMES_DB_PATH, JSON.stringify([], null, 2), 'utf-8');
-    
+
     // Invalidate Cache
     cachedGames = null;
     lastCacheTime = 0;
