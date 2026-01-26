@@ -23,10 +23,20 @@ export async function POST(req: Request) {
   console.error('[ImportAuth] Request received');
   
   // 1. --- Security Check ---
-  const authHeader = req.headers.get('Authorization') || '';
+  let authHeader = req.headers.get('Authorization') || '';
   
-  // Normalize client token (remove Bearer prefix and whitespace)
-  const clientToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+  // Cleanup incoming header: remove 'Bearer' prefix (case insensitive)
+  // We do this BEFORE removing quotes to handle cases like "Bearer TOKEN"
+  authHeader = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+  // Remove surrounding quotes if the user configured n8n with "Value"
+  if ((authHeader.startsWith('"') && authHeader.endsWith('"')) || 
+      (authHeader.startsWith("'") && authHeader.endsWith("'"))) {
+    authHeader = authHeader.slice(1, -1);
+  }
+  
+  // Final trim just in case
+  const clientToken = authHeader.trim();
   
   // Normalize server token
   let serverToken = process.env.N8N_SECRET_TOKEN || '';
