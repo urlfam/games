@@ -1,0 +1,18 @@
+#!/usr/bin/expect
+
+set timeout 600
+# 1. Upload the modified script
+spawn scp test_game.py root@147.93.7.103:/root/puzzio/test_game.py
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof
+
+# 2. Run the test
+spawn ssh root@147.93.7.103 "docker exec puzzio-validator python test_game.py 'http://147.93.7.103:9999/game/obby-vs-brainrot'"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

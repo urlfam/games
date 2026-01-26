@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next';
-import { ARTICLES_DATA } from '@/lib/articles';
 import { getAllGames } from '@/lib/games';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -14,7 +13,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/news`,
+      url: `${baseUrl}/new`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/trending`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.9,
@@ -43,39 +48,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly' as const,
       priority: 0.5,
     },
-    {
-      url: `${baseUrl}/news/category/latest-news`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/news/category/reviews`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/news/category/interviews`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
   ];
-
-  const articlePages = ARTICLES_DATA.map((article) => ({
-    url: `${baseUrl}/news/${article.slug}`,
-    lastModified: new Date(article.publishDate),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
 
   const gamePages = games.map((game) => ({
     url: `${baseUrl}/game/${game.slug}`,
-    lastModified: new Date(game.importedAt || new Date()), // Use import date or now
+    lastModified: new Date(game.importedAt || new Date()),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
-  return [...staticPages, ...gamePages, ...articlePages];
+  return [...staticPages, ...gamePages];
 }

@@ -7,6 +7,7 @@ import MobileGridItem from '@/components/MobileGridItem'; // Import MobileGridIt
 import { Suspense } from 'react';
 import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText';
+import { stripHtml } from '@/lib/utils';
 
 export const revalidate = 60;
 
@@ -42,8 +43,88 @@ export default async function NewGamesPage({
   // 4. Optimization
   const minimizedPaginatedGames = paginatedGames.map(minimizeGame);
 
+  // CollectionPage Schema for the new games listing
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'New Games',
+    description: 'Discover the newest free online games on Puzzio. Play the latest puzzle, action, and strategy games.',
+    url: 'https://puzzio.io/new',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Puzzio',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://puzzio.io/puzzio.webp',
+        width: 384,
+        height: 163,
+      },
+    },
+  };
+
+  // Schema.org structured data
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'New Games on Puzzio',
+    description: 'Latest free online games added to Puzzio.io',
+    itemListElement: paginatedGames.map((game: Game, index: number) => ({
+      '@type': 'ListItem',
+      position: startIndex + index + 1,
+      item: {
+        '@type': 'VideoGame',
+        name: game.title,
+        url: `https://puzzio.io/game/${game.slug}`,
+        image: {
+          '@type': 'ImageObject',
+          url: game.image_url,
+          description: (game as any).image_description || stripHtml(game.description),
+          name: (game as any).image_title || game.title,
+        },
+        description: stripHtml(game.description),
+      },
+    })),
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'New Games',
+        item: 'https://puzzio.io/new',
+      },
+    ],
+  };
+
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
       <section>
         <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
           New Games
@@ -113,5 +194,6 @@ export default async function NewGamesPage({
         )}
       </section>
     </div>
+    </>
   );
 }

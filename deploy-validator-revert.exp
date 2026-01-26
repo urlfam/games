@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+spawn ssh root@147.93.7.103
+expect "root@147.93.7.103's password:"
+send "8d@H7s_2\r"
+expect "# "
+
+# Aller dans le dossier
+send "cd /var/www/puzzio\r"
+expect "# "
+
+# Pull des changements (le revert de test_game.py)
+send "git pull\r"
+expect "# "
+
+# Rebuild et restart du validator spécifiquement
+# On utilise --force-recreate pour être sûr
+send "docker-compose up -d --build --force-recreate validator\r"
+expect "# "
+
+# Vérification rapide des logs pour voir si ça démarre
+send "docker logs --tail 20 puzzio-validator\r"
+expect "# "
+
+send "exit\r"
+expect eof

@@ -67,6 +67,20 @@ export default async function TagPage({ params }: TagPageProps) {
   const games = await getGamesByTag(tagSlug);
   const trendingGames = await getTrendingGames(6);
 
+  // CollectionPage Schema
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag.name} Games`,
+    description: `Play the best ${tag.name} games online for free on Puzzio.`,
+    url: `https://puzzio.io/tag/${tagSlug}`,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+  };
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -91,11 +105,38 @@ export default async function TagPage({ params }: TagPageProps) {
     })),
   };
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: `${tag.name} Games`,
+        item: `https://puzzio.io/tag/${tagSlug}`
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-slate-900">
       <script
         type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">

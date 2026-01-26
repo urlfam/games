@@ -92,6 +92,20 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
   const minimizedGames = games.map(minimizeGame);
 
+  // CollectionPage Schema
+  const collectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag.name} Games`,
+    description: `Play the best ${tag.name} games online for free on Puzzio.`,
+    url: `https://puzzio.io/t/${tagSlug}`,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+  };
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -137,6 +151,10 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
   return (
     <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}

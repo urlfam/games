@@ -9,8 +9,54 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Privacy Policy',
+    description: 'Learn how Puzzio.io collects, uses, and protects your personal information.',
+    url: 'https://puzzio.io/privacy',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Privacy Policy',
+        item: 'https://puzzio.io/privacy',
+      },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className="min-h-screen bg-slate-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
@@ -193,20 +239,26 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-none space-y-2 my-4">
                 <li>
-                  By visiting this page:{' '}
+                  <strong>Email:</strong>{' '}
+                  <a href="mailto:privacy@puzzio.io" className="text-purple-500 hover:text-purple-600">
+                    privacy@puzzio.io
+                  </a>
+                </li>
+                <li>
+                  <strong>Contact Page:</strong>{' '}
                   <Link
                     href="/contact"
                     className="text-purple-500 hover:text-purple-600"
                   >
-                    Contact Us
+                    puzzio.io/contact
                   </Link>
                 </li>
-                <li>By email: privacy@puzzio.io</li>
               </ul>
             </section>
           </div>
         </article>
       </div>
     </div>
+    </>
   );
 }

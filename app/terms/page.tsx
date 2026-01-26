@@ -8,8 +8,54 @@ export const metadata: Metadata = {
 };
 
 export default function TermsPage() {
+  const webPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Terms of Service',
+    description: 'Read the terms and conditions for using Puzzio.io.',
+    url: 'https://puzzio.io/terms',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Puzzio',
+      url: 'https://puzzio.io',
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Terms of Service',
+        item: 'https://puzzio.io/terms',
+      },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className="min-h-screen bg-slate-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
@@ -180,8 +226,9 @@ export default function TermsPage() {
               </h2>
               <p>
                 These terms and conditions are governed by and construed in
-                accordance with the laws and you irrevocably submit to the
-                exclusive jurisdiction of the courts in that location.
+                accordance with the laws of the Commonwealth of Virginia, United States,
+                and you irrevocably submit to the exclusive jurisdiction of the
+                courts in Virginia Beach, VA.
               </p>
             </section>
 
@@ -205,20 +252,26 @@ export default function TermsPage() {
               </p>
               <ul className="list-none space-y-2 my-4">
                 <li>
-                  By visiting:{' '}
+                  <strong>Email:</strong>{' '}
+                  <a href="mailto:legal@puzzio.io" className="text-purple-500 hover:text-purple-600">
+                    legal@puzzio.io
+                  </a>
+                </li>
+                <li>
+                  <strong>Contact Page:</strong>{' '}
                   <Link
                     href="/contact"
                     className="text-purple-500 hover:text-purple-600"
                   >
-                    Contact Page
+                    puzzio.io/contact
                   </Link>
                 </li>
-                <li>By email: legal@puzzio.io</li>
               </ul>
             </section>
           </div>
         </article>
       </div>
     </div>
+    </>
   );
 }

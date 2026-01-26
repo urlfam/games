@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 600
+spawn ssh root@147.93.7.103 "cd /root/puzzio && git pull && docker-compose up -d --force-recreate web"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

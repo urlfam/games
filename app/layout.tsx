@@ -91,12 +91,12 @@ export default function RootLayout({
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Puzzio.io',
+      name: 'Puzzio',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://puzzio.io/puzzio.webp', // Updated logo
-        width: 600,
-        height: 60,
+        url: 'https://puzzio.io/puzzio.webp',
+        width: 384,
+        height: 163,
       },
     },
   };
@@ -104,29 +104,44 @@ export default function RootLayout({
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Puzzio.io',
+    name: 'Puzzio',
+    legalName: 'Puzzio',
     url: 'https://puzzio.io',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://puzzio.io/puzzio.webp', // Updated logo
-      width: 600,
-      height: 60,
+      url: 'https://puzzio.io/puzzio.webp',
+      width: 384,
+      height: 163,
+    },
+    image: 'https://puzzio.io/puzzio.webp',
+    foundingDate: '2025-01-01',
+    founder: {
+      '@type': 'Person',
+      name: 'Jack Bonser',
+    },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '242 Central Park Ave',
+      addressLocality: 'Virginia Beach',
+      addressRegion: 'VA',
+      postalCode: '23462',
+      addressCountry: 'US',
     },
     sameAs: [
       'https://twitter.com/puzzio',
       'https://facebook.com/puzzio',
       'https://instagram.com/puzzio',
-      'https://youtube.com/puzzio',
+      'https://youtube.com/@puzzio',
       'https://discord.gg/puzzio',
-      'https://pinterest.com/puzzio',
-      'https://reddit.com/r/puzzio',
       'https://tiktok.com/@puzzio',
     ],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',
+      telephone: '+1-757-275-2390',
       email: 'contact@puzzio.io',
       url: 'https://puzzio.io/contact',
+      availableLanguage: ['English'],
     },
   };
 

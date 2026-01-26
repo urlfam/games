@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 300
+spawn ssh root@147.93.7.103 "cd /root/puzzio && git fetch --all && git reset --hard origin/main && docker-compose stop validator && docker-compose build validator && docker-compose up -d validator"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

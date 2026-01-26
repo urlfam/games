@@ -142,6 +142,32 @@ export default async function GamePage({ params }: GamePageProps) {
     };
   }
 
+  // Breadcrumb Schema for better navigation in search results
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: `${game.category} Games`,
+        item: `https://puzzio.io/c/${game.category.toLowerCase()}`
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: game.title,
+        item: `https://puzzio.io/play/${params.slug}`
+      }
+    ]
+  };
+
   const recommendedGames = allGames
     .filter((g) => g.category === game.category && g.id !== game.id)
     .slice(0, 12);
@@ -158,6 +184,11 @@ export default async function GamePage({ params }: GamePageProps) {
         id="game-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       {faqJsonLd && (
         <Script

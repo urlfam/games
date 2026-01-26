@@ -9,8 +9,58 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const contactPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Puzzio',
+    description: 'Get in touch with the Puzzio team for support, business inquiries, or feedback.',
+    url: 'https://puzzio.io/contact',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Puzzio',
+      telephone: '+1-757-275-2390',
+      email: 'contact@puzzio.io',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '242 Central Park Ave',
+        addressLocality: 'Virginia Beach',
+        addressRegion: 'VA',
+        postalCode: '23462',
+        addressCountry: 'US',
+      },
+    },
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://puzzio.io',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contact',
+        item: 'https://puzzio.io/contact',
+      },
+    ],
+  };
+
   return (
-    <div className="min-h-screen bg-slate-900">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <div className="min-h-screen bg-slate-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
@@ -177,5 +227,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

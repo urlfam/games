@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 600
+spawn ssh root@147.93.7.103 "docker exec puzzio-validator python test_game.py 'http://147.93.7.103:9999/game/obby-vs-brainrot'"
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof

@@ -1,0 +1,9 @@
+#!/usr/bin/expect
+
+set timeout 300
+spawn ssh root@147.93.7.103 "mkdir -p /root/crazygames-import && cd /root/puzzio && git fetch --all && git reset --hard origin/main && cp Dockerfile.import /root/crazygames-import/Dockerfile && cp scraper_no_memory.py /root/crazygames-import/script.py && cd /root/crazygames-import && docker build -t crazygames-import ."
+expect {
+  "yes/no" { send "yes\r"; exp_continue }
+  "password:" { send "Aissayoub21\r" }
+}
+expect eof
