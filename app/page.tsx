@@ -119,11 +119,9 @@ export default async function HomePage({
   }
 
   // 2. New Games (Next batch)
-  // Exclude games already in trending to avoid duplicates on homepage
-  const trendingIds = new Set(trendingGames.map((g: any) => g.id));
-  const newGames = filteredGames
-    .filter((g: Game) => !trendingIds.has(g.id))
-    .slice(0, 12);
+  // We do NOT exclude trending games here anymore because we want the "New Games" section 
+  // to always show the absolute newest games, even if they appear in trending.
+  const newGames = filteredGames.slice(0, 12);
 
   // 3. Custom Sections (Tags & Categories) for Homepage
   // Order: Brain, Battle, Relaxing, Simulation, Puzzle, Action, Casual, Clicker, Driving, Sports, 3D, Mouse
