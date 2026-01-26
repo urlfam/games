@@ -56,3 +56,16 @@ services:
       dockerfile: Dockerfile.capturer
     container_name: puzzio-image-description
     restart: unless-stopped
+
+  image-description:
+    build:
+      context: .
+      dockerfile: Dockerfile.capturer
+    image: puzzio-image-description:latest
+    container_name: puzzio-image-description
+    network_mode: host
+    volumes:
+      - ./capture_screenshot.py:/app/capture_screenshot.py:ro
+      - ./gameplay_captures:/app/screenshots
+    shm_size: '2gb'
+    restart: unless-stopped
