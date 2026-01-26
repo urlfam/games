@@ -39,7 +39,8 @@ export async function POST(req: Request) {
   const clientToken = authHeader.trim();
   
   // Normalize server token
-  let serverToken = process.env.N8N_SECRET_TOKEN || '';
+  // FALLBACK: Hardcoded token if env var is missing (Emergency fix)
+  let serverToken = process.env.N8N_SECRET_TOKEN || 'changeMe_a1b2c3d4e5f6_make_this_secret_and_long';
   
   // Aggressive cleanup: remove surrounding quotes, trim whitespace/newlines
   serverToken = serverToken.trim();
