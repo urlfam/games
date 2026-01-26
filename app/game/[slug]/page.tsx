@@ -8,7 +8,7 @@ import FAQAccordion from '@/components/FAQAccordion';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { stripHtml } from '@/lib/utils';
-import { createServerClientSimple } from '@/lib/supabase/server-simple'; 
+import { createServerClientSimple } from '@/lib/supabase/server-simple';
 import Script from 'next/script';
 import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
@@ -19,9 +19,11 @@ export const revalidate = 60;
 // Enable SSG
 export async function generateStaticParams() {
   const games = await getAllGames();
-  return games.map((game) => ({
-    slug: game.slug || '',
-  })).filter(p => p.slug);
+  return games
+    .map((game) => ({
+      slug: game.slug || '',
+    }))
+    .filter((p) => p.slug);
 }
 
 interface GamePageProps {
@@ -46,10 +48,7 @@ export async function generateMetadata({
       (game as any).seo_description ||
       (game as any).image_description ||
       stripHtml(game.description).substring(0, 160),
-    keywords: [
-      ...((game as any).image_keywords || []),
-      ...(game.tags || [])
-    ],
+    keywords: [...((game as any).image_keywords || []), ...(game.tags || [])],
     alternates: {
       canonical: `https://puzzio.io/game/${params.slug}`,
     },
@@ -99,12 +98,12 @@ export default async function GamePage({ params }: GamePageProps) {
   // We use revalidate = 60 to fetch this data only once per minute server-side.
   // Using simple client (no cookies) to keep ISR working properly.
   const supabase = createServerClientSimple();
-  
+
   let likes = 0;
   let dislikes = 0;
   let plays = 0;
   let totalVotes = 0;
-  
+
   // Visual Rating (0-10)
   let ratingValueVisual = 10.0;
   // Schema Rating (0-5)
@@ -114,12 +113,12 @@ export default async function GamePage({ params }: GamePageProps) {
     const { data: stats } = await supabase
       .from('game_stats')
       .select('likes, dislikes, plays') // removed game_slug to match grep results simpler
-      .eq('game_slug', params.slug) // Check exact column name from grep: 'game_slug' seems used in SQL. 
-      // Wait, standard supabase query uses column names. 
+      .eq('game_slug', params.slug) // Check exact column name from grep: 'game_slug' seems used in SQL.
+      // Wait, standard supabase query uses column names.
       // Grep showed: `WHERE game_slug = p_game_slug` in SQL function.
       // Let's assume the column in table is 'game_slug' or 'slug'.
       // Let's check check_supabase.js to be sure.
-      // Actually, safest is to check 'slug' or 'game_slug'. 
+      // Actually, safest is to check 'slug' or 'game_slug'.
       // The grep for check_supabase.js line 12 might help.
       // Let's assume 'slug' based on typical pattern, but grep says 'game_slug' in SQL.
       // Let's stick to what was likely there or what works.
@@ -127,7 +126,7 @@ export default async function GamePage({ params }: GamePageProps) {
       // So column is definitely `game_slug`.
       .eq('game_slug', params.slug)
       .single();
-      
+
     if (stats) {
       likes = stats.likes || 0;
       dislikes = stats.dislikes || 0;
@@ -135,7 +134,7 @@ export default async function GamePage({ params }: GamePageProps) {
       totalVotes = likes + dislikes;
 
       if (totalVotes > 0) {
-        // Calculate weighted rating or simple average? 
+        // Calculate weighted rating or simple average?
         // Simple average as requested "same logic as before".
         // Rating 0-10
         ratingValueVisual = (likes / totalVotes) * 10;
@@ -149,7 +148,7 @@ export default async function GamePage({ params }: GamePageProps) {
   }
 
   const videoUrl = (game as any).video_url || (game as any).youtube_video_url;
-  
+
   const jsonLd: any = {
     '@context': 'https://schema.org',
     '@type': 'VideoGame',
@@ -158,12 +157,12 @@ export default async function GamePage({ params }: GamePageProps) {
     image: [
       game.image_url,
       (game as any).mobile_image_url,
-      (game as any).mobile_1x1_url
+      (game as any).mobile_1x1_url,
     ].filter(Boolean),
-    screenshot: game.gameplay_screenshot_url || game.image_url, 
+    screenshot: game.gameplay_screenshot_url || game.image_url,
     keywords: [
       ...((game as any).image_keywords || []),
-      ...(game.tags || [])
+      ...(game.tags || []),
     ].join(', '),
     genre: game.category,
     playMode: 'SinglePlayer',
@@ -202,21 +201,21 @@ export default async function GamePage({ params }: GamePageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://puzzio.io'
+        item: 'https://puzzio.io',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: `${game.category} Games`,
-        item: `https://puzzio.io/c/${game.category.toLowerCase()}`
+        item: `https://puzzio.io/c/${game.category.toLowerCase()}`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: game.title,
-        item: `https://puzzio.io/game/${params.slug}`
-      }
-    ]
+        item: `https://puzzio.io/game/${params.slug}`,
+      },
+    ],
   };
 
   let faqJsonLd = null;
@@ -299,7 +298,9 @@ export default async function GamePage({ params }: GamePageProps) {
                     {ratingValueVisual.toFixed(1)}
                   </span>
                   <span className="text-gray-500 text-sm">
-                    {totalVotes > 0 ? `(${totalVotes} votes)` : '(No votes yet)'}
+                    {totalVotes > 0
+                      ? `(${totalVotes} votes)`
+                      : '(No votes yet)'}
                   </span>
                 </div>
               </div>
@@ -411,23 +412,35 @@ export default async function GamePage({ params }: GamePageProps) {
               className="game-description prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: game.description || '' }}
             />
-            
+
             {/* Gameplay Screenshot */}
             {(game as any).gameplay_screenshot_url && (
               <div className="mt-8">
-                <a 
-                  href={(game as any).gameplay_screenshot_url.includes('cloudinary.com') 
-                    ? (game as any).gameplay_screenshot_url.replace('/upload/', `/upload/fl_attachment:${(game as any).gameplay_filename || 'gameplay-screenshot'}/`)
-                    : (game as any).gameplay_screenshot_url}
-                  download={(game as any).gameplay_filename || `${game.slug}-gameplay`}
+                <a
+                  href={
+                    (game as any).gameplay_screenshot_url.includes(
+                      'cloudinary.com',
+                    )
+                      ? (game as any).gameplay_screenshot_url.replace(
+                          '/upload/',
+                          `/upload/fl_attachment:${(game as any).gameplay_filename || 'gameplay-screenshot'}/`,
+                        )
+                      : (game as any).gameplay_screenshot_url
+                  }
+                  download={
+                    (game as any).gameplay_filename || `${game.slug}-gameplay`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block cursor-pointer hover:opacity-95 transition-opacity"
                   title="Click to download"
                 >
-                  <img 
-                    src={(game as any).gameplay_screenshot_url} 
-                    alt={(game as any).gameplay_filename || `${game.title} Gameplay Screenshot`}
+                  <img
+                    src={(game as any).gameplay_screenshot_url}
+                    alt={
+                      (game as any).gameplay_filename ||
+                      `${game.title} Gameplay Screenshot`
+                    }
                     className="w-full rounded-lg shadow-lg border border-slate-700"
                     loading="lazy"
                   />

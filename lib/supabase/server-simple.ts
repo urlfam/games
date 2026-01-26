@@ -11,6 +11,6 @@ export function createServerClientSimple() {
         persistSession: false,
         autoRefreshToken: false,
       },
-    }
+    },
   );
 }

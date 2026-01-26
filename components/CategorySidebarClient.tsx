@@ -34,7 +34,7 @@ export default function CategorySidebarClient({
   useEffect(() => {
     // There are 3 default categories (Home, New, Popular). If we have these or fewer, assume data missing.
     const hasOnlyDefaults = categories.length <= 3;
-    
+
     if (hasOnlyDefaults) {
       fetch('/api/categories')
         .then((res) => {
@@ -48,7 +48,7 @@ export default function CategorySidebarClient({
               { name: 'New', slug: 'new' },
               { name: 'Popular Games', slug: 'trending' },
             ];
-            
+
             const merged = [
               ...specialCategories,
               ...realCategories.map((cat) => ({
@@ -59,7 +59,9 @@ export default function CategorySidebarClient({
             setCategories(merged);
           }
         })
-        .catch((err) => console.error('Error fetching sidebar categories:', err));
+        .catch((err) =>
+          console.error('Error fetching sidebar categories:', err),
+        );
     }
   }, [categories]);
 

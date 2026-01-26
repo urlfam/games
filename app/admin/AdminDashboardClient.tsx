@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import type { Game } from '@/lib/games';
-import { logout } from './actions';
-import { Search, Edit, LogOut, FileText } from 'lucide-react';
+import { logout, deleteGameAction, deleteAllGamesAction } from './actions';
+import { Search, Edit, LogOut, FileText, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardClient({
@@ -12,6 +12,39 @@ export default function AdminDashboardClient({
   games: Game[];
 }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async (slug: string) => {
+    if (!confirm('Voulez-vous vraiment supprimer ce jeu ?')) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteGameAction(slug);
+    } catch (e) {
+      alert('Erreur lors de la suppression');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (
+      !confirm(
+        'ATTENTION : Voulez-vous vraiment TOUT supprimer ? Cette action est irréversible.',
+      )
+    )
+      return;
+    if (!confirm('Confirmation finale : Supprimer TOUS les jeux ?')) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteAllGamesAction();
+    } catch (e) {
+      alert('Erreur lors de la suppression totale');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Filter games safely
   const filteredGames = (games || []).filter(
@@ -27,6 +60,14 @@ export default function AdminDashboardClient({
           Dashboard
         </h1>
         <div className="flex items-center gap-4">
+          <button
+            onClick={handleDeleteAll}
+            disabled={isDeleting}
+            className="flex items-center gap-2 px-4 py-2 bg-red-800 hover:bg-red-900 rounded text-sm transition-colors text-white font-bold"
+          >
+            <Trash2 className="w-4 h-4" />
+            TOUT SUPPRIMER
+          </button>
           <Link
             href="/admin/seo"
             className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm transition-colors text-white font-bold"
@@ -101,6 +142,14 @@ export default function AdminDashboardClient({
                     </span>
                     <Edit className="h-5 w-5" />
                   </Link>
+                  <button
+                    onClick={() => handleDelete(game.slug || '')}
+                    disabled={isDeleting}
+                    className="p-2 text-red-400 hover:text-white hover:bg-red-600 rounded-lg transition-all"
+                    title="Delete Game"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
             </li>

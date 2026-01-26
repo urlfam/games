@@ -404,3 +404,44 @@ export async function saveGame(updatedGame: Game): Promise<void> {
     throw new Error('Failed to save game to database');
   }
 }
+
+/**
+ * Deletes a game by its slug.
+ * @param {string} slug - The slug of the game to delete.
+ */
+export async function deleteGame(slug: string): Promise<void> {
+  try {
+    const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
+    let games: Game[] = JSON.parse(data);
+
+    const initialLength = games.length;
+    games = games.filter((g) => g.slug !== slug);
+
+    if (games.length !== initialLength) {
+      await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+      cachedGames = null;
+      lastCacheTime = 0;
+    }
+  } catch (error) {
+    console.error('Error deleting game:', error);
+    throw new Error('Failed to delete game');
+  }
+}
+
+/**
+ * Deletes all games from the database.
+ * WARNING: This action is irreversible.
+ */
+export async function deleteAllGames(): Promise<void> {
+  try {
+    // Write empty array to file
+    await fs.writeFile(GAMES_DB_PATH, JSON.stringify([], null, 2), 'utf-8');
+    
+    // Invalidate Cache
+    cachedGames = null;
+    lastCacheTime = 0;
+  } catch (error) {
+    console.error('Error deleting all games:', error);
+    throw new Error('Failed to delete all games');
+  }
+}

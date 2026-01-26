@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { saveGame, Game, getGameBySlug } from '@/lib/games';
+import { saveGame, Game, getGameBySlug, deleteGame, deleteAllGames } from '@/lib/games';
 import { updateSeoData, SeoData } from '@/lib/seo';
 
 // MOT DE PASSE SIMPLE (STOCKÉ MAINTENANT DANS ENV)
@@ -202,4 +202,39 @@ export async function saveSeoContent(formData: FormData) {
   }
 
   return { success: true };
+}
+
+export async function saveGameAction(game: Game) {
+  try {
+    await saveGame(game);
+    revalidatePath('/admin');
+    revalidatePath(`/game/${game.slug}`);
+    return { success: true };
+  } catch (error) {
+    return { error: 'Failed to save game' };
+  }
+}
+
+export async function deleteGameAction(slug: string) {
+  try {
+    await deleteGame(slug);
+    revalidatePath('/admin');
+    revalidatePath('/'); 
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete game:', error);
+    return { error: 'Failed to delete game' };
+  }
+}
+
+export async function deleteAllGamesAction() {
+  try {
+    await deleteAllGames();
+    revalidatePath('/admin');
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete all games:', error);
+    return { error: 'Failed to delete all games' };
+  }
 }

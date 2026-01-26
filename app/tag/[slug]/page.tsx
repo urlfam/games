@@ -113,22 +113,24 @@ export default async function TagPage({ params }: TagPageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://puzzio.io'
+        item: 'https://puzzio.io',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: `${tag.name} Games`,
-        item: `https://puzzio.io/tag/${tagSlug}`
-      }
-    ]
+        item: `https://puzzio.io/tag/${tagSlug}`,
+      },
+    ],
   };
 
   return (
     <div className="min-h-screen bg-slate-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionPageSchema),
+        }}
       />
       <script
         type="application/ld+json"

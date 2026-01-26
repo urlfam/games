@@ -151,21 +151,21 @@ export default async function GamePage({ params }: GamePageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://puzzio.io'
+        item: 'https://puzzio.io',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: `${game.category} Games`,
-        item: `https://puzzio.io/c/${game.category.toLowerCase()}`
+        item: `https://puzzio.io/c/${game.category.toLowerCase()}`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: game.title,
-        item: `https://puzzio.io/play/${params.slug}`
-      }
-    ]
+        item: `https://puzzio.io/play/${params.slug}`,
+      },
+    ],
   };
 
   const recommendedGames = allGames

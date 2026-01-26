@@ -21,44 +21,53 @@ let isWriting = false;
  */
 export async function POST(req: Request) {
   console.error('[ImportAuth] Request received');
-  
+
   // 1. --- Security Check ---
   let authHeader = req.headers.get('Authorization') || '';
-  
+
   // Cleanup incoming header: remove 'Bearer' prefix (case insensitive)
   // We do this BEFORE removing quotes to handle cases like "Bearer TOKEN"
   authHeader = authHeader.replace(/^Bearer\s+/i, '').trim();
 
   // Remove surrounding quotes if the user configured n8n with "Value"
-  if ((authHeader.startsWith('"') && authHeader.endsWith('"')) || 
-      (authHeader.startsWith("'") && authHeader.endsWith("'"))) {
+  if (
+    (authHeader.startsWith('"') && authHeader.endsWith('"')) ||
+    (authHeader.startsWith("'") && authHeader.endsWith("'"))
+  ) {
     authHeader = authHeader.slice(1, -1);
   }
-  
+
   // Final trim just in case
   const clientToken = authHeader.trim();
-  
+
   // Normalize server token
   // FALLBACK: Hardcoded token if env var is missing (Emergency fix)
-  let serverToken = process.env.N8N_SECRET_TOKEN || 'changeMe_a1b2c3d4e5f6_make_this_secret_and_long';
-  
+  let serverToken =
+    process.env.N8N_SECRET_TOKEN ||
+    'changeMe_a1b2c3d4e5f6_make_this_secret_and_long';
+
   // Aggressive cleanup: remove surrounding quotes, trim whitespace/newlines
   serverToken = serverToken.trim();
-  if ((serverToken.startsWith('"') && serverToken.endsWith('"')) || 
-      (serverToken.startsWith("'") && serverToken.endsWith("'"))) {
+  if (
+    (serverToken.startsWith('"') && serverToken.endsWith('"')) ||
+    (serverToken.startsWith("'") && serverToken.endsWith("'"))
+  ) {
     serverToken = serverToken.slice(1, -1);
   }
-  
+
   // Helper to handle potential double-escaping in some environments
   serverToken = serverToken.replace(/\\"/g, '"');
 
   if (!serverToken || clientToken !== serverToken) {
     const msg = `[ImportAuth] FAILED: Tokens do not match. Client len=${clientToken.length}, Server len=${serverToken.length}`;
     console.error(msg);
-    return NextResponse.json({ 
-      message: 'Unauthorized', 
-      debug_info: msg + `. Server token exists: ${!!serverToken}`
-    }, { status: 401 });
+    return NextResponse.json(
+      {
+        message: 'Unauthorized',
+        debug_info: msg + `. Server token exists: ${!!serverToken}`,
+      },
+      { status: 401 },
+    );
   }
 
   // Prevent multiple writes at the same time

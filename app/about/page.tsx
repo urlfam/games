@@ -13,7 +13,8 @@ export default function AboutPage() {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'About Puzzio',
-    description: 'Learn about Puzzio - your destination for free browser-based gaming.',
+    description:
+      'Learn about Puzzio - your destination for free browser-based gaming.',
     url: 'https://puzzio.io/about',
     mainEntity: {
       '@type': 'Organization',
@@ -199,17 +200,18 @@ export default function AboutPage() {
                   Our Story
                 </h2>
                 <p>
-                  Puzzio was founded on January 1st, 2025 by Jack Bonser,
-                  a gaming enthusiast who saw the potential of browser-based gaming to revolutionize
-                  how people access and enjoy games. We started with a simple
-                  vision: make gaming accessible to everyone, regardless of
-                  their device or technical capabilities.
+                  Puzzio was founded on January 1st, 2025 by Jack Bonser, a
+                  gaming enthusiast who saw the potential of browser-based
+                  gaming to revolutionize how people access and enjoy games. We
+                  started with a simple vision: make gaming accessible to
+                  everyone, regardless of their device or technical
+                  capabilities.
                 </p>
                 <p className="mt-4">
-                  Based in Virginia Beach, VA, United States, we serve players worldwide, offering a
-                  curated collection of the best browser games. Our platform continues to
-                  grow, driven by our commitment to quality, accessibility, and
-                  community.
+                  Based in Virginia Beach, VA, United States, we serve players
+                  worldwide, offering a curated collection of the best browser
+                  games. Our platform continues to grow, driven by our
+                  commitment to quality, accessibility, and community.
                 </p>
               </section>
 

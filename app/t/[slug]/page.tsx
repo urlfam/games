@@ -2,7 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
 import { notFound } from 'next/navigation';
-import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games';
+import {
+  getGamesByTag,
+  getAllTags,
+  getTrendingGames,
+  minimizeGame,
+} from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
@@ -82,7 +87,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
   const allGames = await getGamesByTag(tagSlug);
   const totalGames = allGames.length;
-  
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const games = allGames.slice(startIndex, endIndex);
@@ -138,22 +143,24 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://puzzio.io'
+        item: 'https://puzzio.io',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: `${tag.name} Games`,
-        item: `https://puzzio.io/t/${tagSlug}`
-      }
-    ]
+        item: `https://puzzio.io/t/${tagSlug}`,
+      },
+    ],
   };
 
   return (
     <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionPageSchema),
+        }}
       />
       <script
         type="application/ld+json"
@@ -163,7 +170,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      
+
       {/* Header - Styled like Category Page */}
       <section>
         <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1 flex items-center gap-2">
@@ -172,15 +179,15 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
         {/* SEO Header Description */}
         {seoData?.header_desc && (
-           <ExpandableText 
-             content={seoData.header_desc} 
-             className="text-gray-300 mb-6 px-1 text-lg w-full"
-             limit={300}
-           />
+          <ExpandableText
+            content={seoData.header_desc}
+            className="text-gray-300 mb-6 px-1 text-lg w-full"
+            limit={300}
+          />
         )}
 
         {/* Responsive Layout */}
-        
+
         {/* Desktop View (Standard Grid) */}
         <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
           {minimizedGames.map((game) => (
@@ -190,26 +197,30 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
         {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
         <div className="md:hidden space-y-6">
-            {/* First 6 games as Hero Units */}
-            <div className="space-y-6">
-                {minimizedGames.slice(0, 6).map((game, index) => (
-                  <MobileHeroCard key={game.id} game={game} priority={index === 0} />
-                ))}
-            </div>
+          {/* First 6 games as Hero Units */}
+          <div className="space-y-6">
+            {minimizedGames.slice(0, 6).map((game, index) => (
+              <MobileHeroCard
+                key={game.id}
+                game={game}
+                priority={index === 0}
+              />
+            ))}
+          </div>
 
-            {/* Remaining games as 1x1 Grid */}
-            <div className="grid grid-cols-3 gap-3">
-                {minimizedGames.slice(6).map((game) => (
-                    <MobileGridItem key={game.id} game={game} />
-                ))}
-            </div>
+          {/* Remaining games as 1x1 Grid */}
+          <div className="grid grid-cols-3 gap-3">
+            {minimizedGames.slice(6).map((game) => (
+              <MobileGridItem key={game.id} game={game} />
+            ))}
+          </div>
         </div>
 
         {/* Pagination Component */}
-        <Pagination 
-          totalItems={totalGames} 
-          itemsPerPage={itemsPerPage} 
-          currentPage={currentPage} 
+        <Pagination
+          totalItems={totalGames}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
         />
 
         {/* SEO Main Content */}

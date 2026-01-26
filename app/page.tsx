@@ -119,7 +119,7 @@ export default async function HomePage({
   }
 
   // 2. New Games (Next batch)
-  // We do NOT exclude trending games here anymore because we want the "New Games" section 
+  // We do NOT exclude trending games here anymore because we want the "New Games" section
   // to always show the absolute newest games, even if they appear in trending.
   const newGames = filteredGames.slice(0, 12);
 
@@ -198,9 +198,9 @@ export default async function HomePage({
 
     let categoryUrl = `https://puzzio.io/c/${categoryParam}`;
     if (categoryParam === 'trending') {
-       categoryUrl = 'https://puzzio.io/trending';
+      categoryUrl = 'https://puzzio.io/trending';
     } else if (categoryParam === 'new') {
-       categoryUrl = 'https://puzzio.io/new';
+      categoryUrl = 'https://puzzio.io/new';
     }
 
     breadcrumbJsonLd = {
