@@ -42,10 +42,11 @@ export async function POST(req: Request) {
   serverToken = serverToken.replace(/\\"/g, '"');
 
   if (!serverToken || clientToken !== serverToken) {
-    console.error(`[ImportAuth] FAILED: Tokens do not match. Client len=${clientToken.length}, Server len=${serverToken.length}`);
+    const msg = `[ImportAuth] FAILED: Tokens do not match. Client len=${clientToken.length}, Server len=${serverToken.length}`;
+    console.error(msg);
     return NextResponse.json({ 
       message: 'Unauthorized', 
-      debug_info: 'Check container logs for details'
+      debug_info: msg + `. Server token exists: ${!!serverToken}`
     }, { status: 401 });
   }
 
