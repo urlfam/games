@@ -82,54 +82,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* News */}
-          <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              News
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/news"
-                  className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
-                >
-                  All Articles
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/news/category/latest-news"
-                  className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
-                >
-                  Latest News
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/news/category/reviews"
-                  className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
-                >
-                  Reviews
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/news/category/industry-analysis"
-                  className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
-                >
-                  Industry Analysis
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/news/category/interviews"
-                  className="text-gray-400 hover:text-purple-400 text-sm transition-colors"
-                >
-                  Interviews
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* News was here - Removed */}
 
           {/* Legal & About */}
           <div>

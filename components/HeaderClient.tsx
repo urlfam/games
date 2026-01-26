@@ -39,11 +39,11 @@ export default function Header({ categories }: HeaderProps) {
   const { toggleSidebar } = useSidebar();
 
   // Determine header style - white for news and static pages, dark for play
-  const isNewsMain = pathname === '/news';
-  const isNewsArticle = pathname.startsWith('/news/');
+  const isNewsMain = false;
+  const isNewsArticle = false;
   // Static pages should now use the dark header as requested
   const isStaticPage = false;
-  const isWhiteHeader = isNewsMain;
+  const isWhiteHeader = false;
 
   // Header style
   const headerClass = isWhiteHeader
@@ -135,10 +135,6 @@ export default function Header({ categories }: HeaderProps) {
                 <Gamepad2 size={18} />
                 PLAY
               </Link>
-              <Link href="/news" className={newsLinkClass}>
-                <Newspaper size={18} />
-                NEWS
-              </Link>
             </div> */}
           </div>
 
@@ -205,14 +201,6 @@ export default function Header({ categories }: HeaderProps) {
             >
               <Gamepad2 size={20} className="mr-2" />
               PLAY
-            </Link>
-            <Link
-              href="/news"
-              className={mobileNewsLinkClass}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Newspaper size={20} className="mr-2" />
-              NEWS
             </Link>
             */}
 

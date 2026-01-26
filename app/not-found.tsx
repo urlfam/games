@@ -16,12 +16,6 @@ export default function NotFound() {
           >
             Browse Games
           </Link>
-          <Link
-            href="/news"
-            className="px-6 py-3 bg-white text-slate-900 font-medium rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Read News
-          </Link>
         </div>
       </div>
     </div>

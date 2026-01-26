@@ -70,8 +70,6 @@ export default function Header() {
   const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
 
   // Determine header style - white for news and static pages, dark for play
-  const isNewsMain = pathname === '/news';
-  const isNewsArticle = pathname.startsWith('/news/');
   const isStaticPage = [
     '/contact',
     '/privacy',
@@ -79,7 +77,7 @@ export default function Header() {
     '/about',
     '/about-us',
   ].includes(pathname);
-  const isWhiteHeader = isNewsMain || isStaticPage;
+  const isWhiteHeader = isStaticPage;
 
   // Header style
   const headerClass = isWhiteHeader
@@ -96,9 +94,6 @@ export default function Header() {
   const playLinkClass = isWhiteHeader
     ? 'text-gray-600 font-medium hover:text-gray-900 transition-colors'
     : 'text-white font-medium hover:text-purple-400 transition-colors';
-  const newsLinkClass = isWhiteHeader
-    ? 'text-gray-900 font-medium hover:text-purple-500 transition-colors'
-    : 'text-gray-400 font-medium hover:text-white transition-colors';
 
   // Mobile menu button color
   const mobileMenuBtnClass = isWhiteHeader
@@ -114,9 +109,6 @@ export default function Header() {
   const mobilePlayLinkClass = isWhiteHeader
     ? 'block py-4 px-4 text-gray-900 text-base font-semibold hover:bg-gray-100 rounded-lg transition-colors'
     : 'block py-4 px-4 text-white text-base font-semibold hover:bg-slate-700/50 rounded-lg transition-colors';
-  const mobileNewsLinkClass = isWhiteHeader
-    ? 'block py-4 px-4 text-purple-600 text-base font-semibold hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors'
-    : 'block py-4 px-4 text-gray-300 text-base font-semibold hover:bg-slate-700/50 hover:text-white rounded-lg transition-colors';
 
   // Search bar styles
   const searchContainerClass = isWhiteHeader
@@ -155,9 +147,6 @@ export default function Header() {
             <div className="hidden md:flex gap-6">
               <Link href="/" className={playLinkClass}>
                 PLAY
-              </Link>
-              <Link href="/news" className={newsLinkClass}>
-                NEWS
               </Link>
             </div>
           </div>
@@ -222,13 +211,6 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               PLAY
-            </Link>
-            <Link
-              href="/news"
-              className={mobileNewsLinkClass}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              NEWS
             </Link>
 
             {/* Divider */}
