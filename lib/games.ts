@@ -21,6 +21,24 @@ const CACHE_TTL = 60 * 1000; // 60 seconds
 let cachedTrendingGames: { data: Game[]; timestamp: number } | null = null;
 const TRENDING_CACHE_TTL = 60 * 1000; // 60 seconds
 
+/**
+ * Generates a slug from a string.
+ * @param {string} text - The text to slugify.
+ * @returns {string} The collected slug.
+ */
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD') // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, '') // Remove accent marks
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/&/g, '-and-') // Replace & with 'and'
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-'); // Replace multiple - with single -
+}
+
 export interface Game {
   id: number;
   importedAt: string;
@@ -102,6 +120,30 @@ export async function getAllGames(): Promise<Game[]> {
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     cachedGames = JSON.parse(data);
+
+    // FIX: Polyfill missing slugs to prevent URL errors
+    let needsSave = false;
+    
+    cachedGames = cachedGames!.map((game) => {
+      if (!game.slug) {
+        // Generate missing slug from title
+        game.slug = slugify(game.title || `game-${game.id}`);
+        needsSave = true; // Mark that we found issues in the file
+        console.warn(`[AutoFix] Generated missing slug for game ID ${game.id}: ${game.slug}`);
+      }
+      return game;
+    });
+
+    // If we found missing slugs, treat this as a migration and attempt to save back to disk asynchronously
+    // We don't await this to keep the read fast, and we catch errors silently.
+    if (needsSave) {
+        // We use a non-blocking write to fix the file permanently.
+        // We re-serialize the *fixed* games array.
+        fs.writeFile(GAMES_DB_PATH, JSON.stringify(cachedGames, null, 2), 'utf-8')
+           .then(() => console.log('[AutoFix] Successfully saved generated slugs to games.json'))
+           .catch((e) => console.error('[AutoFix] Failed to save generated slugs:', e));
+    }
+
     lastCacheTime = Date.now();
     return cachedGames!;
   } catch (error) {
