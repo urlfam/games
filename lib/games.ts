@@ -15,8 +15,7 @@ try {
 // Cache configuration
 let cachedGames: Game[] | null = null;
 let lastCacheTime = 0;
-let lastFileMTime = 0; // Track file modification time
-const CACHE_TTL = 5 * 1000; // Reduce TTL to 5 seconds for faster updates
+const CACHE_TTL = 60 * 1000; // 60 seconds
 
 // Cache for trending games to minimize DB calls
 let cachedTrendingGames: { data: Game[]; timestamp: number } | null = null;
@@ -95,22 +94,7 @@ export function minimizeGame(game: Game): MinimalGame {
  * @returns {Promise<Game[]>} A promise that resolves to an array of games.
  */
 export async function getAllGames(): Promise<Game[]> {
-  // Check if file has changed
-  try {
-    const stats = await fs.stat(GAMES_DB_PATH);
-    const mtime = stats.mtimeMs;
-
-    // If file changed on disk, invalidate cache
-    if (mtime > lastFileMTime) {
-      cachedGames = null;
-      lastFileMTime = mtime;
-    }
-  } catch (e) {
-    // If we can't stat the file, assume we need to read it (or it doesn't exist)
-    cachedGames = null;
-  }
-
-  // If cache is valid and fresh enough, return it
+  // Check memory cache
   if (cachedGames && Date.now() - lastCacheTime < CACHE_TTL) {
     return cachedGames;
   }
@@ -119,13 +103,6 @@ export async function getAllGames(): Promise<Game[]> {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     cachedGames = JSON.parse(data);
     lastCacheTime = Date.now();
-
-    // Update mtime if not set (first read)
-    if (lastFileMTime === 0) {
-      const stats = await fs.stat(GAMES_DB_PATH);
-      lastFileMTime = stats.mtimeMs;
-    }
-
     return cachedGames!;
   } catch (error) {
     console.error('Error reading games database:', error);
