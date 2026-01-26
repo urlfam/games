@@ -50,13 +50,6 @@ services:
     restart: unless-stopped
     command: tail -f /dev/null
 
-  image-capturer:
-    build:
-      context: .
-      dockerfile: Dockerfile.capturer
-    container_name: puzzio-image-description
-    restart: unless-stopped
-
   image-description:
     build:
       context: .
