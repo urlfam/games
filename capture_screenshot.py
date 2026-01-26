@@ -75,7 +75,7 @@ async def run():
                 game_frame = page
 
             # 3. Attente pour le chargement du jeu (splash screens etc)
-            await page.wait_for_timeout(15000) # 15s usually enough, 30s is safe but slow
+            await page.wait_for_timeout(30000) # Increased to 30s for slower games
 
             # 4. Capture RAM
             # If it's a frame or page, we try to target canvas specifically if possible for cleaner shot
