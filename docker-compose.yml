@@ -47,7 +47,7 @@ services:
     volumes:
       - ./test_game.py:/app/test_game.py:ro
       - ./validation-results:/app/results
-    shm_size: '2gb' # Fix OOM issues with Chromium
+    shm_size: '4gb' # Fix OOM issues with Chromium
     restart: unless-stopped
     command: tail -f /dev/null
 

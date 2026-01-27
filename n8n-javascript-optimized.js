@@ -52,7 +52,7 @@ function findRelatedGames(currentGame, allGames, count = 2) {
 // FONCTION: Créer un lien HTML avec style
 function createGameLink(game) {
   const slug = extractSlug(game.page_url);
-  return `<a href="/play/${slug}" class="text-purple-400 hover:text-purple-300 underline transition-colors">${game.title}</a>`;
+  return `<a href="/game/${slug}" class="text-purple-400 hover:text-purple-300 underline transition-colors">${game.title}</a>`;
 }
 
 // Traiter la description
@@ -105,7 +105,7 @@ if (allGames && allGames.length > 0) {
 
 // Remplacer le lien catégorie (toujours possible)
 const categorySlug = currentCategory.toLowerCase();
-const categoryLink = `<a href="/play?category=${categorySlug}" class="text-purple-400 hover:text-purple-300 underline font-semibold transition-colors">${currentCategory} games collection</a>`;
+const categoryLink = `<a href="/c/${categorySlug}" class="text-purple-400 hover:text-purple-300 underline font-semibold transition-colors">${currentCategory} games collection</a>`;
 finalDescription = finalDescription.replace(
   /\{\{CATEGORY_LINK\}\}/g,
   categoryLink,

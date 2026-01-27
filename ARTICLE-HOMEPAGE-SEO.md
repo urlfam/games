@@ -84,7 +84,7 @@ We focus on quality over quantity. Every game we add is tested for performance, 
 
 One click and you're in the game. Join thousands of players worldwide and discover why Puzzio.io is becoming the top choice for [free online games](/), instant browser entertainment, and endless fun. No downloads, no waiting, just pure gaming enjoyment.
 
-Ready to play? Browse our [complete game library](/), explore [new releases](/new-games), or try a [random game](/play/favorites) right now!
+Ready to play? Browse our [complete game library](/), explore [new releases](/new-games), or try a [random game](/favorites) right now!
 
 ---
 

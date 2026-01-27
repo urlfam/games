@@ -134,8 +134,6 @@ export async function updateGameFull(formData: FormData) {
     mobile_1x1_url: formData.get('mobile_1x1_url') as string,
     video_url: formData.get('video_url') as string,
     youtube_video_url: formData.get('youtube_video_url') as string,
-    gameplay_screenshot_url: formData.get('gameplay_screenshot_url') as string,
-    gameplay_filename: formData.get('gameplay_filename') as string,
 
     // SEO / Metadata
     seo_title: formData.get('seo_title') as string,

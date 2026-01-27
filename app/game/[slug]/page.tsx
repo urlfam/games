@@ -412,41 +412,6 @@ export default async function GamePage({ params }: GamePageProps) {
               className="game-description prose prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: game.description || '' }}
             />
-
-            {/* Gameplay Screenshot */}
-            {(game as any).gameplay_screenshot_url && (
-              <div className="mt-8">
-                <a
-                  href={
-                    (game as any).gameplay_screenshot_url.includes(
-                      'cloudinary.com',
-                    )
-                      ? (game as any).gameplay_screenshot_url.replace(
-                          '/upload/',
-                          `/upload/fl_attachment:${(game as any).gameplay_filename || 'gameplay-screenshot'}/`,
-                        )
-                      : (game as any).gameplay_screenshot_url
-                  }
-                  download={
-                    (game as any).gameplay_filename || `${game.slug}-gameplay`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block cursor-pointer hover:opacity-95 transition-opacity"
-                  title="Click to download"
-                >
-                  <img
-                    src={(game as any).gameplay_screenshot_url}
-                    alt={
-                      (game as any).gameplay_filename ||
-                      `${game.title} Gameplay Screenshot`
-                    }
-                    className="w-full rounded-lg shadow-lg border border-slate-700"
-                    loading="lazy"
-                  />
-                </a>
-              </div>
-            )}
           </div>
 
           {/* FAQ Section */}

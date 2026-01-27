@@ -92,7 +92,7 @@ export default async function TagPage({ params }: TagPageProps) {
       item: {
         '@type': 'VideoGame',
         name: game.title,
-        url: `https://puzzio.io/play/${game.slug}`,
+        url: `https://puzzio.io/game/${game.slug}`,
         image: {
           '@type': 'ImageObject',
           url: game.image_url,
