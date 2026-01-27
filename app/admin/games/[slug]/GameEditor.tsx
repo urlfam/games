@@ -243,16 +243,6 @@ export default function GameEditor({ game }: { game: Game }) {
                       name="youtube_video_url"
                       defaultValue={game.youtube_video_url}
                     />
-                    <InputGroup
-                      label="Gameplay Screenshot URL"
-                      name="gameplay_screenshot_url"
-                      defaultValue={game.gameplay_screenshot_url}
-                    />
-                    <InputGroup
-                      label="Gameplay Filename"
-                      name="gameplay_filename"
-                      defaultValue={game.gameplay_filename}
-                    />
                   </div>
                 </div>
               </div>
