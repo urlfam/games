@@ -159,7 +159,7 @@ export default async function GamePage({ params }: GamePageProps) {
       (game as any).mobile_image_url,
       (game as any).mobile_1x1_url,
     ].filter(Boolean),
-    screenshot: game.gameplay_screenshot_url || game.image_url,
+    screenshot: game.image_url,
     keywords: [
       ...((game as any).image_keywords || []),
       ...(game.tags || []),
