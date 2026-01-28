@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
+import Pagination from '@/components/Pagination'; // Import Pagination
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getGamesByTag, getAllTags, getTrendingGames } from '@/lib/games';
+import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games'; // Import minimizeGame
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 
@@ -13,6 +15,7 @@ interface TagPageProps {
   params: {
     slug: string;
   };
+  searchParams?: { [key: string]: string | undefined };
 }
 
 export async function generateStaticParams() {
@@ -55,7 +58,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function TagPage({ params }: TagPageProps) {
+export default async function TagPage({ params, searchParams }: TagPageProps) {
   const tagSlug = params.slug;
   const tags = await getAllTags();
   const tag = tags.find((t) => t.slug === tagSlug);
@@ -64,7 +67,20 @@ export default async function TagPage({ params }: TagPageProps) {
     notFound();
   }
 
-  const games = await getGamesByTag(tagSlug);
+  const currentPage = Number(searchParams?.page) || 1;
+  const itemsPerPage = 60;
+
+  const allGames = await getGamesByTag(tagSlug);
+  
+  // Pagination
+  const totalGames = allGames.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGames = allGames.slice(startIndex, endIndex);
+
+  // minimize for client
+  const minimizedPaginatedGames = paginatedGames.map(minimizeGame);
+
   const trendingGames = await getTrendingGames(6);
 
   // CollectionPage Schema
@@ -86,9 +102,9 @@ export default async function TagPage({ params }: TagPageProps) {
     '@type': 'ItemList',
     name: `${tag.name} Games List`,
     description: `List of available ${tag.name} games on Puzzio.io`,
-    itemListElement: games.map((game, index) => ({
+    itemListElement: paginatedGames.map((game, index) => ({
       '@type': 'ListItem',
-      position: index + 1,
+      position: startIndex + index + 1,
       item: {
         '@type': 'VideoGame',
         name: game.title,
@@ -147,10 +163,19 @@ export default async function TagPage({ params }: TagPageProps) {
         </h1>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-          {games.map((game) => (
+          {minimizedPaginatedGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
+
+        {/* Pagination Component */}
+        <Suspense fallback={null}>
+          <Pagination
+            totalItems={totalGames}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+          />
+        </Suspense>
       </div>
     </div>
   );

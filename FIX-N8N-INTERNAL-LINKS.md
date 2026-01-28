@@ -61,9 +61,9 @@ Le dernier paragraphe de la description devrait contenir :
 ```html
 <p>
   Ready to start playing? Jump into Truck Simulator Real now! If you're hooked
-  on Driving games, you'll love <a href="/play/driveoff">DriveOff</a> and
-  <a href="/play/escape-road-2">Escape Road 2</a>. Want more? Explore our
-  <a href="/play?category=driving">Driving games collection</a> for endless
+  on Driving games, you'll love <a href="/game/driveoff">DriveOff</a> and
+  <a href="/game/escape-road-2">Escape Road 2</a>. Want more? Explore our
+  <a href="/c/driving">Driving games collection</a> for endless
   entertainment!
 </p>
 ```

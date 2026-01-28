@@ -1,19 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { stripHtml } from '@/lib/utils';
 import { Game } from '@/lib/games';
 import { Heart } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import Pagination from '@/components/Pagination';
 
 interface FavoritesClientProps {
   games: Game[];
 }
 
-export default function FavoritesClient({ games }: FavoritesClientProps) {
+function FavoritesContent({ games }: FavoritesClientProps) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Pagination Logic
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const itemsPerPage = 60;
 
   useEffect(() => {
     const stored = localStorage.getItem('game_favorites');
@@ -58,42 +65,64 @@ export default function FavoritesClient({ games }: FavoritesClientProps) {
     );
   }
 
+  // Calculate slice
+  const totalGames = favoriteGames.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGames = favoriteGames.slice(startIndex, endIndex);
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0">
-      {favoriteGames.map((game) => (
-        <div
-          key={game.id}
-          className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
-        >
-          <div className="relative h-40 sm:h-60 overflow-hidden">
-            <Image
-              src={game.image_url}
-              alt={game.image_alt || game.title}
-              title={game.image_title || game.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-              loading="lazy"
-            />
+    <>
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0 mb-8">
+        {paginatedGames.map((game) => (
+          <div
+            key={game.id}
+            className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
+          >
+            <div className="relative h-40 sm:h-60 overflow-hidden">
+              <Image
+                src={game.image_url}
+                alt={game.image_alt || game.title}
+                title={game.image_title || game.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                loading="lazy"
+              />
+            </div>
+            <div className="p-3 sm:p-4">
+              <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
+                {game.category}
+              </span>
+              <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
+                {game.title}
+              </h3>
+              <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
+                {stripHtml(game.description)}
+              </p>
+              <Link href={`/game/${game.slug}`}>
+                <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                  Play
+                </button>
+              </Link>
+            </div>
           </div>
-          <div className="p-3 sm:p-4">
-            <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
-              {game.category}
-            </span>
-            <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
-              {game.title}
-            </h3>
-            <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
-              {stripHtml(game.description)}
-            </p>
-            <Link href={`/game/${game.slug}`}>
-              <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
-                Play
-              </button>
-            </Link>
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      
+      <Pagination 
+        totalItems={totalGames}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+      />
+    </>
+  );
+}
+
+export default function FavoritesClient({ games }: FavoritesClientProps) {
+  return (
+    <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center">Loading...</div>}>
+      <FavoritesContent games={games} />
+    </Suspense>
   );
 }

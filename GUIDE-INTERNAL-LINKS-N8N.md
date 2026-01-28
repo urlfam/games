@@ -119,9 +119,9 @@ Dans chaque description de jeu, tu devrais voir :
 <p>
   Think you can handle the challenge? Play Card Solitaire now! If you love
   Puzzle games, you might also enjoy
-  <a href="/play/mahjong-puzzle">Mahjong Puzzle</a> and
-  <a href="/play/sudoku-master">Sudoku Master</a>, or explore our complete
-  <a href="/play?category=puzzle">Puzzle games collection</a>
+  <a href="/game/mahjong-puzzle">Mahjong Puzzle</a> and
+  <a href="/game/sudoku-master">Sudoku Master</a>, or explore our complete
+  <a href="/c/puzzle">Puzzle games collection</a>
   for even more exciting challenges!
 </p>
 ```
