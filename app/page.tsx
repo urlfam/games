@@ -224,6 +224,39 @@ export default async function HomePage({
     };
   }
 
+  // CollectionPage Schema for category pages
+  let collectionPageSchema = null;
+  if (
+    categoryParam !== 'all' &&
+    categoryParam !== 'popular' &&
+    !searchQuery
+  ) {
+    const categoryName = categoryParam
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    let categoryUrl = `https://puzzio.io/c/${categoryParam}`;
+    if (categoryParam === 'trending') {
+      categoryUrl = 'https://puzzio.io/trending';
+    } else if (categoryParam === 'new') {
+      categoryUrl = 'https://puzzio.io/new';
+    }
+
+    collectionPageSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: `${categoryName} Games`,
+      description: `Play the best ${categoryName} games online for free on Puzzio.`,
+      url: categoryUrl,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'Puzzio',
+        url: 'https://puzzio.io',
+      },
+    };
+  }
+
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -284,6 +317,12 @@ export default async function HomePage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+      )}
+      {collectionPageSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
         />
       )}
 
