@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Home, Sparkles, TrendingUp, Shuffle } from 'lucide-react';
 
 export function GoHomeButton() {
-  const router = useRouter();
-
   const handleGoHome = () => {
-    router.push('/');
+    // Force full page reload to exit 404 context
+    window.location.href = '/';
   };
 
   return (
