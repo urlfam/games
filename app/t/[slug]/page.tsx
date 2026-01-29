@@ -10,8 +10,6 @@ import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText';
-import MobileHeroCard from '@/components/MobileHeroCard';
-import MobileGridItem from '@/components/MobileGridItem';
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -148,7 +146,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -164,8 +162,8 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
-        <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
+      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
           {tag.name} Games
         </h1>
 
@@ -178,32 +176,10 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
           />
         )}
 
-        {/* Desktop View */}
-        <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
           {minimizedPaginatedGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
-        </div>
-
-        {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
-        <div className="md:hidden space-y-6">
-          <div className="space-y-6">
-            {minimizedPaginatedGames
-              .slice(0, 6)
-              .map((game, index) => (
-                <MobileHeroCard
-                  key={game.id}
-                  game={game}
-                  priority={index === 0}
-                />
-              ))}
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {minimizedPaginatedGames.slice(6).map((game) => (
-              <MobileGridItem key={game.id} game={game} />
-            ))}
-          </div>
         </div>
 
         {/* Pagination Component */}
@@ -252,6 +228,6 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 }
