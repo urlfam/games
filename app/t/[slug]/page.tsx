@@ -1,32 +1,31 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
-import Pagination from '@/components/Pagination';
-import FAQAccordion from '@/components/FAQAccordion';
+import Pagination from '@/components/Pagination'; // Import Pagination
+import FAQAccordion from '@/components/FAQAccordion'; // Import FAQAccordion
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games';
+import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games'; // Import minimizeGame
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
-import { getSeoData } from '@/lib/seo';
-import ExpandableText from '@/components/ExpandableText';
+import { getSeoData } from '@/lib/seo'; // Import getSeoData
+import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  const tags = await getAllTags();
-  return tags.map((tag) => ({
-    slug: tag.slug,
-  }));
-}
 
 interface TagPageProps {
   params: {
     slug: string;
   };
   searchParams?: { [key: string]: string | undefined };
+}
+
+export async function generateStaticParams() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    slug: tag.slug,
+  }));
 }
 
 export async function generateMetadata({
@@ -87,6 +86,8 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
   // minimize for client
   const minimizedPaginatedGames = paginatedGames.map(minimizeGame);
+
+  const trendingGames = await getTrendingGames(6);
 
   // CollectionPage Schema
   const collectionPageSchema = {
