@@ -37,34 +37,42 @@ interface TagPageProps {
 export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
-  const tagSlug = params.slug;
-  const tags = await getAllTags();
-  const tag = tags.find((t) => t.slug === tagSlug);
+  try {
+    const tagSlug = params.slug;
+    const tags = await getAllTags();
+    const tag = tags.find((t) => t.slug === tagSlug);
 
-  if (!tag) {
+    if (!tag) {
+      return {
+        title: 'Tag Not Found',
+      };
+    }
+
+    const tagName = tag.name;
+    const title = `${tagName} Games - Play Free ${tagName} Games Online on Puzzio`;
+    const description = `Play the best free ${tagName} games online. We have a great collection of ${tagName} games for you to play.`;
+
     return {
-      title: 'Tag Not Found',
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata for tag page:', error);
+    return {
+      title: 'Puzzio Games',
+      description: 'Play free online games on Puzzio.',
     };
   }
-
-  const tagName = tag.name;
-  const title = `${tagName} Games - Play Free ${tagName} Games Online on Puzzio`;
-  const description = `Play the best free ${tagName} games online. We have a great collection of ${tagName} games for you to play.`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-    },
-  };
 }
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {
