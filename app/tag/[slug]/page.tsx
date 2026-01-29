@@ -95,7 +95,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     '@type': 'CollectionPage',
     name: `${tag.name} Games`,
     description: `Play the best ${tag.name} games online for free on Puzzio.`,
-    url: `https://puzzio.io/tag/${tagSlug}`,
+    url: `https://puzzio.io/t/${tagSlug}`,
     isPartOf: {
       '@type': 'WebSite',
       name: 'Puzzio',
@@ -141,7 +141,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         '@type': 'ListItem',
         position: 2,
         name: `${tag.name} Games`,
-        item: `https://puzzio.io/tag/${tagSlug}`,
+        item: `https://puzzio.io/t/${tagSlug}`,
       },
     ],
   };
