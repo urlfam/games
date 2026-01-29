@@ -184,7 +184,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         />
 
         <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
+          <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
             {tag.name} Games
           </h1>
 
@@ -197,7 +197,15 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             />
           )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          {/* Desktop View */}
+          <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {minimizedPaginatedGames.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden grid grid-cols-2 sm:grid-cols-3 gap-2">
             {minimizedPaginatedGames.map((game) => (
               <GameCard key={game.id} game={game} />
             ))}
