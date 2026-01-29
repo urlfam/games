@@ -23,10 +23,9 @@ interface TagPageProps {
 }
 
 export async function generateStaticParams() {
-  const tags = await getAllTags();
-  return tags.map((tag) => ({
-    slug: tag.slug,
-  }));
+  // Return empty array to rely on dynamic generation (ISR)
+  // This avoids build-time crashes if games.json is unavailable
+  return [];
 }
 
 export async function generateMetadata({
