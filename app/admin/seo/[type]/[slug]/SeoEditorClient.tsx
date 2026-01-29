@@ -54,6 +54,8 @@ export default function SeoEditorClient({
       const result = await saveSeoContent(formData);
       if (result.success) {
         alert('SEO Content saved successfully!');
+      } else if (result.error) {
+        alert('Error saving: ' + result.error);
       }
     } catch (err) {
       alert(
