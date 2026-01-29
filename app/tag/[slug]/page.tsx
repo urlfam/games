@@ -7,6 +7,8 @@ import { notFound } from 'next/navigation';
 import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games'; // Import minimizeGame
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
+import { getSeoData } from '@/lib/seo'; // Import getSeoData
+import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
@@ -72,6 +74,9 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
 
   const allGames = await getGamesByTag(tagSlug);
   
+  // Get SEO Data
+  const seoData = await getSeoData(tagSlug, 'Tag');
+
   // Pagination
   const totalGames = allGames.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -162,6 +167,15 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
           {tag.name} Games
         </h1>
 
+        {/* SEO Header Description */}
+        {seoData?.header_desc && (
+          <ExpandableText
+            content={seoData.header_desc}
+            className="text-gray-300 mb-6 px-1 text-lg w-full"
+            limit={300}
+          />
+        )}
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
           {minimizedPaginatedGames.map((game) => (
             <GameCard key={game.id} game={game} />
@@ -176,6 +190,61 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             currentPage={currentPage}
           />
         </Suspense>
+
+        {/* SEO Main Content */}
+        {seoData?.main_content && (
+          <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-12">
+            <div
+              className="game-description"
+              dangerouslySetInnerHTML={{ __html: seoData.main_content }}
+            />
+          </div>
+        )}
+
+        {/* FAQ Section & Schema */}
+        {seoData?.faq_schema && seoData.faq_schema.length > 0 && (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  '@context': 'https://schema.org',
+                  '@type': 'FAQPage',
+                  mainEntity: seoData.faq_schema.map((item) => ({
+                    '@type': 'Question',
+                    name: item.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: item.answer,
+                    },
+                  })),
+                }),
+              }}
+            />
+
+            <div className="mt-8 mb-12">
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">
+                Frequently Asked Questions
+              </h2>
+              <div className="space-y-6">
+                {seoData.faq_schema.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-slate-800/50 rounded-lg p-6 border border-slate-700"
+                  >
+                    <h3 className="text-xl font-semibold text-white mb-3">
+                      {item.question}
+                    </h3>
+                    <div
+                      className="text-gray-300 prose prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: item.answer }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

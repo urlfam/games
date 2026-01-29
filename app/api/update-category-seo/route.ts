@@ -37,6 +37,7 @@ export async function POST(req: Request) {
       type: body.type,
       header_desc: body.header_desc,
       main_content: body.main_content,
+      faq_schema: typeof body.faq_schema === 'string' ? JSON.parse(body.faq_schema) : body.faq_schema,
     };
 
     await updateSeoData(seoData);

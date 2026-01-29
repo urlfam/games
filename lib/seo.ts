@@ -9,6 +9,7 @@ export interface SeoData {
   type: 'Category' | 'Tag';
   header_desc?: string;
   main_content?: string;
+  faq_schema?: Array<{ question: string; answer: string }>;
 }
 
 interface SeoStore {

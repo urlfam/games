@@ -425,6 +425,51 @@ export default async function HomePage({
                 />
               </div>
             )}
+
+            {/* FAQ Section & Schema */}
+            {seoData?.faq_schema && seoData.faq_schema.length > 0 && (
+              <>
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      '@context': 'https://schema.org',
+                      '@type': 'FAQPage',
+                      mainEntity: seoData.faq_schema.map((item) => ({
+                        '@type': 'Question',
+                        name: item.question,
+                        acceptedAnswer: {
+                          '@type': 'Answer',
+                          text: item.answer,
+                        },
+                      })),
+                    }),
+                  }}
+                />
+                
+                <div className="mt-8 mb-12">
+                  <h2 className="text-2xl font-bold text-white mb-6">
+                    Frequently Asked Questions
+                  </h2>
+                  <div className="space-y-6">
+                    {seoData.faq_schema.map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-slate-800/50 rounded-lg p-6 border border-slate-700"
+                      >
+                        <h3 className="text-xl font-semibold text-white mb-3">
+                          {item.question}
+                        </h3>
+                        <div
+                          className="text-gray-300 prose prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{ __html: item.answer }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </section>
         )}
       </div>
