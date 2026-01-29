@@ -175,9 +175,17 @@ export async function saveSeoContent(formData: FormData) {
   const type = formData.get('type') as 'Category' | 'Tag';
   const header_desc = formData.get('header_desc') as string;
   const main_content = formData.get('main_content') as string;
+  const faqJson = formData.get('faq_schema') as string;
 
   if (!slug || !type) {
     throw new Error('Missing slug or type');
+  }
+
+  let faq_schema = [];
+  try {
+    faq_schema = faqJson ? JSON.parse(faqJson) : [];
+  } catch (e) {
+    console.error('Invalid FAQ JSON', e);
   }
 
   const seoData: SeoData = {
@@ -185,6 +193,7 @@ export async function saveSeoContent(formData: FormData) {
     type,
     header_desc,
     main_content,
+    faq_schema,
   };
 
   await updateSeoData(seoData);
