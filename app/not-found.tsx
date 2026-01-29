@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Home, Sparkles, TrendingUp, Shuffle } from 'lucide-react';
 import { getTrendingGames, minimizeGame } from '@/lib/games';
 import GameCard from '@/components/GameCard';
+import { GoHomeButton, ActionButtons } from '@/components/NotFoundActions';
 
 export default async function NotFound() {
   // Get popular games for the 404 page
@@ -43,13 +43,9 @@ export default async function NotFound() {
       </div>
 
       {/* Go back home button */}
-      <Link
-        href="/"
-        className="flex items-center gap-2 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full transition-colors mb-10"
-      >
-        <Home className="w-5 h-5" />
-        Go back home
-      </Link>
+      <div className="mb-10">
+        <GoHomeButton />
+      </div>
 
       {/* Popular games section */}
       {popularGames.length > 0 && (
@@ -67,29 +63,7 @@ export default async function NotFound() {
       )}
 
       {/* Action buttons */}
-      <div className="flex flex-wrap justify-center gap-3 mt-4">
-        <Link
-          href="/new"
-          className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-full border border-slate-600 transition-colors"
-        >
-          <Sparkles className="w-4 h-4" />
-          New games
-        </Link>
-        <Link
-          href="/trending"
-          className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-full border border-slate-600 transition-colors"
-        >
-          <TrendingUp className="w-4 h-4" />
-          Trending games
-        </Link>
-        <Link
-          href="/?random=1"
-          className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-full border border-slate-600 transition-colors"
-        >
-          <Shuffle className="w-4 h-4" />
-          Random game
-        </Link>
-      </div>
+      <ActionButtons />
     </div>
   );
 }
