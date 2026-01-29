@@ -1,39 +1,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
+import Pagination from '@/components/Pagination';
+import FAQAccordion from '@/components/FAQAccordion';
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import {
-  getGamesByTag,
-  getAllTags,
-  getTrendingGames,
-  minimizeGame,
-} from '@/lib/games';
+import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo';
-import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
-import Pagination from '@/components/Pagination'; // Import Pagination
-import cloudinaryLoader from '@/lib/cloudinaryLoader';
-import MobileHeroCard from '@/components/MobileHeroCard';
-import MobileGridItem from '@/components/MobileGridItem';
+import ExpandableText from '@/components/ExpandableText';
 
-// Force dynamic rendering to handle searchParams correctly
-export const dynamic = 'force-dynamic';
+// ISR: Regenerate this page every 60 seconds
+export const revalidate = 60;
 
 interface TagPageProps {
   params: {
     slug: string;
   };
-  searchParams?: {
-    page?: string;
-  };
-}
-
-export async function generateStaticParams() {
-  const tags = await getAllTags();
-  return tags.map((tag) => ({
-    slug: tag.slug,
-  }));
+  searchParams?: { [key: string]: string | undefined };
 }
 
 export async function generateMetadata({
@@ -56,13 +41,9 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: {
-      canonical: `/t/${tagSlug}`,
-    },
     openGraph: {
       title,
       description,
-      url: `/t/${tagSlug}`,
       type: 'website',
     },
     twitter: {
@@ -75,9 +56,6 @@ export async function generateMetadata({
 
 export default async function TagPage({ params, searchParams }: TagPageProps) {
   const tagSlug = params.slug;
-  const currentPage = Number(searchParams?.page) || 1;
-  const itemsPerPage = 60;
-
   const tags = await getAllTags();
   const tag = tags.find((t) => t.slug === tagSlug);
 
@@ -85,17 +63,22 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     notFound();
   }
 
+  const currentPage = Number(searchParams?.page) || 1;
+  const itemsPerPage = 60;
+
   const allGames = await getGamesByTag(tagSlug);
-  const totalGames = allGames.length;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const games = allGames.slice(startIndex, endIndex);
-
-  const trendingGames = await getTrendingGames(6);
+  
+  // Get SEO Data
   const seoData = await getSeoData(tagSlug, 'Tag');
 
-  const minimizedGames = games.map(minimizeGame);
+  // Pagination
+  const totalGames = allGames.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGames = allGames.slice(startIndex, endIndex);
+
+  // minimize for client
+  const minimizedPaginatedGames = paginatedGames.map(minimizeGame);
 
   // CollectionPage Schema
   const collectionPageSchema = {
@@ -116,7 +99,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     '@type': 'ItemList',
     name: `${tag.name} Games List`,
     description: `List of available ${tag.name} games on Puzzio.io`,
-    itemListElement: games.map((game, index) => ({
+    itemListElement: paginatedGames.map((game, index) => ({
       '@type': 'ListItem',
       position: startIndex + index + 1,
       item: {
@@ -135,7 +118,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     })),
   };
 
-  const breadcrumbJsonLd = {
+  const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
@@ -155,7 +138,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   };
 
   return (
-    <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
+    <div className="min-h-screen bg-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -168,12 +151,11 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      {/* Header - Styled like Category Page */}
-      <section>
-        <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1 flex items-center gap-2">
+      <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 capitalize px-1">
           {tag.name} Games
         </h1>
 
@@ -186,42 +168,20 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
           />
         )}
 
-        {/* Responsive Layout */}
-
-        {/* Desktop View (Standard Grid) */}
-        <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {minimizedGames.map((game) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          {minimizedPaginatedGames.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
 
-        {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
-        <div className="md:hidden space-y-6">
-          {/* First 6 games as Hero Units */}
-          <div className="space-y-6">
-            {minimizedGames.slice(0, 6).map((game, index) => (
-              <MobileHeroCard
-                key={game.id}
-                game={game}
-                priority={index === 0}
-              />
-            ))}
-          </div>
-
-          {/* Remaining games as 1x1 Grid */}
-          <div className="grid grid-cols-3 gap-3">
-            {minimizedGames.slice(6).map((game) => (
-              <MobileGridItem key={game.id} game={game} />
-            ))}
-          </div>
-        </div>
-
         {/* Pagination Component */}
-        <Pagination
-          totalItems={totalGames}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-        />
+        <Suspense fallback={null}>
+          <Pagination
+            totalItems={totalGames}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+          />
+        </Suspense>
 
         {/* SEO Main Content */}
         {seoData?.main_content && (
@@ -232,7 +192,34 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             />
           </div>
         )}
-      </section>
+
+        {/* FAQ Section & Schema */}
+        {seoData?.faq_schema && seoData.faq_schema.length > 0 && (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  '@context': 'https://schema.org',
+                  '@type': 'FAQPage',
+                  mainEntity: seoData.faq_schema.map((item) => ({
+                    '@type': 'Question',
+                    name: item.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: item.answer,
+                    },
+                  })),
+                }),
+              }}
+            />
+
+            <div className="mt-8 mb-12">
+              <FAQAccordion items={seoData.faq_schema} />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
