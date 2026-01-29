@@ -33,7 +33,10 @@ export default async function CategorySidebar() {
       </Suspense>
     );
   } catch (error) {
-    console.warn('Sidebar failed to load categories, showing defaults only.', error);
+    console.warn(
+      'Sidebar failed to load categories, showing defaults only.',
+      error,
+    );
     // Fallback minimal sidebar
     const fallbackCategories = [
       { name: 'Home', slug: 'all' },

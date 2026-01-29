@@ -109,8 +109,8 @@ function FavoritesContent({ games }: FavoritesClientProps) {
           </div>
         ))}
       </div>
-      
-      <Pagination 
+
+      <Pagination
         totalItems={totalGames}
         itemsPerPage={itemsPerPage}
         currentPage={currentPage}
@@ -121,7 +121,13 @@ function FavoritesContent({ games }: FavoritesClientProps) {
 
 export default function FavoritesClient({ games }: FavoritesClientProps) {
   return (
-    <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-[50vh] flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <FavoritesContent games={games} />
     </Suspense>
   );

@@ -4,7 +4,13 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { saveGame, Game, getGameBySlug, deleteGame, deleteAllGames } from '@/lib/games';
+import {
+  saveGame,
+  Game,
+  getGameBySlug,
+  deleteGame,
+  deleteAllGames,
+} from '@/lib/games';
 import { updateSeoData, SeoData } from '@/lib/seo';
 
 // MOT DE PASSE SIMPLE (STOCKÉ MAINTENANT DANS ENV)
@@ -219,8 +225,8 @@ export async function saveSeoContent(formData: FormData) {
     return { success: true };
   } catch (error) {
     console.error('Error in saveSeoContent:', error);
-    return { 
-      error: error instanceof Error ? error.message : 'Unknown server error' 
+    return {
+      error: error instanceof Error ? error.message : 'Unknown server error',
     };
   }
 }
@@ -240,7 +246,7 @@ export async function deleteGameAction(slug: string) {
   try {
     await deleteGame(slug);
     revalidatePath('/admin');
-    revalidatePath('/'); 
+    revalidatePath('/');
     return { success: true };
   } catch (error) {
     console.error('Failed to delete game:', error);

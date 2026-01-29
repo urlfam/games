@@ -52,7 +52,7 @@ export default function FAQAccordion({ items }: FAQAccordionProps) {
                   : 'max-h-0 opacity-0'
               }`}
             >
-              <div 
+              <div
                 className="px-6 pb-4 text-gray-300 leading-relaxed border-t border-slate-700/50 pt-4 game-description"
                 dangerouslySetInnerHTML={{ __html: item.answer }}
               />

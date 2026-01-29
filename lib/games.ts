@@ -377,7 +377,11 @@ export async function deleteGame(slug: string): Promise<void> {
     games = games.filter((g) => g.slug !== slug);
 
     if (games.length !== initialLength) {
-      await fs.writeFile(GAMES_DB_PATH, JSON.stringify(games, null, 2), 'utf-8');
+      await fs.writeFile(
+        GAMES_DB_PATH,
+        JSON.stringify(games, null, 2),
+        'utf-8',
+      );
       cachedGames = null;
       lastCacheTime = 0;
     }

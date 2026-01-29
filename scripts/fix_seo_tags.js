@@ -4,8 +4,8 @@ const path = require('path');
 // Try multiple paths
 const possiblePaths = [
   path.join(__dirname, '../data/seo.json'), // Local dev structure (scripts/../data)
-  path.join(__dirname, 'data/seo.json'),    // Inside container (if script in root: /app/data)
-  '/app/data/seo.json'                      // Absolute container path
+  path.join(__dirname, 'data/seo.json'), // Inside container (if script in root: /app/data)
+  '/app/data/seo.json', // Absolute container path
 ];
 
 let SEO_PATH = '';
@@ -31,16 +31,19 @@ let modified = false;
 function processContent(str) {
   if (!str) return str;
   let newStr = str;
-  
+
   // Replace relative HREF
   if (newStr.includes('href="/tag/')) {
     newStr = newStr.replace(/href="\/tag\//g, 'href="/t/');
     modified = true;
   }
-  
+
   // Replace Absolute URL
   if (newStr.includes('https://puzzio.io/tag/')) {
-    newStr = newStr.replace(/https:\/\/puzzio.io\/tag\//g, 'https://puzzio.io/t/');
+    newStr = newStr.replace(
+      /https:\/\/puzzio.io\/tag\//g,
+      'https://puzzio.io/t/',
+    );
     modified = true;
   }
 
@@ -65,12 +68,12 @@ if (data.Category) {
 if (data.Tag) {
   for (const key in data.Tag) {
     if (data.Tag[key].main_content) {
-        const oldC = data.Tag[key].main_content;
-        const newC = processContent(oldC);
-        if (oldC !== newC) {
-          console.log(`Updated content for Tag: ${key}`);
-          data.Tag[key].main_content = newC;
-        }
+      const oldC = data.Tag[key].main_content;
+      const newC = processContent(oldC);
+      if (oldC !== newC) {
+        console.log(`Updated content for Tag: ${key}`);
+        data.Tag[key].main_content = newC;
+      }
     }
   }
 }

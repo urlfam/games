@@ -21,14 +21,14 @@ export async function POST(req: Request) {
     if (!body.slug || !body.type) {
       return NextResponse.json(
         { message: 'Missing slug or type' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (body.type !== 'Category' && body.type !== 'Tag') {
       return NextResponse.json(
         { message: 'Invalid type. Must be Category or Tag' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,7 +37,10 @@ export async function POST(req: Request) {
       type: body.type,
       header_desc: body.header_desc,
       main_content: body.main_content,
-      faq_schema: typeof body.faq_schema === 'string' ? JSON.parse(body.faq_schema) : body.faq_schema,
+      faq_schema:
+        typeof body.faq_schema === 'string'
+          ? JSON.parse(body.faq_schema)
+          : body.faq_schema,
     };
 
     await updateSeoData(seoData);
@@ -47,7 +50,7 @@ export async function POST(req: Request) {
     console.error('Error updating SEO data:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

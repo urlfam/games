@@ -63,8 +63,7 @@ Le dernier paragraphe de la description devrait contenir :
   Ready to start playing? Jump into Truck Simulator Real now! If you're hooked
   on Driving games, you'll love <a href="/game/driveoff">DriveOff</a> and
   <a href="/game/escape-road-2">Escape Road 2</a>. Want more? Explore our
-  <a href="/c/driving">Driving games collection</a> for endless
-  entertainment!
+  <a href="/c/driving">Driving games collection</a> for endless entertainment!
 </p>
 ```
 

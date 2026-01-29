@@ -96,7 +96,7 @@ export default function SeoEditorClient({
 
         <form id="seo-form" onSubmit={handleSubmit} className="space-y-8">
           <input type="hidden" name="faq_schema" value={JSON.stringify(faqs)} />
-          
+
           <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl">
             <h2 className="text-xl font-bold mb-4">Header Description</h2>
             <p className="text-sm text-gray-400 mb-2">

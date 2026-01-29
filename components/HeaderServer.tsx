@@ -29,7 +29,11 @@ export default async function Header() {
   ];
 
   return (
-    <Suspense fallback={<div className="h-16 w-full bg-[#1a1b26] border-b border-white/10" />}>
+    <Suspense
+      fallback={
+        <div className="h-16 w-full bg-[#1a1b26] border-b border-white/10" />
+      }
+    >
       <HeaderClient categories={allCategories} />
     </Suspense>
   );

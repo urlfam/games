@@ -447,9 +447,9 @@ export default async function HomePage({
                     }),
                   }}
                 />
-                
+
                 <div className="mt-8 mb-12">
-                   <FAQAccordion items={seoData.faq_schema} />
+                  <FAQAccordion items={seoData.faq_schema} />
                 </div>
               </>
             )}

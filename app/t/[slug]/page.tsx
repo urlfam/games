@@ -5,14 +5,19 @@ import Pagination from '@/components/Pagination'; // Import Pagination
 import FAQAccordion from '@/components/FAQAccordion'; // Import FAQAccordion
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games'; // Import minimizeGame
+import {
+  getGamesByTag,
+  getAllTags,
+  getTrendingGames,
+  minimizeGame,
+} from '@/lib/games'; // Import minimizeGame
 import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo'; // Import getSeoData
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
-// ISR: Regenerate this page every 60 seconds
-export const revalidate = 60;
+// Force dynamic rendering because we use searchParams for pagination
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
@@ -89,7 +94,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     const itemsPerPage = 60;
 
     const allGames = await getGamesByTag(tagSlug);
-    
+
     // Get SEO Data
     const seoData = await getSeoData(tagSlug, 'Tag');
 

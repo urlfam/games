@@ -25,7 +25,10 @@ async function ensureSeoFile() {
       const initialData: SeoStore = { Category: {}, Tag: {} };
       await fs.writeFile(SEO_DB_PATH, JSON.stringify(initialData, null, 2));
     } catch (ioError) {
-      console.warn('Could not create SEO file (this is expected in read-only environments):', ioError);
+      console.warn(
+        'Could not create SEO file (this is expected in read-only environments):',
+        ioError,
+      );
     }
   }
 }
