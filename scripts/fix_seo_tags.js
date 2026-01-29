@@ -1,12 +1,25 @@
 const fs = require('fs');
 const path = require('path');
 
-const SEO_PATH = path.join(__dirname, '../data/seo.json');
+// Try multiple paths
+const possiblePaths = [
+  path.join(__dirname, '../data/seo.json'), // Local dev structure (scripts/../data)
+  path.join(__dirname, 'data/seo.json'),    // Inside container (if script in root: /app/data)
+  '/app/data/seo.json'                      // Absolute container path
+];
 
-console.log('Checking SEO file at:', SEO_PATH);
+let SEO_PATH = '';
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    SEO_PATH = p;
+    break;
+  }
+}
 
-if (!fs.existsSync(SEO_PATH)) {
-  console.error('File seo.json not found!');
+console.log('Using SEO file at:', SEO_PATH);
+
+if (!SEO_PATH) {
+  console.error('File seo.json not found in any known location!');
   process.exit(1);
 }
 
