@@ -62,6 +62,7 @@ jobs:
               -e NODE_ENV=production \
               -e NEXT_PUBLIC_SUPABASE_URL="https://vpwvcgqbepomocrnfurz.supabase.co" \
               -e NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwd3ZjZ3FiZXBvbW9jcm5mdXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NzczMTEsImV4cCI6MjA3ODI1MzMxMX0.nHHWj75CekP0HnQmEBLQGAqFPQE6RWRAifuL2rgQhVE" \
+              -e N8N_SECRET_TOKEN="changeMe_a1b2c3d4e5f6_make_this_secret_and_long" \
               -v /root/puzzio/data:/app/data \
               -v /root/puzzio/public/previews:/app/public/previews \
               -v /root/puzzio/public/uploads:/app/public/uploads \
