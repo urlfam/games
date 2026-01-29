@@ -169,46 +169,60 @@ export async function updateGameFull(formData: FormData) {
 }
 
 export async function saveSeoContent(formData: FormData) {
-  await checkAuth();
-
-  const slug = formData.get('slug') as string;
-  const type = formData.get('type') as 'Category' | 'Tag';
-  const header_desc = formData.get('header_desc') as string;
-  const main_content = formData.get('main_content') as string;
-  const faqJson = formData.get('faq_schema') as string;
-
-  if (!slug || !type) {
-    throw new Error('Missing slug or type');
-  }
-
-  let faq_schema = [];
   try {
-    faq_schema = faqJson ? JSON.parse(faqJson) : [];
-  } catch (e) {
-    console.error('Invalid FAQ JSON', e);
+    await checkAuth();
+
+    const slug = formData.get('slug') as string;
+    const type = formData.get('type') as 'Category' | 'Tag';
+    const header_desc = formData.get('header_desc') as string;
+    const main_content = formData.get('main_content') as string;
+    const faqJson = formData.get('faq_schema') as string;
+
+    if (!slug || !type) {
+      throw new Error('Missing slug or type');
+    }
+
+    let faq_schema = [];
+    try {
+      faq_schema = faqJson ? JSON.parse(faqJson) : [];
+    } catch (e) {
+      console.error('Invalid FAQ JSON', e);
+      // We can continue with empty array or throw
+    }
+
+    const seoData: SeoData = {
+      slug,
+      type,
+      header_desc,
+      main_content,
+      faq_schema,
+    };
+
+    console.log('Saving SEO Data:', JSON.stringify(seoData, null, 2));
+    await updateSeoData(seoData);
+
+    // Revalidate relevant paths
+    try {
+      revalidatePath('/admin/seo');
+      if (type === 'Category') {
+        revalidatePath(`/c/${slug}`);
+        revalidatePath(`/`); // Home page handles categories too
+      } else {
+        revalidatePath(`/tag/${slug}`);
+        revalidatePath(`/t/${slug}`);
+      }
+    } catch (revalError) {
+      console.error('Revalidation failed:', revalError);
+      // We don't fail the save if revalidation fails, but we might want to know
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in saveSeoContent:', error);
+    return { 
+      error: error instanceof Error ? error.message : 'Unknown server error' 
+    };
   }
-
-  const seoData: SeoData = {
-    slug,
-    type,
-    header_desc,
-    main_content,
-    faq_schema,
-  };
-
-  await updateSeoData(seoData);
-
-  // Revalidate relevant paths
-  revalidatePath('/admin/seo');
-  if (type === 'Category') {
-    revalidatePath(`/c/${slug}`);
-    revalidatePath(`/`); // Home page handles categories too
-  } else {
-    revalidatePath(`/tag/${slug}`);
-    revalidatePath(`/t/${slug}`);
-  }
-
-  return { success: true };
 }
 
 export async function saveGameAction(game: Game) {
