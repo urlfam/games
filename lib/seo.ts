@@ -21,8 +21,12 @@ async function ensureSeoFile() {
   try {
     await fs.access(SEO_DB_PATH);
   } catch {
-    const initialData: SeoStore = { Category: {}, Tag: {} };
-    await fs.writeFile(SEO_DB_PATH, JSON.stringify(initialData, null, 2));
+    try {
+      const initialData: SeoStore = { Category: {}, Tag: {} };
+      await fs.writeFile(SEO_DB_PATH, JSON.stringify(initialData, null, 2));
+    } catch (ioError) {
+      console.warn('Could not create SEO file (this is expected in read-only environments):', ioError);
+    }
   }
 }
 
