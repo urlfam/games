@@ -3,8 +3,14 @@ import HeaderClient from '@/components/HeaderClient';
 import { Suspense } from 'react';
 
 export default async function Header() {
-  // Get real categories from games
-  const realCategories = await getCategories();
+  let realCategories: Array<{ name: string; count: number; slug: string }> = [];
+
+  try {
+    // Get real categories from games
+    realCategories = await getCategories();
+  } catch (error) {
+    console.warn('Header failed to load categories', error);
+  }
 
   // Define special categories (always shown at top)
   const specialCategories = [
