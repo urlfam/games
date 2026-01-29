@@ -1,11 +1,35 @@
 import { MetadataRoute } from 'next';
 import { getAllGames, getCategories, getAllTags } from '@/lib/games';
 
+// Force dynamic generation - sitemap needs fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://puzzio.io';
-  const games = await getAllGames();
-  const categories = await getCategories();
-  const tags = await getAllTags();
+  
+  // Fetch data with error handling
+  let games: Awaited<ReturnType<typeof getAllGames>> = [];
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  let tags: Awaited<ReturnType<typeof getAllTags>> = [];
+  
+  try {
+    games = await getAllGames();
+  } catch (e) {
+    console.error('Sitemap: Failed to fetch games', e);
+  }
+  
+  try {
+    categories = await getCategories();
+  } catch (e) {
+    console.error('Sitemap: Failed to fetch categories', e);
+  }
+  
+  try {
+    tags = await getAllTags();
+  } catch (e) {
+    console.error('Sitemap: Failed to fetch tags', e);
+  }
 
   const staticPages = [
     {
