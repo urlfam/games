@@ -14,6 +14,13 @@ import ExpandableText from '@/components/ExpandableText';
 // ISR: Regenerate this page every 60 seconds
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    slug: tag.slug,
+  }));
+}
+
 interface TagPageProps {
   params: {
     slug: string;
