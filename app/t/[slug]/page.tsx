@@ -15,17 +15,23 @@ import ExpandableText from '@/components/ExpandableText'; // Import ExpandableTe
 export const revalidate = 60;
 export const dynamicParams = true;
 
+export async function generateStaticParams() {
+  try {
+    const tags = await getAllTags();
+    return tags.map((tag) => ({
+      slug: tag.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for tags:', error);
+    return [];
+  }
+}
+
 interface TagPageProps {
   params: {
     slug: string;
   };
   searchParams?: { [key: string]: string | undefined };
-}
-
-export async function generateStaticParams() {
-  // Return empty array to rely on dynamic generation (ISR)
-  // This avoids build-time crashes if games.json is unavailable
-  return [];
 }
 
 export async function generateMetadata({
