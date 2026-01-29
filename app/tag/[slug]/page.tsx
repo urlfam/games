@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import GameCard from '@/components/GameCard';
 import Pagination from '@/components/Pagination'; // Import Pagination
+import FAQAccordion from '@/components/FAQAccordion'; // Import FAQAccordion
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getGamesByTag, getAllTags, getTrendingGames, minimizeGame } from '@/lib/games'; // Import minimizeGame
@@ -223,25 +224,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             />
 
             <div className="mt-8 mb-12">
-              <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">
-                Frequently Asked Questions
-              </h2>
-              <div className="space-y-6">
-                {seoData.faq_schema.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-slate-800/50 rounded-lg p-6 border border-slate-700"
-                  >
-                    <h3 className="text-xl font-semibold text-white mb-3">
-                      {item.question}
-                    </h3>
-                    <div
-                      className="text-gray-300 prose prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: item.answer }}
-                    />
-                  </div>
-                ))}
-              </div>
+              <FAQAccordion items={seoData.faq_schema} />
             </div>
           </>
         )}

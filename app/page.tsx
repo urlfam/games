@@ -22,6 +22,7 @@ import MobileScrollSection from '@/components/MobileScrollSection'; // Import Mo
 import MobileHeroCard from '@/components/MobileHeroCard';
 import MobileGridItem from '@/components/MobileGridItem';
 import HomepageSeoArticle from '@/components/HomepageSeoArticle'; // Import SEO Article
+import FAQAccordion from '@/components/FAQAccordion'; // Import FAQAccordion
 import { Suspense } from 'react';
 
 // ISR: Regenerate this page every 60 seconds in the background
@@ -448,25 +449,7 @@ export default async function HomePage({
                 />
                 
                 <div className="mt-8 mb-12">
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    Frequently Asked Questions
-                  </h2>
-                  <div className="space-y-6">
-                    {seoData.faq_schema.map((item, index) => (
-                      <div
-                        key={index}
-                        className="bg-slate-800/50 rounded-lg p-6 border border-slate-700"
-                      >
-                        <h3 className="text-xl font-semibold text-white mb-3">
-                          {item.question}
-                        </h3>
-                        <div
-                          className="text-gray-300 prose prose-invert max-w-none"
-                          dangerouslySetInnerHTML={{ __html: item.answer }}
-                        />
-                      </div>
-                    ))}
-                  </div>
+                   <FAQAccordion items={seoData.faq_schema} />
                 </div>
               </>
             )}
