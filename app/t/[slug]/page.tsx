@@ -15,6 +15,8 @@ import { stripHtml } from '@/lib/utils';
 import { Metadata } from 'next';
 import { getSeoData } from '@/lib/seo'; // Import getSeoData
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
+import MobileHeroCard from '@/components/MobileHeroCard';
+import MobileGridItem from '@/components/MobileGridItem';
 
 // Force dynamic rendering because we use searchParams for pagination
 export const dynamic = 'force-dynamic';
@@ -167,7 +169,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
     };
 
     return (
-      <div className="min-h-screen bg-slate-900">
+      <>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -183,10 +185,11 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
 
-        <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
-          <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
-            {tag.name} Games
-          </h1>
+        <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
+          <section>
+            <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
+              {tag.name} Games
+            </h1>
 
           {/* SEO Header Description */}
           {seoData?.header_desc && (
@@ -204,11 +207,25 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
             ))}
           </div>
 
-          {/* Mobile View */}
-          <div className="md:hidden grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {minimizedPaginatedGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+          {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
+          <div className="md:hidden space-y-6">
+            {/* First 6 games as Hero Units */}
+            <div className="space-y-6">
+              {minimizedPaginatedGames.slice(0, 6).map((game, index) => (
+                <MobileHeroCard
+                  key={game.id}
+                  game={game}
+                  priority={index === 0}
+                />
+              ))}
+            </div>
+
+            {/* Remaining games as 1x1 Grid */}
+            <div className="grid grid-cols-3 gap-3">
+              {minimizedPaginatedGames.slice(6).map((game) => (
+                <MobileGridItem key={game.id} game={game} />
+              ))}
+            </div>
           </div>
 
           {/* Pagination Component */}
@@ -256,8 +273,9 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
               </div>
             </>
           )}
+          </section>
         </div>
-      </div>
+      </>
     );
   } catch (error) {
     console.error(`Error rendering page for tag ${params.slug}:`, error);
