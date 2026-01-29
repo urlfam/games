@@ -29,7 +29,7 @@ export default function GameCard({
     setIsHovered(true);
     // Prefetch page on hover for faster navigation
     router.prefetch(`/game/${game.slug}`);
-    
+
     if (game.video_url) {
       setVideoSrc(`/previews/${game.slug}.mp4`);
     }
@@ -41,8 +41,6 @@ export default function GameCard({
     setVideoSrc(undefined); // Unload video
   };
 
-  const imageUrl = game.image_url || '';
-
   return (
     <Link
       href={`/game/${game.slug}`}
@@ -52,38 +50,32 @@ export default function GameCard({
     >
       <div className="relative aspect-video w-full overflow-hidden bg-slate-900 h-full">
         {/* Loading Spinner (Visible until image loads) */}
-        {!isImageLoaded && imageUrl && (
+        {!isImageLoaded && (
           <div className="absolute inset-0 flex items-center justify-center z-0">
             <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
           </div>
         )}
 
         {/* Static Image (Always present, z-index 10 to stay on top) */}
-        {imageUrl ? (
-          <Image
-            loader={
-              imageUrl.includes('res.cloudinary.com')
-                ? cloudinaryLoader
-                : undefined
-            }
-            src={imageUrl}
-            alt={game.image_alt || game.title || 'Game Image'}
-            fill
-            className={`object-cover transition-opacity duration-300 z-10 ${
-              isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'
-            }`}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            loading={priority ? 'eager' : 'lazy'}
-            priority={priority}
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
-            onLoad={() => setIsImageLoaded(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-600 bg-slate-800">
-             <span>No Image</span>
-          </div>
-        )}
+        <Image
+          loader={
+            game.image_url.includes('res.cloudinary.com')
+              ? cloudinaryLoader
+              : undefined
+          }
+          src={game.image_url}
+          alt={game.image_alt || game.title}
+          fill
+          className={`object-cover transition-opacity duration-300 z-10 ${
+            isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          loading={priority ? 'eager' : 'lazy'}
+          priority={priority}
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+          onLoad={() => setIsImageLoaded(true)}
+        />
 
         {/* Video Preview (Only rendered when hovered and src is set) */}
         {game.video_url && videoSrc && (
