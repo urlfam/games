@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getTrendingGames, minimizeGame } from '@/lib/games';
 import GameCard from '@/components/GameCard';
 import MobileGridItem from '@/components/MobileGridItem';
-import { GoHomeButton, ActionButtons } from '@/components/NotFoundActions';
+import { GoHomeButton, ActionButtons, NotFoundMarker } from '@/components/NotFoundActions';
 
 export default async function NotFound() {
   // Get popular games for the 404 page
@@ -16,6 +16,8 @@ export default async function NotFound() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center px-4 py-8">
+      {/* Mark body as 404 page for header navigation */}
+      <NotFoundMarker />
       {/* GAME OVER Title with glitch effect */}
       <div className="text-center mb-6 mt-8">
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white relative select-none">
