@@ -56,7 +56,7 @@ export default function AboutUsPage() {
             <div className="grid md:grid-cols-2 gap-6 text-gray-300">
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  � Action Games
+                  Action Games
                 </h3>
                 <p>
                   Fast stuff. Shooters, platformers, things where you die a lot until you figure it out. Good for getting your blood pumping.
@@ -64,7 +64,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  🧩 Puzzle Games
+                  Puzzle Games
                 </h3>
                 <p>
                   Brain teasers for when you want to feel smart. Match-3, logic puzzles, color challenges. Some are easy, some will make you rage-quit.
@@ -72,7 +72,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  ☕ Casual Games
+                  Casual Games
                 </h3>
                 <p>
                   Quick games for lunch breaks. Nothing complicated. Just click stuff and relax.
@@ -80,7 +80,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  🚗 Driving Games
+                  Driving Games
                 </h3>
                 <p>
                   Racing, parking, crashing into things. No driver&apos;s license needed. Beat lap times or just mess around—both work.
@@ -88,7 +88,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  � .io Games
+                  .io Games
                 </h3>
                 <p>
                   Real multiplayer. Fight other actual humans. Eat things, grow bigger, don&apos;t die. You know the drill.
@@ -96,7 +96,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  ⚽ Sports Games
+                  Sports Games
                 </h3>
                 <p>
                   Soccer, basketball, tennis. All the sports without the sweating. Way easier than actual exercise.
@@ -104,7 +104,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  🏗️ Simulation & Strategy
+                  Simulation & Strategy
                 </h3>
                 <p>
                   Build stuff, manage stuff, plan stuff. For when you want to zone out and create things.
@@ -112,7 +112,7 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white">
-                  ✨ And More
+                  And More
                 </h3>
                 <p>
                   Clicker games (weirdly addictive), adventure games, beauty games, shooting games. We&apos;ve got categories for days.
@@ -128,37 +128,37 @@ export default function AboutUsPage() {
             </h2>
             <div className="grid md:grid-cols-2 gap-4 text-gray-300">
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">💯</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">100% Free</strong> – No subscriptions. No &quot;free trial then we charge you&quot; garbage. Actually free to play.
                 </div>
               </div>
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">⚡</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">Instant Play</strong> – Click a game, it loads, you&apos;re playing. That&apos;s it.
                 </div>
               </div>
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">🚫</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">No Downloads</strong> – Everything runs in your browser. Chrome, Safari, Firefox, whatever you&apos;ve got.
                 </div>
               </div>
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">📱</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">Cross-Platform</strong> – Desktop, phone, tablet. Doesn&apos;t matter. Games work on all of them.
                 </div>
               </div>
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">🔓</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">No Forced Registration</strong> – Play immediately. Only sign up if you want to save scores or favorite games.
                 </div>
               </div>
               <div className="flex items-start">
-                <span className="text-purple-400 mr-3 text-xl">🔄</span>
+                <span className="text-purple-400 mr-3 text-xl">•</span>
                 <div>
                   <strong className="text-white">Regular Updates</strong> – New games added weekly because variety matters.
                 </div>
