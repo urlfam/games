@@ -5,7 +5,7 @@ set host "147.93.7.103"
 set user "root"
 set password "Aissayoub21"
 
-spawn ssh -o StrictHostKeyChecking=no $user@$host "docker logs --tail 300 puzzio-web-container"
+spawn ssh -o StrictHostKeyChecking=no $user@$host "head -c 500 /root/puzzio/data/games.json"
 expect {
     "password:" { send "$password\r" }
 }
