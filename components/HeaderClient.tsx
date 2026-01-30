@@ -119,7 +119,8 @@ export default function Header({ categories }: HeaderProps) {
               <AlignLeft size={24} />
             </button>
 
-            <Link href="/" className="flex items-center">
+            {/* Use native <a> tag for logo to ensure it works on 404 pages */}
+            <a href="/" className="flex items-center">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
@@ -128,7 +129,7 @@ export default function Header({ categories }: HeaderProps) {
                 className="h-14 w-auto object-contain"
                 priority
               />
-            </Link>
+            </a>
             {/* Desktop menu - Hidden for now (Uncomment to reactivate) */}
             {/* <div className="hidden md:flex items-center gap-4">
               <Link href="/" className={playLinkClass}>
