@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getTrendingGames, minimizeGame } from '@/lib/games';
 import GameCard from '@/components/GameCard';
+import MobileGridItem from '@/components/MobileGridItem';
 import { GoHomeButton, ActionButtons } from '@/components/NotFoundActions';
 
 export default async function NotFound() {
@@ -54,9 +55,17 @@ export default async function NotFound() {
             ...or try some of our most popular games:
           </p>
           
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-2 md:gap-3 mb-8">
+          {/* Desktop View */}
+          <div className="hidden md:grid md:grid-cols-4 gap-3 mb-8">
             {popularGames.map((game) => (
               <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+
+          {/* Mobile View - 1x1 Grid */}
+          <div className="md:hidden grid grid-cols-3 gap-2 mb-8">
+            {popularGames.map((game) => (
+              <MobileGridItem key={game.id} game={game} />
             ))}
           </div>
         </div>

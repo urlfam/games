@@ -1,4 +1,4 @@
-import { getAllGames } from '@/lib/games';
+import { getAllGames, minimizeGame } from '@/lib/games';
 import FavoritesClient from './FavoritesClient';
 import { Metadata } from 'next';
 
@@ -11,13 +11,17 @@ export const metadata: Metadata = {
 
 export default async function FavoritesPage() {
   const games = await getAllGames();
+  // Minimize games for client component
+  const minimizedGames = games.map(minimizeGame);
 
   return (
-    <div className="min-h-screen bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">My Favorites</h1>
-        <FavoritesClient games={games} />
-      </div>
+    <div className="w-full max-w-[1800px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-2 sm:space-y-4">
+      <section>
+        <h1 className="text-3xl lg:text-4xl font-black text-white mb-6 capitalize px-1">
+          My Favorites
+        </h1>
+        <FavoritesClient games={games} minimizedGames={minimizedGames} />
+      </section>
     </div>
   );
 }

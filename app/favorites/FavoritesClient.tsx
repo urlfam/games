@@ -2,18 +2,20 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { stripHtml } from '@/lib/utils';
-import { Game } from '@/lib/games';
+import { Game, MinimalGame } from '@/lib/games';
 import { Heart } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Pagination from '@/components/Pagination';
+import GameCard from '@/components/GameCard';
+import MobileHeroCard from '@/components/MobileHeroCard';
+import MobileGridItem from '@/components/MobileGridItem';
 
 interface FavoritesClientProps {
   games: Game[];
+  minimizedGames: MinimalGame[];
 }
 
-function FavoritesContent({ games }: FavoritesClientProps) {
+function FavoritesContent({ games, minimizedGames }: FavoritesClientProps) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
   const searchParams = useSearchParams();
@@ -42,9 +44,10 @@ function FavoritesContent({ games }: FavoritesClientProps) {
     );
   }
 
-  const favoriteGames = games.filter((g) => favorites.includes(g.slug || ''));
+  // Filter minimized games by favorites
+  const favoriteMinimizedGames = minimizedGames.filter((g) => favorites.includes(g.slug || ''));
 
-  if (favoriteGames.length === 0) {
+  if (favoriteMinimizedGames.length === 0) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
         <div className="bg-slate-800 p-6 rounded-full mb-6">
@@ -66,48 +69,41 @@ function FavoritesContent({ games }: FavoritesClientProps) {
   }
 
   // Calculate slice
-  const totalGames = favoriteGames.length;
+  const totalGames = favoriteMinimizedGames.length;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedGames = favoriteGames.slice(startIndex, endIndex);
+  const paginatedGames = favoriteMinimizedGames.slice(startIndex, endIndex);
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-0 mb-8">
+      {/* Desktop View */}
+      <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
         {paginatedGames.map((game) => (
-          <div
-            key={game.id}
-            className="bg-slate-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition-all"
-          >
-            <div className="relative h-40 sm:h-60 overflow-hidden">
-              <Image
-                src={game.image_url}
-                alt={game.image_alt || game.title}
-                title={game.image_title || game.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                loading="lazy"
-              />
-            </div>
-            <div className="p-3 sm:p-4">
-              <span className="inline-block px-2 py-1 bg-purple-500/20 text-purple-300 text-xs font-medium rounded mb-2">
-                {game.category}
-              </span>
-              <h3 className="text-sm sm:text-lg font-bold text-white mb-2 line-clamp-1 sm:line-clamp-2">
-                {game.title}
-              </h3>
-              <p className="text-gray-400 text-sm mb-4 hidden sm:line-clamp-3">
-                {stripHtml(game.description)}
-              </p>
-              <Link href={`/game/${game.slug}`}>
-                <button className="w-full py-1.5 sm:py-2 bg-purple-500 text-white text-sm font-medium rounded-lg hover:bg-purple-600 transition-colors">
-                  Play
-                </button>
-              </Link>
-            </div>
-          </div>
+          <GameCard key={game.id} game={game} />
         ))}
+      </div>
+
+      {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
+      <div className="md:hidden space-y-6">
+        {/* First 6 games as Hero Units */}
+        <div className="space-y-6">
+          {paginatedGames.slice(0, 6).map((game, index) => (
+            <MobileHeroCard
+              key={game.id}
+              game={game}
+              priority={index === 0}
+            />
+          ))}
+        </div>
+
+        {/* Remaining games as 1x1 Grid */}
+        {paginatedGames.length > 6 && (
+          <div className="grid grid-cols-3 gap-3">
+            {paginatedGames.slice(6).map((game) => (
+              <MobileGridItem key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </div>
 
       <Pagination
@@ -119,16 +115,16 @@ function FavoritesContent({ games }: FavoritesClientProps) {
   );
 }
 
-export default function FavoritesClient({ games }: FavoritesClientProps) {
+export default function FavoritesClient({ games, minimizedGames }: FavoritesClientProps) {
   return (
     <Suspense
       fallback={
         <div className="min-h-[50vh] flex items-center justify-center">
-          Loading...
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
         </div>
       }
     >
-      <FavoritesContent games={games} />
+      <FavoritesContent games={games} minimizedGames={minimizedGames} />
     </Suspense>
   );
 }
