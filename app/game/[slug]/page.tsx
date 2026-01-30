@@ -14,7 +14,7 @@ import { Calendar, RefreshCw, Tag, Star } from 'lucide-react';
 
 // ISR: Regenerate game pages every 60 seconds
 // Keeps pages fast while showing updated content
-export const revalidate = 60;
+export const revalidate = 3600;
 
 // Enable SSG
 export async function generateStaticParams() {

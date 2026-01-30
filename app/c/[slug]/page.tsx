@@ -3,7 +3,7 @@ import { getCategories } from '@/lib/games';
 import { Metadata } from 'next';
 
 // ISR: Regenerate this page every 60 seconds
-export const revalidate = 60;
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

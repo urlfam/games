@@ -25,9 +25,9 @@ import HomepageSeoArticle from '@/components/HomepageSeoArticle'; // Import SEO 
 import FAQAccordion from '@/components/FAQAccordion'; // Import FAQAccordion
 import { Suspense } from 'react';
 
-// ISR: Regenerate this page every 60 seconds in the background
-// This keeps the site blazing fast while showing fresh content
-export const revalidate = 60;
+// ISR: Regenerate this page every hour in the background
+// This keeps the site blazing fast while limiting server load as Cloudflare handles caching
+export const revalidate = 3600;
 
 // This is a Server Component
 export default async function HomePage({

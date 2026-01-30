@@ -9,7 +9,7 @@ import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText';
 import { stripHtml } from '@/lib/utils';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'New Games - Play the Latest Free Online Games on Puzzio',

@@ -17,7 +17,7 @@ import { getSeoData } from '@/lib/seo'; // Import getSeoData
 import ExpandableText from '@/components/ExpandableText'; // Import ExpandableText
 
 // ISR: Regenerate this page every 60 seconds
-export const revalidate = 60;
+export const revalidate = 3600;
 
 interface TagPageProps {
   params: {
