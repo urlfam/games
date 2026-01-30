@@ -69,16 +69,6 @@ export default function Header() {
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
 
-  // Handle home navigation - force full reload on 404 pages
-  const handleHomeClick = (e: React.MouseEvent) => {
-    // Check if we're on a 404 page by looking for data attribute
-    if (typeof document !== 'undefined' && document.body.dataset.notFound === 'true') {
-      e.preventDefault();
-      window.location.href = '/';
-    }
-    // Otherwise, let Link handle it normally
-  };
-
   // Determine header style - white for news and static pages, dark for play
   const isStaticPage = [
     '/contact',
@@ -143,7 +133,8 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center" onClick={handleHomeClick}>
+            {/* Use native <a> tag for logo to ensure it works on 404 pages */}
+            <a href="/" className="flex items-center">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
@@ -152,12 +143,12 @@ export default function Header() {
                 className="h-14 w-auto object-contain"
                 priority
               />
-            </Link>
+            </a>
             {/* Desktop menu */}
             <div className="hidden md:flex gap-6">
-              <Link href="/" className={playLinkClass} onClick={handleHomeClick}>
+              <a href="/" className={playLinkClass}>
                 PLAY
-              </Link>
+              </a>
             </div>
           </div>
 
