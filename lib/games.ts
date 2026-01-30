@@ -95,8 +95,6 @@ export async function getAllGames(): Promise<Game[]> {
     return cachedGames;
   }
 
-  console.log(`[DEBUG] Attempting to read games from: ${GAMES_DB_PATH}`);
-
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     const parsed = JSON.parse(data);
