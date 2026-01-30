@@ -45,7 +45,9 @@ function FavoritesContent({ games, minimizedGames }: FavoritesClientProps) {
   }
 
   // Filter minimized games by favorites
-  const favoriteMinimizedGames = minimizedGames.filter((g) => favorites.includes(g.slug || ''));
+  const favoriteMinimizedGames = minimizedGames.filter((g) =>
+    favorites.includes(g.slug || ''),
+  );
 
   if (favoriteMinimizedGames.length === 0) {
     return (
@@ -88,11 +90,7 @@ function FavoritesContent({ games, minimizedGames }: FavoritesClientProps) {
         {/* First 6 games as Hero Units */}
         <div className="space-y-6">
           {paginatedGames.slice(0, 6).map((game, index) => (
-            <MobileHeroCard
-              key={game.id}
-              game={game}
-              priority={index === 0}
-            />
+            <MobileHeroCard key={game.id} game={game} priority={index === 0} />
           ))}
         </div>
 
@@ -115,7 +113,10 @@ function FavoritesContent({ games, minimizedGames }: FavoritesClientProps) {
   );
 }
 
-export default function FavoritesClient({ games, minimizedGames }: FavoritesClientProps) {
+export default function FavoritesClient({
+  games,
+  minimizedGames,
+}: FavoritesClientProps) {
   return (
     <Suspense
       fallback={

@@ -20,14 +20,22 @@ export default async function NotFound() {
       <div className="text-center mb-6 mt-8">
         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white relative select-none">
           <span className="relative inline-block">
-            <span className="absolute -left-1 top-0 text-cyan-400 opacity-70 blur-[1px]">GAME</span>
-            <span className="absolute left-1 top-0 text-pink-500 opacity-70 blur-[1px]">GAME</span>
+            <span className="absolute -left-1 top-0 text-cyan-400 opacity-70 blur-[1px]">
+              GAME
+            </span>
+            <span className="absolute left-1 top-0 text-pink-500 opacity-70 blur-[1px]">
+              GAME
+            </span>
             <span className="relative text-white">GAME</span>
           </span>
           <br />
           <span className="relative inline-block">
-            <span className="absolute -left-1 top-0 text-cyan-400 opacity-70 blur-[1px]">OVER</span>
-            <span className="absolute left-1 top-0 text-pink-500 opacity-70 blur-[1px]">OVER</span>
+            <span className="absolute -left-1 top-0 text-cyan-400 opacity-70 blur-[1px]">
+              OVER
+            </span>
+            <span className="absolute left-1 top-0 text-pink-500 opacity-70 blur-[1px]">
+              OVER
+            </span>
             <span className="relative text-white">OVER</span>
           </span>
         </h1>
@@ -54,7 +62,7 @@ export default async function NotFound() {
           <p className="text-center text-gray-300 text-lg mb-6">
             ...or try some of our most popular games:
           </p>
-          
+
           {/* Desktop View */}
           <div className="hidden md:grid md:grid-cols-4 gap-3 mb-8">
             {popularGames.map((game) => (

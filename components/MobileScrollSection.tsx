@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 import { ChevronRight } from 'lucide-react';
 
 interface MobileScrollSectionProps {
@@ -33,7 +34,7 @@ function MobileScrollItem({ game, useVerticalCards }: { game: Game | MinimalGame
                         </div>
                     )}
                     <Image
-                        loader={game.mobile_image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                        loader={isCloudinaryImage(game.mobile_image_url) ? cloudinaryLoader : undefined}
                         src={game.mobile_image_url || game.image_url} 
                         alt={game.title}
                         fill
@@ -54,7 +55,7 @@ function MobileScrollItem({ game, useVerticalCards }: { game: Game | MinimalGame
                             </div>
                         )}
                         <Image
-                            loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                            loader={isCloudinaryImage(game.mobile_1x1_url) ? cloudinaryLoader : undefined}
                             src={game.mobile_1x1_url || game.image_url} 
                             alt={game.title}
                             fill

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 
 interface TrendingSectionProps {
   games: (Game | MinimalGame)[];
@@ -68,7 +69,7 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
           {/* Image */}
           <Image
             loader={
-              game.image_url.includes('res.cloudinary.com')
+              isCloudinaryImage(game.image_url)
                 ? cloudinaryLoader
                 : undefined
             }

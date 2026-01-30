@@ -191,88 +191,88 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
               {tag.name} Games
             </h1>
 
-          {/* SEO Header Description */}
-          {seoData?.header_desc && (
-            <ExpandableText
-              content={seoData.header_desc}
-              className="text-gray-300 mb-6 px-1 text-lg w-full"
-              limit={300}
-            />
-          )}
+            {/* SEO Header Description */}
+            {seoData?.header_desc && (
+              <ExpandableText
+                content={seoData.header_desc}
+                className="text-gray-300 mb-6 px-1 text-lg w-full"
+                limit={300}
+              />
+            )}
 
-          {/* Desktop View */}
-          <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {minimizedPaginatedGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
-          </div>
-
-          {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
-          <div className="md:hidden space-y-6">
-            {/* First 6 games as Hero Units */}
-            <div className="space-y-6">
-              {minimizedPaginatedGames.slice(0, 6).map((game, index) => (
-                <MobileHeroCard
-                  key={game.id}
-                  game={game}
-                  priority={index === 0}
-                />
+            {/* Desktop View */}
+            <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {minimizedPaginatedGames.map((game) => (
+                <GameCard key={game.id} game={game} />
               ))}
             </div>
 
-            {/* Remaining games as 1x1 Grid */}
-            <div className="grid grid-cols-3 gap-3">
-              {minimizedPaginatedGames.slice(6).map((game) => (
-                <MobileGridItem key={game.id} game={game} />
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination Component */}
-          <Suspense fallback={null}>
-            <Pagination
-              totalItems={totalGames}
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-            />
-          </Suspense>
-
-          {/* SEO Main Content */}
-          {seoData?.main_content && (
-            <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-12">
-              <div
-                className="game-description"
-                dangerouslySetInnerHTML={{ __html: seoData.main_content }}
-              />
-            </div>
-          )}
-
-          {/* FAQ Section & Schema */}
-          {seoData?.faq_schema && seoData.faq_schema.length > 0 && (
-            <>
-              <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                  __html: JSON.stringify({
-                    '@context': 'https://schema.org',
-                    '@type': 'FAQPage',
-                    mainEntity: seoData.faq_schema.map((item) => ({
-                      '@type': 'Question',
-                      name: item.question,
-                      acceptedAnswer: {
-                        '@type': 'Answer',
-                        text: item.answer,
-                      },
-                    })),
-                  }),
-                }}
-              />
-
-              <div className="mt-8 mb-12">
-                <FAQAccordion items={seoData.faq_schema} />
+            {/* Mobile View (Custom Layout: 6 Hero + Rest 1x1) */}
+            <div className="md:hidden space-y-6">
+              {/* First 6 games as Hero Units */}
+              <div className="space-y-6">
+                {minimizedPaginatedGames.slice(0, 6).map((game, index) => (
+                  <MobileHeroCard
+                    key={game.id}
+                    game={game}
+                    priority={index === 0}
+                  />
+                ))}
               </div>
-            </>
-          )}
+
+              {/* Remaining games as 1x1 Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {minimizedPaginatedGames.slice(6).map((game) => (
+                  <MobileGridItem key={game.id} game={game} />
+                ))}
+              </div>
+            </div>
+
+            {/* Pagination Component */}
+            <Suspense fallback={null}>
+              <Pagination
+                totalItems={totalGames}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+              />
+            </Suspense>
+
+            {/* SEO Main Content */}
+            {seoData?.main_content && (
+              <div className="bg-slate-800 rounded-lg p-6 mb-6 mt-12">
+                <div
+                  className="game-description"
+                  dangerouslySetInnerHTML={{ __html: seoData.main_content }}
+                />
+              </div>
+            )}
+
+            {/* FAQ Section & Schema */}
+            {seoData?.faq_schema && seoData.faq_schema.length > 0 && (
+              <>
+                <script
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                      '@context': 'https://schema.org',
+                      '@type': 'FAQPage',
+                      mainEntity: seoData.faq_schema.map((item) => ({
+                        '@type': 'Question',
+                        name: item.question,
+                        acceptedAnswer: {
+                          '@type': 'Answer',
+                          text: item.answer,
+                        },
+                      })),
+                    }),
+                  }}
+                />
+
+                <div className="mt-8 mb-12">
+                  <FAQAccordion items={seoData.faq_schema} />
+                </div>
+              </>
+            )}
           </section>
         </div>
       </>

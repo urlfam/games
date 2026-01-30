@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 
 interface MobileHeroCardProps {
   game: Game | MinimalGame;
@@ -86,7 +87,7 @@ export default function MobileHeroCard({ game, priority = false }: MobileHeroCar
 
         {/* Static Image Layer - Visible when not playing or if no video */}
         <Image
-            loader={game.image_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+            loader={isCloudinaryImage(game.image_url) ? cloudinaryLoader : undefined}
             src={game.image_url}
             alt={game.title}
             fill
@@ -107,7 +108,7 @@ export default function MobileHeroCard({ game, priority = false }: MobileHeroCar
             <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white/20 shadow-md flex-shrink-0 relative bg-slate-800">
                 <Image
-                    loader={game.mobile_1x1_url?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+                    loader={isCloudinaryImage(game.mobile_1x1_url) ? cloudinaryLoader : undefined}
                     src={game.mobile_1x1_url || game.image_url} 
                     alt={`${game.title} Icon`}
                     fill

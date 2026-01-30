@@ -39,6 +39,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'cdn.puzzio.io',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
       },
       {

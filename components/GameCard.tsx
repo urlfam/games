@@ -3,10 +3,11 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import { Game, MinimalGame } from '@/lib/games';
 import { stripHtml } from '@/lib/utils';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 
 interface GameCardProps {
   game: Game | MinimalGame;
@@ -59,7 +60,7 @@ export default function GameCard({
         {/* Static Image (Always present, z-index 10 to stay on top) */}
         <Image
           loader={
-            game.image_url.includes('res.cloudinary.com')
+            isCloudinaryImage(game.image_url)
               ? cloudinaryLoader
               : undefined
           }

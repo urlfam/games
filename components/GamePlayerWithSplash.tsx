@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 
 interface GamePlayerWithSplashProps {
   gameTitle: string;
@@ -431,7 +432,7 @@ export default function GamePlayerWithSplash({
                 <div className="absolute inset-0 opacity-30 blur-2xl">
                   <Image
                     loader={
-                      gameImage.includes('res.cloudinary.com')
+                      isCloudinaryImage(gameImage)
                         ? cloudinaryLoader
                         : undefined
                     }
@@ -455,7 +456,7 @@ export default function GamePlayerWithSplash({
                   )}
                   <Image
                     loader={
-                      gameImage.includes('res.cloudinary.com')
+                      isCloudinaryImage(gameImage)
                         ? cloudinaryLoader
                         : undefined
                     }
@@ -591,7 +592,7 @@ export default function GamePlayerWithSplash({
               <div className="absolute inset-0 opacity-20">
                 <Image
                   loader={
-                    gameImage.includes('res.cloudinary.com')
+                    isCloudinaryImage(gameImage)
                       ? cloudinaryLoader
                       : undefined
                   }
@@ -616,7 +617,7 @@ export default function GamePlayerWithSplash({
                   )}
                   <Image
                     loader={
-                      gameImage.includes('res.cloudinary.com')
+                      isCloudinaryImage(gameImage)
                         ? cloudinaryLoader
                         : undefined
                     }
@@ -700,7 +701,7 @@ export default function GamePlayerWithSplash({
             <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 ring-2 ring-purple-500/50 bg-slate-800">
               <Image
                 loader={
-                  (gameMobile1x1 || gameImage).includes('res.cloudinary.com')
+                  isCloudinaryImage(gameMobile1x1 || gameImage)
                     ? cloudinaryLoader
                     : undefined
                 }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Game, MinimalGame } from '@/lib/games';
 import cloudinaryLoader from '@/lib/cloudinaryLoader';
+import { isCloudinaryImage } from '@/lib/imageUtils';
 
 interface MobileGridItemProps {
   game: Game | MinimalGame;
@@ -28,7 +29,7 @@ export default function MobileGridItem({ game, className = '', imgClassName = ''
              </div>
         )}
         <Image
-          loader={(game.mobile_1x1_url || game.image_url)?.includes('res.cloudinary.com') ? cloudinaryLoader : undefined}
+          loader={isCloudinaryImage(game.mobile_1x1_url || game.image_url) ? cloudinaryLoader : undefined}
           src={game.mobile_1x1_url || game.image_url}
           alt={game.title}
           fill

@@ -226,11 +226,7 @@ export default async function HomePage({
 
   // CollectionPage Schema for category pages
   let collectionPageSchema = null;
-  if (
-    categoryParam !== 'all' &&
-    categoryParam !== 'popular' &&
-    !searchQuery
-  ) {
+  if (categoryParam !== 'all' && categoryParam !== 'popular' && !searchQuery) {
     const categoryName = categoryParam
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -322,7 +318,9 @@ export default async function HomePage({
       {collectionPageSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(collectionPageSchema),
+          }}
         />
       )}
 
