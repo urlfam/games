@@ -1,20 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Home, Sparkles, TrendingUp, Shuffle } from 'lucide-react';
-
-// Component to mark body as 404 page
-export function NotFoundMarker() {
-  useEffect(() => {
-    document.body.dataset.notFound = 'true';
-    return () => {
-      delete document.body.dataset.notFound;
-    };
-  }, []);
-  return null;
-}
 
 export function GoHomeButton() {
   const handleGoHome = () => {
