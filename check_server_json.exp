@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+
+set timeout 60
+set host "147.93.7.103"
+set user "root"
+set password "Aissayoub21"
+
+spawn ssh -o StrictHostKeyChecking=no $user@$host "ls -l /root/puzzio/data/games.json && head -c 50 /root/puzzio/data/games.json"
+expect {
+    "password:" { send "$password\r" }
+}
+expect eof

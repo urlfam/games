@@ -95,9 +95,26 @@ export async function getAllGames(): Promise<Game[]> {
     return cachedGames;
   }
 
+  console.log(`[DEBUG] Attempting to read games from: ${GAMES_DB_PATH}`);
+
   try {
+    // Debug: Check if file exists
+    try {
+      await fs.access(GAMES_DB_PATH);
+      console.log(`[DEBUG] File exists at ${GAMES_DB_PATH}`);
+    } catch (e) {
+      console.error(`[DEBUG] File DOES NOT exist at ${GAMES_DB_PATH}`);
+    }
+
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
+    console.log(`[DEBUG] File read successfully. Length: ${data.length} chars`);
+    
+    if (data.length < 100) {
+       console.log(`[DEBUG] Content preview: ${data}`);
+    }
+    
     const parsed = JSON.parse(data);
+
     // Filter out nulls/undefineds which might cause crashes downstream
     cachedGames = Array.isArray(parsed) ? parsed.filter((g) => !!g) : [];
     lastCacheTime = Date.now();
