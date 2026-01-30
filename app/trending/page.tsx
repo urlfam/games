@@ -7,8 +7,8 @@ import { getSeoData } from '@/lib/seo';
 import ExpandableText from '@/components/ExpandableText';
 import { stripHtml } from '@/lib/utils';
 
-// ISR: Regenerate this page every 60 seconds
-export const revalidate = 3600;
+// ISR: Switch to 0 temporarily to force dynamic rendering and debug cache issues
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Trending Games - Most Popular Free Online Games on Puzzio',
