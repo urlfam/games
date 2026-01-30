@@ -99,26 +99,9 @@ export async function getAllGames(): Promise<Game[]> {
 
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
-    
     const parsed = JSON.parse(data);
-    
-    // Filter out nulls/undefineds and ensure slugs exist
-    cachedGames = Array.isArray(parsed) 
-      ? parsed
-          .filter((g) => !!g)
-          .map((g) => {
-            // Ensure slug exists
-            if (!g.slug && g.title) {
-              g.slug = g.title
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-');
-            }
-            return g;
-          })
-      : [];
-    
+    // Filter out nulls/undefineds which might cause crashes downstream
+    cachedGames = Array.isArray(parsed) ? parsed.filter((g) => !!g) : [];
     lastCacheTime = Date.now();
     return cachedGames!;
   } catch (error) {
