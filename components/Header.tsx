@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, Search } from 'lucide-react';
@@ -64,33 +64,10 @@ const categories = [
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [is404Page, setIs404Page] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category')?.toLowerCase() || 'all';
-
-  // Detect if we're on a 404 page
-  useEffect(() => {
-    // Check if the page title contains "404" or "Not Found"
-    const checkFor404 = () => {
-      const title = document.title.toLowerCase();
-      const hasGameOverText = document.body.textContent?.includes('GAME OVER');
-      setIs404Page(title.includes('404') || title.includes('not found') || !!hasGameOverText);
-    };
-    checkFor404();
-    // Re-check after a short delay in case title changes
-    const timeout = setTimeout(checkFor404, 100);
-    return () => clearTimeout(timeout);
-  }, [pathname]);
-
-  // Handle logo click - force reload on 404 pages
-  const handleLogoClick = (e: React.MouseEvent) => {
-    if (is404Page) {
-      e.preventDefault();
-      window.location.href = '/';
-    }
-  };
 
   // Determine header style - white for news and static pages, dark for play
   const isStaticPage = [
@@ -156,7 +133,8 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center" onClick={handleLogoClick}>
+            {/* Use native <a> tag for logo to ensure it works on 404 pages */}
+            <a href="/" className="flex items-center">
               <Image
                 src="/puzzio.webp"
                 alt="Puzzio"
@@ -165,12 +143,12 @@ export default function Header() {
                 className="h-14 w-auto object-contain"
                 priority
               />
-            </Link>
+            </a>
             {/* Desktop menu */}
             <div className="hidden md:flex gap-6">
-              <Link href="/" className={playLinkClass} onClick={handleLogoClick}>
+              <a href="/" className={playLinkClass}>
                 PLAY
-              </Link>
+              </a>
             </div>
           </div>
 
