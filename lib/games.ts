@@ -2,6 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
+import { toCdnUrl } from './imageUtils';
+
 const GAMES_DB_PATH = path.join(process.cwd(), 'data', 'games.json');
 
 // Ensure data directory exists
@@ -98,8 +100,15 @@ export async function getAllGames(): Promise<Game[]> {
   try {
     const data = await fs.readFile(GAMES_DB_PATH, 'utf-8');
     const parsed = JSON.parse(data);
-    // Filter out nulls/undefineds which might cause crashes downstream
-    cachedGames = Array.isArray(parsed) ? parsed.filter((g) => !!g) : [];
+    // Filter out nulls/undefineds and convert Cloudinary URLs to CDN
+    cachedGames = Array.isArray(parsed) 
+      ? parsed.filter((g) => !!g).map((g) => ({
+          ...g,
+          image_url: toCdnUrl(g.image_url),
+          mobile_image_url: toCdnUrl(g.mobile_image_url),
+          mobile_1x1_url: toCdnUrl(g.mobile_1x1_url),
+        }))
+      : [];
     lastCacheTime = Date.now();
     return cachedGames!;
   } catch (error) {
