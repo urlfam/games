@@ -152,10 +152,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://cdn.puzzio.io" />
         <link rel="dns-prefetch" href="https://cdn.puzzio.io" />
 
-        {/* Keep Cloudinary origin as fallback/source if needed */}
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-
         {/* Preconnect to CrazyGames for faster game loading */}
         <link rel="preconnect" href="https://imgs.crazygames.com" />
         <link rel="dns-prefetch" href="https://imgs.crazygames.com" />
