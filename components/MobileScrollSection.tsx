@@ -27,18 +27,14 @@ function MobileScrollItem({ game, useVerticalCards }: { game: Game | MinimalGame
             {useVerticalCards ? (
                 // Vertical Card (New Games Style)
                 <>
-                    {/* Spinner */}
-                    {!isLoaded && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-0">
-                            <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
-                        </div>
-                    )}
                     <Image
                         loader={isCloudinaryImage(game.mobile_image_url) ? cloudinaryLoader : undefined}
                         src={game.mobile_image_url || game.image_url} 
                         alt={game.title}
                         fill
                         sizes="160px"
+                        placeholder="blur"
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                         onLoad={() => setIsLoaded(true)}
                         className={`object-cover transition-transform duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
                     />
@@ -48,18 +44,14 @@ function MobileScrollItem({ game, useVerticalCards }: { game: Game | MinimalGame
                 // Square 1x1 Card (Other Sections Style)
                 <>
                     <div className="aspect-square relative rounded-xl overflow-hidden w-full bg-slate-800 shadow-md">
-                        {/* Spinner */}
-                        {!isLoaded && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-slate-800 z-0">
-                                <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
-                            </div>
-                        )}
                         <Image
                             loader={isCloudinaryImage(game.mobile_1x1_url) ? cloudinaryLoader : undefined}
                             src={game.mobile_1x1_url || game.image_url} 
                             alt={game.title}
                             fill
                             sizes="120px"
+                            placeholder="blur"
+                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                             onLoad={() => setIsLoaded(true)}
                             className={`object-cover transition-transform duration-300 group-hover:scale-110 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
                         />

@@ -22,12 +22,6 @@ export default function MobileGridItem({ game, className = '', imgClassName = ''
       className={`flex flex-col gap-2 group ${className}`}
     >
       <div className="aspect-square relative rounded-xl overflow-hidden bg-slate-800 shadow-md">
-        {/* Spinner */}
-        {!isLoaded && (
-             <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-5 h-5 border-2 border-slate-600 border-t-purple-400 rounded-full animate-spin"></div>
-             </div>
-        )}
         <Image
           loader={isCloudinaryImage(game.mobile_1x1_url || game.image_url) ? cloudinaryLoader : undefined}
           src={game.mobile_1x1_url || game.image_url}
