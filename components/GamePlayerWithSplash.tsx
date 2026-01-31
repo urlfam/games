@@ -448,12 +448,6 @@ export default function GamePlayerWithSplash({
 
                 {/* Main Game Image - Compact, no empty spaces */}
                 <div className="relative z-10 w-full max-w-[300px] aspect-video rounded-2xl overflow-hidden shadow-2xl bg-slate-800">
-                  {/* Loading Spinner */}
-                  {!isImageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center z-0">
-                      <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
-                    </div>
-                  )}
                   <Image
                     loader={
                       isCloudinaryImage(gameImage)
@@ -465,10 +459,12 @@ export default function GamePlayerWithSplash({
                     title={imageTitle || gameTitle}
                     fill
                     sizes="(max-width: 768px) 90vw, 300px"
-                    className={`object-cover transition-opacity duration-300 ${
+                    className={`object-cover transition-opacity duration-500 ${
                       !isImageLoaded ? 'opacity-0' : 'opacity-100'
                     }`}
                     priority
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
                     onLoad={() => setIsImageLoaded(true)}
                   />
                 </div>
