@@ -25,9 +25,9 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            // TEMPORAIRE POUR TEST : s-maxage=60 (1 min) pour vérifier stale-while-revalidate
-            // Remettre s-maxage=3600 après le test !
-            value: 'public, max-age=60, s-maxage=60, stale-while-revalidate=86400',
+            // s-maxage=3600 (1h) = Cloudflare considère la page "fraîche" pendant 1h (aligné avec ISR)
+            // stale-while-revalidate=86400 (24h) = Après 1h, sert instantanément du stale pendant 24h
+            value: 'public, max-age=14400, s-maxage=3600, stale-while-revalidate=86400',
           },
         ],
       },
