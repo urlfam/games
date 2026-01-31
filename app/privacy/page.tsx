@@ -815,32 +815,26 @@ export default function PrivacyPage() {
                   version:
                 </p>
                 <div className="p-6 bg-gradient-to-br from-purple-900/40 to-slate-800 border border-purple-700/50 rounded-xl space-y-3">
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> You can play
-                    games without giving us personal info
+                  <p>
+                    • You can play games without giving us personal info
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> We collect
-                    technical data (IP, browser, usage) to run the site
+                  <p>
+                    • We collect technical data (IP, browser, usage) to run the site
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> We use cookies for
-                    functionality, analytics, and ads
+                  <p>
+                    • We use cookies for functionality, analytics, and ads
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> We don&apos;t sell
-                    your personal information
+                  <p>
+                    • We don&apos;t sell your personal information
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> For kids under 13:
-                    No personal data collection, only contextual ads
+                  <p>
+                    • For kids under 13: No personal data collection, only contextual ads
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> You have rights to
-                    access, delete, or correct your data
+                  <p>
+                    • You have rights to access, delete, or correct your data
                   </p>
-                  <p className="flex items-center gap-2">
-                    <span className="text-green-400">✅</span> Contact{' '}
+                  <p>
+                    • Contact{' '}
                     <a
                       href="mailto:privacy@puzzio.io"
                       className="text-purple-400 hover:text-purple-300"
