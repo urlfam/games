@@ -55,18 +55,11 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
         onMouseLeave={handleMouseLeave}
       >
         <div
-          className={`relative w-full h-full overflow-hidden ${
+          className={`relative w-full h-full overflow-hidden bg-slate-800 ${
             !isMain ? 'aspect-video' : ''
           }`}
         >
-          {/* Loading Spinner */}
-          {!isImageLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center z-0 bg-slate-800">
-              <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
-            </div>
-          )}
-
-          {/* Image */}
+          {/* Image - No spinner, smooth fade-in */}
           <Image
             loader={
               isCloudinaryImage(game.image_url)
@@ -77,10 +70,12 @@ export default function TrendingSection({ games }: TrendingSectionProps) {
             alt={game.image_alt || game.title}
             fill
             sizes={sizes}
-            className={`object-cover group-hover/card:scale-105 transition-transform duration-300 z-10 ${
-              isVideoReady ? 'opacity-0' : 'opacity-100'
+            className={`object-cover group-hover/card:scale-105 transition-all duration-300 z-10 ${
+              isVideoReady ? 'opacity-0' : isImageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             priority={priority}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
             onLoad={() => setIsImageLoaded(true)}
           />
 

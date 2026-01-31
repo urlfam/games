@@ -61,15 +61,8 @@ export default function MobileHeroCard({ game, priority = false }: MobileHeroCar
   }, [hasStarted]);
 
   return (
-    <div ref={containerRef} className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group bg-slate-900">
+    <div ref={containerRef} className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-lg group bg-slate-800">
       <Link href={`/game/${game.slug}`} className="block w-full h-full relative">
-        
-        {/* Loading Spinner / Background */}
-        <div className="absolute inset-0 bg-slate-800 z-0 flex items-center justify-center">
-          {!isImageLoaded && (
-            <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
-          )}
-        </div>
 
         {/* Video Layer - Only mounts if video_url exists */}
         {game.video_url && (
@@ -95,9 +88,9 @@ export default function MobileHeroCard({ game, priority = false }: MobileHeroCar
             priority={priority}
             {...(priority ? { fetchPriority: 'high' } : {})}
             placeholder="blur"
-            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
             onLoad={() => setIsImageLoaded(true)}
-            className={`object-cover z-20 transition-opacity duration-500 ${isPlaying && game.video_url ? 'opacity-0' : 'opacity-100'}`}
+            className={`object-cover z-20 transition-opacity duration-300 ${isPlaying && game.video_url ? 'opacity-0' : isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
 
         {/* Overlay Gradients - Visible only when playing */}

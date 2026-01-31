@@ -49,15 +49,8 @@ export default function GameCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-slate-900 h-full">
-        {/* Loading Spinner (Visible until image loads) */}
-        {!isImageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center z-0">
-            <div className="w-8 h-8 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
-          </div>
-        )}
-
-        {/* Static Image (Always present, z-index 10 to stay on top) */}
+      <div className="relative aspect-video w-full overflow-hidden bg-slate-800 h-full">
+        {/* Static Image - Always visible, smooth fade-in on load */}
         <Image
           loader={
             isCloudinaryImage(game.image_url)
@@ -67,14 +60,14 @@ export default function GameCard({
           src={game.image_url}
           alt={game.image_alt || game.title}
           fill
-          className={`object-cover transition-opacity duration-300 z-10 ${
-            isVideoReady || !isImageLoaded ? 'opacity-0' : 'opacity-100'
+          className={`object-cover transition-opacity duration-200 z-10 ${
+            isVideoReady ? 'opacity-0' : isImageLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           loading={priority ? 'eager' : 'lazy'}
           priority={priority}
           placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
           onLoad={() => setIsImageLoaded(true)}
         />
 
