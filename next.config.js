@@ -25,10 +25,10 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            // s-maxage=31536000 (1 an) = Cloudflare ne montrera jamais EXPIRED
-            // Next.js ISR (revalidate=3600) met à jour le contenu toutes les heures en arrière-plan
-            // Le contenu reste frais grâce à ISR, mais Cloudflare sert toujours instantanément
-            value: 'public, max-age=14400, s-maxage=31536000, stale-while-revalidate=31536000',
+            // s-maxage=3600 (1h) = Cloudflare considère la page "fraîche" pendant 1h (aligné avec ISR)
+            // stale-while-revalidate=86400 (24h) = Après 1h, sert instantanément du stale pendant 24h pendant la mise à jour
+            // Résultat : Ultra-rapide 24/7 + contenu toujours à jour grâce à ISR
+            value: 'public, max-age=14400, s-maxage=3600, stale-while-revalidate=86400',
           },
         ],
       },
